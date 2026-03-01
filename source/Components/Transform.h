@@ -1,6 +1,6 @@
 #pragma once
 
-#include "source/Objects/ObjectComponent.h"
+#include "Objects/ObjectComponent.h"
 #include <glm.hpp>
 #include <gtc/quaternion.hpp>
 

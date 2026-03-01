@@ -1,6 +1,6 @@
 #include "Scene.h"
-#include "source/Objects/RenderObject.h"
-#include "source/Components/Cube.h"
+#include "Objects/RenderObject.h"
+#include "Components/Cube.h"
 
 Scene::Scene(WindowManager* windowManager, std::shared_ptr<VulkanInterface> vulkanInterface)
 {

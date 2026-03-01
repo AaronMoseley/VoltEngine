@@ -1,9 +1,9 @@
 #pragma once
 
-#include "source/Objects/ObjectComponent.h"
-#include "source/Vulkan Interface/TextureImage.h"
-#include "source/Vulkan Interface/VulkanCommonFunctions.h"
-#include "source/Components/UIMeshRenderer.h"
+#include "Objects/ObjectComponent.h"
+#include "Vulkan Interface/TextureImage.h"
+#include "Vulkan Interface/VulkanCommonFunctions.h"
+#include "Components/UIMeshRenderer.h"
 
 class UIImage : public UIMeshRenderer {
 public:

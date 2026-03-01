@@ -1,10 +1,10 @@
-#include "source/ThirdParty/ThirdPartyDeclarations.h"
+#include "ThirdParty/ThirdPartyDeclarations.h"
 #include <memory>
 
 #include <QApplication>
 #include <QVulkanInstance>
 
-#include "source/Management/VoltEngine.h"
+#include "Management/VoltEngine.h"
 
 bool DebugFilter(QVulkanInstance::DebugMessageSeverityFlags severity, QVulkanInstance::DebugMessageTypeFlags type, const void* message)
 {

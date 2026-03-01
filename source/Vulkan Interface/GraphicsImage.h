@@ -1,7 +1,7 @@
 #pragma once
 
-#include "source/Vulkan Interface/GraphicsBuffer.h"
-#include "source/Vulkan Interface/VulkanCommonFunctions.h"
+#include "Vulkan Interface/GraphicsBuffer.h"
+#include "Vulkan Interface/VulkanCommonFunctions.h"
 
 class GraphicsImage {
 public:

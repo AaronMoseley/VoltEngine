@@ -1,6 +1,6 @@
 #include "Text.h"
-#include "source/Objects/RenderObject.h"
-#include "source/Components/Transform.h"
+#include "Objects/RenderObject.h"
+#include "Components/Transform.h"
 
 Text::Text()
 {

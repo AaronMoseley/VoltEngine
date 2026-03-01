@@ -1,5 +1,5 @@
 #include "DemoBehavior.h"
-#include "source/Management/Scene.h"
+#include "Management/Scene.h"
 
 void DemoBehavior::Start()
 {

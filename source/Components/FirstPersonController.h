@@ -1,9 +1,9 @@
 #pragma once
 
-#include "source/Objects/ObjectComponent.h"
-#include "source/Components/Transform.h"
-#include "source/Objects/RenderObject.h"
-#include "source/Components/Camera.h"
+#include "Objects/ObjectComponent.h"
+#include "Components/Transform.h"
+#include "Objects/RenderObject.h"
+#include "Components/Camera.h"
 
 class FirstPersonController : public ObjectComponent {
 public:

@@ -4,11 +4,11 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
-#include "source/Vulkan Interface/VulkanCommonFunctions.h"
-#include "source/Components/MeshRenderer.h"
-#include "source/Objects/ObjectComponent.h"
-#include "source/Vulkan Interface/GraphicsBuffer.h"
-#include "source/Components/Transform.h"
+#include "Vulkan Interface/VulkanCommonFunctions.h"
+#include "Components/MeshRenderer.h"
+#include "Objects/ObjectComponent.h"
+#include "Vulkan Interface/GraphicsBuffer.h"
+#include "Components/Transform.h"
 
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>

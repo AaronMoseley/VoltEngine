@@ -1,12 +1,12 @@
 #pragma once
 
-#include "source/Objects/RenderObject.h"
-#include "source/Components/Camera.h"
-#include "source/Management/WindowManager.h"
-#include "source/Components/FirstPersonController.h"
-#include "source/Management/Scene.h"
-#include "source/Vulkan Interface/VulkanWindow.h"
-#include "source/Components/DemoBehavior.h"
+#include "Objects/RenderObject.h"
+#include "Components/Camera.h"
+#include "Management/WindowManager.h"
+#include "Components/FirstPersonController.h"
+#include "Management/Scene.h"
+#include "Vulkan Interface/VulkanWindow.h"
+#include "Components/DemoBehavior.h"
 
 #include <QApplication>
 #include <QScreen>

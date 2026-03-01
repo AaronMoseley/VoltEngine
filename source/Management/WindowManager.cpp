@@ -1,7 +1,7 @@
 #include "WindowManager.h"
-#include "source/Management/Scene.h"
-#include "source/Vulkan Interface/VulkanWindow.h"
-#include "source/Vulkan Interface/VulkanInterface.h"
+#include "Management/Scene.h"
+#include "Vulkan Interface/VulkanWindow.h"
+#include "Vulkan Interface/VulkanInterface.h"
 
 #include <iostream>
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "source/Vulkan Interface/VulkanInterface.h"
-#include "source/Vulkan Interface/VulkanCommonFunctions.h"
-#include "source/Components/UIImage.h"
-#include "source/Text Rendering/FontManager.h"
+#include "Vulkan Interface/VulkanInterface.h"
+#include "Vulkan Interface/VulkanCommonFunctions.h"
+#include "Components/UIImage.h"
+#include "Text Rendering/FontManager.h"
 
 #include <memory>
 #include <vector>

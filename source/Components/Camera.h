@@ -3,8 +3,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "source/Objects/ObjectComponent.h"
-#include "source/Components/Transform.h"
+#include "Objects/ObjectComponent.h"
+#include "Components/Transform.h"
 
 class Camera : public ObjectComponent {
 public:

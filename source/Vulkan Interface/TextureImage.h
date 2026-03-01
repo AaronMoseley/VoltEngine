@@ -1,6 +1,6 @@
 #pragma once
 
-#include "source/Vulkan Interface/GraphicsImage.h"
+#include "Vulkan Interface/GraphicsImage.h"
 
 class TextureImage : public GraphicsImage {
 public:

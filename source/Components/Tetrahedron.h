@@ -1,7 +1,7 @@
 #pragma once
 
-#include "source/Components/MeshRenderer.h"
-#include "source/Vulkan Interface/VulkanCommonFunctions.h"
+#include "Components/MeshRenderer.h"
+#include "Vulkan Interface/VulkanCommonFunctions.h"
 
 class Tetrahedron : public MeshRenderer {
 public:

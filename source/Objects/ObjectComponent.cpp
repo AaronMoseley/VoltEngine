@@ -1,5 +1,5 @@
 #include "ObjectComponent.h"
-#include "source/Objects/RenderObject.h"
+#include "Objects/RenderObject.h"
 
 Scene* ObjectComponent::GetScene()
 {

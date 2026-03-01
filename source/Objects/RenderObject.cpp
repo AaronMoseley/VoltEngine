@@ -1,6 +1,6 @@
 #include "RenderObject.h"
-#include "source/Management/Scene.h"
-#include "source/Management/WindowManager.h"
+#include "Management/Scene.h"
+#include "Management/WindowManager.h"
 
 RenderObject::RenderObject()
 {

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "source/Objects/ObjectComponent.h"
-#include "source/Vulkan Interface/VulkanCommonFunctions.h"
-#include "source/Components/Transform.h"
-#include "source/Objects/RenderObject.h"
-#include "source/Components/Cube.h"
-#include "source/Components/Tetrahedron.h"
-#include "source/Components/LightSource.h"
-#include "source/Components/Text.h"
+#include "Objects/ObjectComponent.h"
+#include "Vulkan Interface/VulkanCommonFunctions.h"
+#include "Components/Transform.h"
+#include "Objects/RenderObject.h"
+#include "Components/Cube.h"
+#include "Components/Tetrahedron.h"
+#include "Components/LightSource.h"
+#include "Components/Text.h"
 
 class DemoBehavior : public ObjectComponent {
 public:

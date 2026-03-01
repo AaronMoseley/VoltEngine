@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QVulkanWindowRenderer>
-#include "source/Management/Scene.h"
+#include "Management/Scene.h"
 
 class VulkanInterface;
 

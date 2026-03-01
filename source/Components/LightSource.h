@@ -1,8 +1,8 @@
 #pragma once
 
-#include "source/Objects/ObjectComponent.h"
-#include "source/Vulkan Interface/VulkanCommonFunctions.h"
-#include "source/Components/Transform.h"
+#include "Objects/ObjectComponent.h"
+#include "Vulkan Interface/VulkanCommonFunctions.h"
+#include "Components/Transform.h"
 
 #include "glm.hpp"
 

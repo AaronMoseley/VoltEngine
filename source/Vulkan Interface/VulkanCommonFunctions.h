@@ -5,7 +5,7 @@
 
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 
-#include "source/ThirdParty/vk_mem_alloc.h"
+#include "ThirdParty/vk_mem_alloc.h"
 
 #include "glm.hpp"
 

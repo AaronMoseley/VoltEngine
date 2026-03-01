@@ -1,5 +1,5 @@
 #include "GraphicsPipeline.h"
-#include "source/Vulkan Interface/VulkanWindow.h"
+#include "Vulkan Interface/VulkanWindow.h"
 
 GraphicsPipeline::GraphicsPipeline(GraphicsPipelineCreateInfo pipelineCreateInfo)
 {

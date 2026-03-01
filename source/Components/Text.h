@@ -1,8 +1,8 @@
 #pragma once
 
-#include "source/Components/UIMeshRenderer.h"
-#include "source/Vulkan Interface/VulkanCommonFunctions.h"
-#include "source/Text Rendering/Font.h"
+#include "Components/UIMeshRenderer.h"
+#include "Vulkan Interface/VulkanCommonFunctions.h"
+#include "Text Rendering/Font.h"
 
 class Text : public UIMeshRenderer {
 public:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "source/Management/WindowManager.h"
+#include "Management/WindowManager.h"
 
 #include <string>
 #include <memory>

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "source/Objects/ObjectComponent.h"
-#include "source/Vulkan Interface/VulkanCommonFunctions.h"
-#include "source/Vulkan Interface/GraphicsBuffer.h"
+#include "Objects/ObjectComponent.h"
+#include "Vulkan Interface/VulkanCommonFunctions.h"
+#include "Vulkan Interface/GraphicsBuffer.h"
 
 #include <glm.hpp>
 

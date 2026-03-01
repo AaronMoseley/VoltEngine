@@ -1,6 +1,6 @@
 #include "VulkanInterface.h"
-#include "source/Vulkan Interface/VulkanWindow.h"
-#include "source/Management/WindowManager.h"
+#include "Vulkan Interface/VulkanWindow.h"
+#include "Management/WindowManager.h"
 
 #include "stb_image.h"
 

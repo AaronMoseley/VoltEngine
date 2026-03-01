@@ -1,5 +1,5 @@
 #include "VulkanWindow.h"
-#include "source/Vulkan Interface/VulkanInterface.h"
+#include "Vulkan Interface/VulkanInterface.h"
 
 VulkanWindow::VulkanWindow(std::shared_ptr<VulkanInterface> vulkanInterface, std::shared_ptr<Scene> scene) : QVulkanWindow(nullptr)
 {

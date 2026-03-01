@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <memory>
 
-#include "source/Vulkan Interface/VulkanCommonFunctions.h"
+#include "Vulkan Interface/VulkanCommonFunctions.h"
 
 class GraphicsBuffer {
 public:

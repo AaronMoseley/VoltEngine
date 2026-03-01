@@ -1,16 +1,16 @@
 #pragma once
 
-#include "source/Objects/RenderObject.h"
-#include "source/Components/Camera.h"
-#include "source/Vulkan Interface/VulkanCommonFunctions.h"
-#include "source/Vulkan Interface/GraphicsBuffer.h"
-#include "source/Vulkan Interface/GraphicsImage.h"
-#include "source/Vulkan Interface/TextureImage.h"
-#include "source/Components/LightSource.h"
-#include "source/Vulkan Interface/GraphicsPipeline.h"
-#include "source/Components/UIImage.h"
-#include "source/Components/Text.h"
-#include "source/Text Rendering/FontManager.h"
+#include "Objects/RenderObject.h"
+#include "Components/Camera.h"
+#include "Vulkan Interface/VulkanCommonFunctions.h"
+#include "Vulkan Interface/GraphicsBuffer.h"
+#include "Vulkan Interface/GraphicsImage.h"
+#include "Vulkan Interface/TextureImage.h"
+#include "Components/LightSource.h"
+#include "Vulkan Interface/GraphicsPipeline.h"
+#include "Components/UIImage.h"
+#include "Components/Text.h"
+#include "Text Rendering/FontManager.h"
 
 #include <map>
 #include <vector>
