@@ -33,7 +33,7 @@ public:
 
 	void FinalizeUIMesh(std::shared_ptr<RenderObject> updatedObject);
 
-	void UpdateTexture(std::string newTexturePath);
+	void UpdateTexture(std::filesystem::path newTexturePath);
 
 	std::shared_ptr<FontManager> GetFontManager() { return m_fontManager; }
 

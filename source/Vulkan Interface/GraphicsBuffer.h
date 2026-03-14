@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <memory>
+#include <cstring>
 
 #include "Vulkan Interface/VulkanCommonFunctions.h"
 

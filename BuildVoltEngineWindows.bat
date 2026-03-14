@@ -14,7 +14,7 @@ set PROJECT_NAME=VoltEngine
 set BUILD_DIR=VoltEngineBuild_Windows
 
 REM Build type: Debug or Release
-set BUILD_TYPE=Debug
+set BUILD_TYPE=Release
 
 REM ================================
 REM ===== INTERNAL SETTINGS ========

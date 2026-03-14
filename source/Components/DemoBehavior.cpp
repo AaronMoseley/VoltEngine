@@ -15,7 +15,7 @@ void DemoBehavior::Start()
 	imageTextureTransform->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	imageTextureTransform->SetScale(glm::vec3(0.05f, 0.05f, 1.0f));
 	std::shared_ptr<UIImage> uiImageComponent = uiImageTexture->AddComponent<UIImage>();
-	uiImageComponent->SetTexture("textures\\Crosshair.png");
+	uiImageComponent->SetTexture("textures/Crosshair.png");
     GetScene()->AddUIObject(uiImageTexture);
 
     std::shared_ptr<RenderObject> uiTextObject = std::make_shared<RenderObject>();
@@ -24,7 +24,7 @@ void DemoBehavior::Start()
     uiTextObjectTransform->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
     std::shared_ptr<Text> uiTextComponent = uiTextObject->AddComponent<Text>();
     uiTextComponent->SetTextString("\"the quick brown fox\"\njumps over the\nlazy dog\n\nTHE QUICK BROWN FOX\nJUMPS OVER THE\nLAZY DOG\n\n: ' \" / \\ . , ; | ! @ # $ % ^ & * ( ) { } [ ]");
-    std::shared_ptr<Font> newFont = GetScene()->AddFont("fonts\\jetbrainsmononl-medium.png", "fonts\\jetbrainsmononl-medium.fnt");
+    std::shared_ptr<Font> newFont = GetScene()->AddFont("fonts/jetbrainsmononl-medium.png", "fonts/jetbrainsmononl-medium.fnt");
     uiTextComponent->SetFontName("JetBrains Mono NL Medium");
     GetScene()->AddUIObject(uiTextObject);
 
@@ -85,11 +85,11 @@ void DemoBehavior::Start()
 
         if (GetScene()->GetObjectCount() % 3 == 0)
         {
-            currentMesh->SetTexture("textures\\SandTexture.png");
+            currentMesh->SetTexture("textures/SandTexture.png");
         }
         else if (GetScene()->GetObjectCount() % 3 == 1)
         {
-            currentMesh->SetTexture("textures\\OtherTexture.png");
+            currentMesh->SetTexture("textures/OtherTexture.png");
         }
         else {
             currentMesh->SetTextured(false);
@@ -167,11 +167,11 @@ void DemoBehavior::Update(float deltaTime)
 
         if (GetScene()->GetObjectCount() % 3 == 0)
         {
-            currentMesh->SetTexture("textures\\SandTexture.png");
+            currentMesh->SetTexture("textures/SandTexture.png");
         }
         else if (GetScene()->GetObjectCount() % 3 == 1)
         {
-            currentMesh->SetTexture("textures\\OtherTexture.png");
+            currentMesh->SetTexture("textures/OtherTexture.png");
         }
         else {
             currentMesh->SetTextured(false);

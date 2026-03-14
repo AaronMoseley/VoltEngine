@@ -14,6 +14,7 @@
 #include <gtc/matrix_transform.hpp>
 
 #include <array>
+#include <filesystem>
 #include <vector>
 #include <string>
 #include <vulkan/vulkan_core.h>
@@ -56,10 +57,10 @@ public:
 
 	std::vector<std::shared_ptr<ObjectComponent>> GetAllComponents() { return m_components; }
 
-    VulkanCommonFunctions::InstanceInfo GetInstanceInfo(const std::vector<std::string>& textureFilePaths);
-	VulkanCommonFunctions::UIInstanceInfo GetUIInstanceInfo(const std::vector<std::string>& textureFilePaths);
-	std::shared_ptr<GraphicsBuffer> GetInstanceBuffer(const std::vector<std::string>& textureFilePaths);
-	std::shared_ptr<GraphicsBuffer> GetUIInstanceBuffer(const std::vector<std::string>& textureFilePaths);
+    VulkanCommonFunctions::InstanceInfo GetInstanceInfo(const std::vector<std::filesystem::path>& textureFilePaths);
+	VulkanCommonFunctions::UIInstanceInfo GetUIInstanceInfo(const std::vector<std::filesystem::path>& textureFilePaths);
+	std::shared_ptr<GraphicsBuffer> GetInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths);
+	std::shared_ptr<GraphicsBuffer> GetUIInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths);
 	void SetInstanceBuffer(std::shared_ptr<GraphicsBuffer> instanceBuffer) { m_instanceBuffer = instanceBuffer; }
 
 	void SetSceneManager(Scene* sceneManager) { m_sceneManager = sceneManager; }

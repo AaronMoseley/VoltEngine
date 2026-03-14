@@ -20,10 +20,14 @@ void VulkanWindowRenderer::initResources()
 void VulkanWindowRenderer::initSwapChainResources()
 {
 	m_vulkanInterface->CreateDepthResources();
+
+	m_vulkanInterface->SetSwapChainReady(true);
 }
 
 void VulkanWindowRenderer::releaseResources()
 {
+	m_vulkanInterface->SetSwapChainReady(false);
+
 	m_scene->Cleanup();
 	m_vulkanInterface->Cleanup();
 }

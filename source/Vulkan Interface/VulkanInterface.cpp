@@ -28,7 +28,7 @@ void VulkanInterface::InitializeVulkan()
     CreateAllDescriptorSets();
 }
 
-void VulkanInterface::CreateTextureSampler(std::string textureFilePath)
+void VulkanInterface::CreateTextureSampler(std::filesystem::path textureFilePath)
 {
     VkPhysicalDeviceProperties properties{};
     vkGetPhysicalDeviceProperties(physicalDevice, &properties);
@@ -36,7 +36,7 @@ void VulkanInterface::CreateTextureSampler(std::string textureFilePath)
 	textureImages[textureFilePath]->CreateTextureSampler(properties.limits.maxSamplerAnisotropy);
 }
 
-void VulkanInterface::CreateTextureImageView(std::string textureFilePath) {
+void VulkanInterface::CreateTextureImageView(std::filesystem::path textureFilePath) {
 	textureImages[textureFilePath]->CreateImageView(VK_IMAGE_ASPECT_COLOR_BIT);
 }
 
@@ -84,13 +84,14 @@ VkFormat VulkanInterface::FindSupportedFormat(const std::vector<VkFormat>& candi
     throw std::runtime_error("failed to find supported format!");
 }
 
-void VulkanInterface::CreateTextureImage(std::string textureFilePath) {
+void VulkanInterface::CreateTextureImage(std::filesystem::path textureFilePath) {
     int texWidth, texHeight, texChannels;
+
     stbi_uc* pixels = stbi_load(textureFilePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     VkDeviceSize imageSize = texWidth * texHeight * 4;
 
     if (!pixels) {
-        throw std::runtime_error("failed to load texture image: " + textureFilePath);
+        throw std::runtime_error("failed to load texture image: " + textureFilePath.string());
     }
 
     GraphicsBuffer::BufferCreateInfo stagingBufferCreateInfo{};
@@ -128,7 +129,7 @@ void VulkanInterface::CreateTextureImage(std::string textureFilePath) {
 	stagingBuffer->DestroyBuffer();
 }
 
-void VulkanInterface::UpdateTextureResources(std::string textureFilePath, bool alreadyInitialized)
+void VulkanInterface::UpdateTextureResources(std::filesystem::path textureFilePath, bool alreadyInitialized)
 {
 	textureFilePaths.push_back(textureFilePath);
 	texturePathToIndex[textureFilePath] = textureFilePaths.size() - 1;
@@ -307,9 +308,11 @@ void VulkanInterface::CreateUIDescriptorPool() {
         vkDestroyDescriptorPool(device, m_uiDescriptorPool, nullptr);
     }
 
-    std::array<VkDescriptorPoolSize, 1> poolSizes{};
-    poolSizes[0].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) * textureFilePaths.size();
+    std::array<VkDescriptorPoolSize, 2> poolSizes{};
+    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) * textureFilePaths.size();
 
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -944,6 +947,14 @@ void VulkanInterface::DrawUIElementCommandBuffer(VkCommandBuffer commandBuffer, 
 }
 
 void VulkanInterface::DrawFrame(float deltaTime, std::shared_ptr<Scene> scene, std::shared_ptr<FontManager> fontManager) {
+    vkDeviceWaitIdle(device);
+
+    if (m_swapChainReady == false)
+    {
+        m_vulkanWindow->requestUpdate();
+        return;
+    }
+
     std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>> objectHandles = scene->GetMeshNameToObjectMap();
     std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> objects = scene->GetObjects();
     std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> uiObjects = scene->GetUIObjects();

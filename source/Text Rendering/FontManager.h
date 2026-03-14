@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Text Rendering/Font.h"
+#include <memory>
 
 class FontManager {
 public:

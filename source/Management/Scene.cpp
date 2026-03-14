@@ -413,7 +413,7 @@ void Scene::GenerateInstanceBuffer(std::shared_ptr<RenderObject> newObject)
     newObject->SetInstanceBuffer(instanceBuffer);
 }
 
-void Scene::UpdateTexture(std::string newTexturePath)
+void Scene::UpdateTexture(std::filesystem::path newTexturePath)
 {
     if (m_vulkanInterface->HasTexture(newTexturePath))
     {

@@ -7,7 +7,7 @@ RenderObject::RenderObject()
 
 }
 
-VulkanCommonFunctions::InstanceInfo RenderObject::GetInstanceInfo(const std::vector<std::string>& textureFilePaths)
+VulkanCommonFunctions::InstanceInfo RenderObject::GetInstanceInfo(const std::vector<std::filesystem::path>& textureFilePaths)
 {
 	VulkanCommonFunctions::InstanceInfo result {};
 
@@ -67,7 +67,7 @@ VulkanCommonFunctions::InstanceInfo RenderObject::GetInstanceInfo(const std::vec
 	return result;
 }
 
-VulkanCommonFunctions::UIInstanceInfo RenderObject::GetUIInstanceInfo(const std::vector<std::string>& textureFilePaths)
+VulkanCommonFunctions::UIInstanceInfo RenderObject::GetUIInstanceInfo(const std::vector<std::filesystem::path>& textureFilePaths)
 {
 	VulkanCommonFunctions::UIInstanceInfo result {};
 	std::shared_ptr<Transform> transform = GetComponent<Transform>();
@@ -98,7 +98,7 @@ VulkanCommonFunctions::UIInstanceInfo RenderObject::GetUIInstanceInfo(const std:
 	return result;
 }
 
-std::shared_ptr<GraphicsBuffer> RenderObject::GetInstanceBuffer(const std::vector<std::string>& textureFilePaths)
+std::shared_ptr<GraphicsBuffer> RenderObject::GetInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths)
 {
 	if (m_instanceBuffer == nullptr)
 	{
@@ -114,7 +114,7 @@ std::shared_ptr<GraphicsBuffer> RenderObject::GetInstanceBuffer(const std::vecto
 	return m_instanceBuffer;
 }
 
-std::shared_ptr<GraphicsBuffer> RenderObject::GetUIInstanceBuffer(const std::vector<std::string>& textureFilePaths)
+std::shared_ptr<GraphicsBuffer> RenderObject::GetUIInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths)
 {
 	if (m_instanceBuffer == nullptr)
 	{

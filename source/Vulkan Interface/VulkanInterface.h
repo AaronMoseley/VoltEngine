@@ -19,6 +19,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <filesystem>
 
 class VulkanWindow;
 class WindowManager;
@@ -28,8 +29,9 @@ public:
     VulkanInterface(WindowManager* windowManager);
 
     void DrawFrame(float deltaTime, std::shared_ptr<Scene> scene, std::shared_ptr<FontManager> fontManager);
+	void SetSwapChainReady(const bool isReady) { m_swapChainReady=isReady; };
 
-    bool HasRenderedFirstFrame() { return renderedFirstFrame; };
+    bool HasRenderedFirstFrame() const { return renderedFirstFrame; };
 
     void Cleanup();
 
@@ -42,8 +44,8 @@ public:
     void CreateInstanceBuffer(std::shared_ptr<MeshRenderer> object);
 	std::shared_ptr<GraphicsBuffer> CreateInstanceBuffer(size_t maxObjects);
     void UpdateObjectBuffers(std::shared_ptr<MeshRenderer> objectMesh);
-    bool HasTexture(std::string textureFilePath) { return std::find(textureFilePaths.begin(), textureFilePaths.end(), textureFilePath) != textureFilePaths.end(); };
-    void UpdateTextureResources(std::string newTextureFilePath, bool alreadyInitialized=true);
+    bool HasTexture(std::filesystem::path textureFilePath) { return std::find(textureFilePaths.begin(), textureFilePaths.end(), textureFilePath) != textureFilePaths.end(); };
+    void UpdateTextureResources(std::filesystem::path newTextureFilePath, bool alreadyInitialized=true);
     void CreateDepthResources();
 
     void InitializeVulkan();
@@ -69,9 +71,9 @@ private:
     void CreatePrimaryGraphicsPipeline();
 	void CreateUIGraphicsPipeline();
 
-    void CreateTextureImage(std::string textureFilePath);
-    void CreateTextureImageView(std::string textureFilePath);
-    void CreateTextureSampler(std::string textureFilePath);
+    void CreateTextureImage(std::filesystem::path textureFilePath);
+    void CreateTextureImageView(std::filesystem::path textureFilePath);
+    void CreateTextureSampler(std::filesystem::path textureFilePath);
     void CreateUniformBuffers();
 
     VkFormat FindDepthFormat();
@@ -114,11 +116,11 @@ private:
 	std::vector<std::shared_ptr<GraphicsBuffer>> lightInfoBuffers;
 	std::vector<std::shared_ptr<GraphicsBuffer>> uiUniformBuffers;
 
-    std::vector<std::string> textureFilePaths;
-    std::map<std::string, size_t> texturePathToIndex;
-    std::map<std::string, std::shared_ptr<TextureImage>> textureImages;
+    std::vector<std::filesystem::path> textureFilePaths;
+    std::map<std::filesystem::path, size_t> texturePathToIndex;
+    std::map<std::filesystem::path, std::shared_ptr<TextureImage>> textureImages;
 
-	std::string kDefaultTexturePath = "textures\\DefaultTexture.png";
+	const std::filesystem::path kDefaultTexturePath = "textures/DefaultTexture.png";
 
     size_t maxLightCount = 200;
 
@@ -162,4 +164,5 @@ private:
 #endif
 
     bool renderedFirstFrame = false;
+	bool m_swapChainReady = false;
 };
