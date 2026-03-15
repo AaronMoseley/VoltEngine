@@ -33,11 +33,11 @@ private:
     };
 
     std::vector<VulkanCommonFunctions::Vertex> squareVertices = {
-        //positions          //normals           //texture coords
-        {{-0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}}, //top left
-        {{ 0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}}, //top right
-        {{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}}, //bottom right
-        {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}}  //bottom left
+        //positions                                     //normals                                       //texture coords
+        {{-0.5f,  0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f}}, //top left
+        {{ 0.5f,  0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f, 0.0f}}, //top right
+        {{ 0.5f, -0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 0.0f}}, //bottom right
+        {{-0.5f, -0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}}  //bottom left
     };
 
     std::vector<uint16_t> squareIndices = {

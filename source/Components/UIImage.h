@@ -41,10 +41,10 @@ private:
 
 	alignas(16) std::vector<VulkanCommonFunctions::UIVertex> m_squareVertices = {
 		//positions              //texture coords
-		{ {-1.0f,  1.0f, 0.0f},  {0.0f, 0.0f} }, //top left
-		{ { 1.0f,  1.0f, 0.0f},  {1.0f, 0.0f} }, //top right
-		{ { 1.0f, -1.0f, 0.0f},  {1.0f, 1.0f} }, //bottom right
-		{ {-1.0f, -1.0f, 0.0f},  {0.0f, 1.0f} }  //bottom left
+		{ {-1.0f,  1.0f, 0.0f, 0.0f},  {0.0f, 0.0f, 0.0f, 0.0f} }, //top left
+		{ { 1.0f,  1.0f, 0.0f, 0.0f},  {1.0f, 0.0f, 0.0f, 0.0f} }, //top right
+		{ { 1.0f, -1.0f, 0.0f, 0.0f},  {1.0f, 1.0f, 0.0f, 0.0f} }, //bottom right
+		{ {-1.0f, -1.0f, 0.0f, 0.0f},  {0.0f, 1.0f, 0.0f, 0.0f} }  //bottom left
 	};
 
 	alignas(16) std::vector<uint16_t> m_squareIndices = { 0, 1, 2, 2, 3, 0 };

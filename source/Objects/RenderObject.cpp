@@ -41,27 +41,27 @@ VulkanCommonFunctions::InstanceInfo RenderObject::GetInstanceInfo(const std::vec
 
 	result.modelMatrixInverse = glm::inverse(result.modelMatrix);
 
-	result.scale = transform->GetWorldScale();
+	result.scale = glm::vec4(transform->GetWorldScale(), 1.0f);
 
-	result.ambient = meshRenderer->GetColor();
-	result.diffuse = meshRenderer->GetColor();
-	result.specular = glm::vec3(0.5f, 0.5f, 0.5f);
-	result.shininess = std::pow(2.0f, meshRenderer->GetShininess());
+	result.ambient = glm::vec4(meshRenderer->GetColor(), 1.0f);
+	result.diffuse = glm::vec4(meshRenderer->GetColor(), 1.0f);
+	result.specular = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+	result.opacityAndShininess.y = std::pow(2.0f, meshRenderer->GetShininess());
 
-	result.opacity = meshRenderer->GetOpacity();
+	result.opacityAndShininess.x = meshRenderer->GetOpacity();
 
-	result.lit = (meshRenderer->GetLit()) ? 1 : 0;
+	result.displayProperties.x = (meshRenderer->GetLit()) ? 1 : 0;
 
-	result.textured = (meshRenderer->GetTextured()) ? 1 : 0;
+	result.displayProperties.y = (meshRenderer->GetTextured()) ? 1 : 0;
 
-	result.isBillboarded = (meshRenderer->IsBillboarded()) ? 1 : 0;
+	result.displayProperties.w = (meshRenderer->IsBillboarded()) ? 1 : 0;
 
 	auto iterator = std::find(textureFilePaths.begin(), textureFilePaths.end(), meshRenderer->GetTexturePath());
 
-	result.textureIndex = std::distance(textureFilePaths.begin(), iterator);
-	if (result.textureIndex > textureFilePaths.size())
+	result.displayProperties.z = std::distance(textureFilePaths.begin(), iterator);
+	if (result.displayProperties.z > textureFilePaths.size())
 	{
-		result.textureIndex = 0;
+		result.displayProperties.z = 0;
 	}
 
 	return result;
@@ -80,19 +80,18 @@ VulkanCommonFunctions::UIInstanceInfo RenderObject::GetUIInstanceInfo(const std:
 	{
 		return result;
 	}
-	result.objectPosition = transform->GetWorldPosition();
-	result.scale = transform->GetWorldScale();
-	result.color = imageComponent->GetColor();
-	result.opacity = imageComponent->GetOpacity();
-	result.textured = (imageComponent->GetTextured()) ? 1 : 0;
-	result.isTextCharacter = 0;
+	result.objectPosition = glm::vec4(transform->GetWorldPosition(), 1.0f);
+	result.scale = glm::vec4(transform->GetWorldScale(), 1.0f);
+	result.color = glm::vec4(imageComponent->GetColor(), imageComponent->GetOpacity());
+	result.displayProperties.x = (imageComponent->GetTextured()) ? 1 : 0;
+	result.displayProperties.w = 0;
 
 	auto iterator = std::find(textureFilePaths.begin(), textureFilePaths.end(), imageComponent->GetTexturePath());
 
-	result.textureIndex = std::distance(textureFilePaths.begin(), iterator);
-	if (result.textureIndex > textureFilePaths.size())
+	result.displayProperties.y = std::distance(textureFilePaths.begin(), iterator);
+	if (result.displayProperties.y > textureFilePaths.size())
 	{
-		result.textureIndex = 0;
+		result.displayProperties.y = 0;
 	}
 
 	return result;

@@ -4,6 +4,7 @@
 #define VULKAN_COMMON_FUNCTIONS
 
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
+#define GLM_FORCE_STD340
 
 #include "ThirdParty/vk_mem_alloc.h"
 
@@ -18,52 +19,59 @@ namespace VulkanCommonFunctions {
     static const VulkanCommonFunctions::ObjectHandle INVALID_OBJECT_HANDLE = 0;
     static const size_t MAX_OBJECTS = 10000;
     
-    struct alignas(16) GlobalInfo {
-        glm::mat4 view;
-        glm::mat4 proj;
-        glm::vec4 cameraPosition;
-        alignas(4) uint32_t lightCount;
+    struct alignas(256) GlobalInfo {
+        alignas(16) glm::mat4 view;
+        alignas(16) glm::mat4 proj;
+        alignas(16) glm::vec4 cameraPosition;
+        //only x is used
+        alignas(16) glm::uvec4 lightCount;
     };
+
+    static_assert(sizeof(GlobalInfo) % 16 == 0);
 
     struct alignas(16) LightInfo {
-        glm::vec4 lightPosition;
-        glm::vec4 lightColor;
+        alignas(16) glm::vec4 lightPosition;
+        alignas(16) glm::vec4 lightColor;
 
-        glm::vec4 lightAmbient;
-        glm::vec4 lightDiffuse;
-        glm::vec4 lightSpecular;
+        alignas(16) glm::vec4 lightAmbient;
+        alignas(16) glm::vec4 lightDiffuse;
+        alignas(16) glm::vec4 lightSpecular;
 
-        alignas(4) float maxLightDistance;
+        //only x is used
+        alignas(16) glm::vec4 maxLightDistance;
     };
 
-    struct alignas(16) UIGlobalInfo {
-        alignas(4) uint32_t screenWidth;
-        alignas(4) uint32_t screenHeight;
+    static_assert(sizeof(LightInfo) % 16 == 0);
+
+    struct alignas(256) UIGlobalInfo {
+        //x is width, y is height
+        alignas(16) glm::uvec4 screenSize;
     };
+
+    static_assert(sizeof(UIGlobalInfo) % 16 == 0);
 
     struct alignas(16) InstanceInfo {
-        glm::mat4 modelMatrix;
-        glm::mat4 modelMatrixInverse;
+        alignas(16) glm::mat4 modelMatrix;
+        alignas(16) glm::mat4 modelMatrixInverse;
 
-        alignas(16) glm::vec3 scale;
+        alignas(16) glm::vec4 scale;
 
-        alignas(16) glm::vec3 ambient;
-        alignas(16) glm::vec3 diffuse;
-        alignas(16) glm::vec3 specular;
-        alignas(4) float opacity;
-        alignas(4) float shininess;
-        alignas(4) uint32_t lit;
+        alignas(16) glm::vec4 ambient;
+        alignas(16) glm::vec4 diffuse;
+        alignas(16) glm::vec4 specular;
+        //x is opacity, y is shininess
+        alignas(16) glm::vec4 opacityAndShininess;
 
-        alignas(4) uint32_t textured;
-        alignas(4) uint32_t textureIndex;
-
-        alignas(4) uint32_t isBillboarded;
+        //x is lit boolean, y is textured boolean, z is texture index, w is billboarded boolean
+        alignas(16) glm::uvec4 displayProperties;
     };
 
+    static_assert(sizeof(InstanceInfo) % 16 == 0);
+
     struct alignas(16) Vertex {
-        alignas(16) glm::vec3 pos;
-        alignas(16) glm::vec3 normal;
-        alignas(16) glm::vec2 texCoord;
+        alignas(16) glm::vec4 pos;
+        alignas(16) glm::vec4 normal;
+        alignas(16) glm::vec4 texCoord;
 
         static std::array<VkVertexInputBindingDescription, 2> GetBindingDescriptions() {
             std::array<VkVertexInputBindingDescription, 2> result;
@@ -79,22 +87,22 @@ namespace VulkanCommonFunctions {
             return result;
         }
 
-        static std::array<VkVertexInputAttributeDescription, 21> GetAttributeDescriptions() {
-            std::array<VkVertexInputAttributeDescription, 21> attributeDescriptions{};
+        static std::array<VkVertexInputAttributeDescription, 17> GetAttributeDescriptions() {
+            std::array<VkVertexInputAttributeDescription, 17> attributeDescriptions{};
 
             attributeDescriptions[0].binding = 0;
             attributeDescriptions[0].location = 0;
-            attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+            attributeDescriptions[0].format = VK_FORMAT_R32G32B32A32_SFLOAT;
             attributeDescriptions[0].offset = offsetof(Vertex, pos);
 
             attributeDescriptions[1].binding = 0;
             attributeDescriptions[1].location = 1;
-            attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+            attributeDescriptions[1].format = VK_FORMAT_R32G32B32A32_SFLOAT;
             attributeDescriptions[1].offset = offsetof(Vertex, normal);
 
             attributeDescriptions[2].binding = 0;
             attributeDescriptions[2].location = 2;
-            attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+            attributeDescriptions[2].format = VK_FORMAT_R32G32B32A32_SFLOAT;
             attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
 
             for (uint32_t i = 3; i < 7; i++) {
@@ -111,69 +119,41 @@ namespace VulkanCommonFunctions {
                 attributeDescriptions[i].offset = sizeof(glm::mat4) + sizeof(glm::vec4) * (i - 7);
             }
 
-            attributeDescriptions[11].binding = 1;
-            attributeDescriptions[11].location = 11;
-            attributeDescriptions[11].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributeDescriptions[11].offset = offsetof(InstanceInfo, scale);
-
-            for (uint32_t i = 12; i < 15; i++)
+            for (uint32_t i = 11; i < 16; i++)
             {
                 attributeDescriptions[i].binding = 1;
                 attributeDescriptions[i].location = i;
-                attributeDescriptions[i].format = VK_FORMAT_R32G32B32_SFLOAT;
-                attributeDescriptions[i].offset = (2 * sizeof(glm::mat4)) + (sizeof(glm::vec3) * (i - 11));
+                attributeDescriptions[i].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+                attributeDescriptions[i].offset = (2 * sizeof(glm::mat4)) + (sizeof(glm::vec4) * (i - 11));
             }
-
-            attributeDescriptions[15].binding = 1;
-            attributeDescriptions[15].location = 15;
-            attributeDescriptions[15].format = VK_FORMAT_R32_SFLOAT;
-            attributeDescriptions[15].offset = offsetof(InstanceInfo, opacity);
 
             attributeDescriptions[16].binding = 1;
             attributeDescriptions[16].location = 16;
-            attributeDescriptions[16].format = VK_FORMAT_R32_SFLOAT;
-            attributeDescriptions[16].offset = offsetof(InstanceInfo, shininess);
-
-            attributeDescriptions[17].binding = 1;
-            attributeDescriptions[17].location = 17;
-            attributeDescriptions[17].format = VK_FORMAT_R32_UINT;
-            attributeDescriptions[17].offset = offsetof(InstanceInfo, lit);
-
-            attributeDescriptions[18].binding = 1;
-            attributeDescriptions[18].location = 18;
-            attributeDescriptions[18].format = VK_FORMAT_R32_UINT;
-            attributeDescriptions[18].offset = offsetof(InstanceInfo, textured);
-
-            attributeDescriptions[19].binding = 1;
-            attributeDescriptions[19].location = 19;
-            attributeDescriptions[19].format = VK_FORMAT_R32_UINT;
-            attributeDescriptions[19].offset = offsetof(InstanceInfo, textureIndex);
-
-            attributeDescriptions[20].binding = 1;
-            attributeDescriptions[20].location = 20;
-            attributeDescriptions[20].format = VK_FORMAT_R32_UINT;
-            attributeDescriptions[20].offset = offsetof(InstanceInfo, isBillboarded);
+            attributeDescriptions[16].format = VK_FORMAT_R32G32B32A32_UINT;
+            attributeDescriptions[16].offset = offsetof(InstanceInfo, displayProperties);
 
             return attributeDescriptions;
         }
     };
 
+    static_assert(sizeof(Vertex) % 16 == 0);
+
     struct alignas(16) UIInstanceInfo {
-        alignas(16) glm::vec3 objectPosition;
-        alignas(16) glm::vec3 scale;
-        alignas(16) glm::vec3 color;
-        alignas(8) glm::vec2 textureOffset;
-        alignas(8) glm::vec2 characterTextureSize;
-        alignas(8) glm::vec2 characterOffset;
-        alignas(4) float opacity;
-        alignas(4) uint32_t textured;
-        alignas(4) uint32_t textureIndex;
-        alignas(4) uint32_t isTextCharacter;
+        alignas(16) glm::vec4 objectPosition;
+        alignas(16) glm::vec4 scale;
+        alignas(16) glm::vec4 color;
+        alignas(16) glm::vec4 textureOffset;
+        //x, y is texture size, z, w is offset
+        alignas(16) glm::vec4 characterTextureSizeAndOffset;
+        //x is textured boolean, y is texture index, z is isTextCharacter boolean
+        alignas(16) glm::uvec4 displayProperties;
     };
 
+    static_assert(sizeof(UIInstanceInfo) % 16 == 0);
+
     struct alignas(16) UIVertex {
-        alignas(16) glm::vec3 position;
-        alignas(16) glm::vec2 texCoord;
+        alignas(16) glm::vec4 position;
+        alignas(16) glm::vec4 texCoord;
 
         static std::array<VkVertexInputBindingDescription, 2> GetBindingDescriptions() {
             std::array<VkVertexInputBindingDescription, 2> result;
@@ -189,72 +169,54 @@ namespace VulkanCommonFunctions {
             return result;
         }
 
-        static std::array<VkVertexInputAttributeDescription, 12> GetAttributeDescriptions() {
-            std::array<VkVertexInputAttributeDescription, 12> attributeDescriptions{};
+        static std::array<VkVertexInputAttributeDescription, 8> GetAttributeDescriptions() {
+            std::array<VkVertexInputAttributeDescription, 8> attributeDescriptions{};
 
             attributeDescriptions[0].binding = 0;
             attributeDescriptions[0].location = 0;
-            attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+            attributeDescriptions[0].format = VK_FORMAT_R32G32B32A32_SFLOAT;
             attributeDescriptions[0].offset = offsetof(UIVertex, position);
 
             attributeDescriptions[1].binding = 0;
             attributeDescriptions[1].location = 1;
-            attributeDescriptions[1].format = VK_FORMAT_R32G32_SFLOAT;
+            attributeDescriptions[1].format = VK_FORMAT_R32G32B32A32_SFLOAT;
             attributeDescriptions[1].offset = offsetof(UIVertex, texCoord);
 
             attributeDescriptions[2].binding = 1;
             attributeDescriptions[2].location = 2;
-            attributeDescriptions[2].format = VK_FORMAT_R32G32B32_SFLOAT;
+            attributeDescriptions[2].format = VK_FORMAT_R32G32B32A32_SFLOAT;
             attributeDescriptions[2].offset = offsetof(UIInstanceInfo, objectPosition);
 
             attributeDescriptions[3].binding = 1;
             attributeDescriptions[3].location = 3;
-            attributeDescriptions[3].format = VK_FORMAT_R32G32B32_SFLOAT;
+            attributeDescriptions[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
             attributeDescriptions[3].offset = offsetof(UIInstanceInfo, scale);
 
             attributeDescriptions[4].binding = 1;
             attributeDescriptions[4].location = 4;
-            attributeDescriptions[4].format = VK_FORMAT_R32G32B32_SFLOAT;
+            attributeDescriptions[4].format = VK_FORMAT_R32G32B32A32_SFLOAT;
             attributeDescriptions[4].offset = offsetof(UIInstanceInfo, color);
 
             attributeDescriptions[5].binding = 1;
             attributeDescriptions[5].location = 5;
-            attributeDescriptions[5].format = VK_FORMAT_R32G32_SFLOAT;
+            attributeDescriptions[5].format = VK_FORMAT_R32G32B32A32_SFLOAT;
             attributeDescriptions[5].offset = offsetof(UIInstanceInfo, textureOffset);
 
             attributeDescriptions[6].binding = 1;
             attributeDescriptions[6].location = 6;
-            attributeDescriptions[6].format = VK_FORMAT_R32G32_SFLOAT;
-            attributeDescriptions[6].offset = offsetof(UIInstanceInfo, characterTextureSize);
+            attributeDescriptions[6].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+            attributeDescriptions[6].offset = offsetof(UIInstanceInfo, characterTextureSizeAndOffset);
 
             attributeDescriptions[7].binding = 1;
             attributeDescriptions[7].location = 7;
-            attributeDescriptions[7].format = VK_FORMAT_R32G32_SFLOAT;
-            attributeDescriptions[7].offset = offsetof(UIInstanceInfo, characterOffset);
-
-            attributeDescriptions[8].binding = 1;
-            attributeDescriptions[8].location = 8;
-            attributeDescriptions[8].format = VK_FORMAT_R32_SFLOAT;
-            attributeDescriptions[8].offset = offsetof(UIInstanceInfo, opacity);
-
-            attributeDescriptions[9].binding = 1;
-            attributeDescriptions[9].location = 9;
-            attributeDescriptions[9].format = VK_FORMAT_R32_UINT;
-            attributeDescriptions[9].offset = offsetof(UIInstanceInfo, textured);
-
-            attributeDescriptions[10].binding = 1;
-            attributeDescriptions[10].location = 10;
-            attributeDescriptions[10].format = VK_FORMAT_R32_UINT;
-            attributeDescriptions[10].offset = offsetof(UIInstanceInfo, textureIndex);
-
-            attributeDescriptions[11].binding = 1;
-            attributeDescriptions[11].location = 11;
-            attributeDescriptions[11].format = VK_FORMAT_R32_UINT;
-            attributeDescriptions[11].offset = offsetof(UIInstanceInfo, isTextCharacter);
+            attributeDescriptions[7].format = VK_FORMAT_R32G32B32A32_UINT;
+            attributeDescriptions[7].offset = offsetof(UIInstanceInfo, displayProperties);
 
             return attributeDescriptions;
         }
     };
+
+    static_assert(sizeof(UIVertex) % 16 == 0);
 
     struct QueueFamilyIndices {
         std::optional<uint32_t> m_graphicsFamily;

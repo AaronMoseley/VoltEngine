@@ -141,6 +141,8 @@ private:
 
     std::array<std::map<std::string, std::shared_ptr<GraphicsBuffer>>, MAX_FRAMES_IN_FLIGHT> instanceBuffers;
 
+	VkDeviceSize m_uniformBufferAlignment = 1;
+
     VmaAllocator allocator;
 
     WindowManager* m_windowManager;

@@ -27,7 +27,7 @@ public:
 		lightInfo.lightDiffuse = m_color * 0.5f;
 		lightInfo.lightSpecular = m_specularColor;
 		lightInfo.lightPosition = glm::vec4(GetOwner()->GetComponent<Transform>()->GetPosition(), 1.0);
-		lightInfo.maxLightDistance = m_maxDistance;
+		lightInfo.maxLightDistance.x = m_maxDistance;
 		return lightInfo;
 	}
 

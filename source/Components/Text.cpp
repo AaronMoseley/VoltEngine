@@ -22,7 +22,7 @@ void Text::UpdateInstanceBuffer(std::pair<size_t, size_t> screenSize, std::share
 
 	for (size_t i = 0; i < characterInfos.size(); i++)
 	{
-		characterInfos[i].textureIndex = textureIndex;
+		characterInfos[i].displayProperties.y = textureIndex;
 	}
 
 	bufferCreateInfo.size = sizeof(VulkanCommonFunctions::UIInstanceInfo) * characterInfos.size();
@@ -69,11 +69,10 @@ void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, std::s
 		VulkanCommonFunctions::UIInstanceInfo currentCharacterInfo = {};
 
 		//set color and opacity
-		currentCharacterInfo.color = glm::vec3(m_color);
-		currentCharacterInfo.opacity = m_color.a;
+		currentCharacterInfo.color = m_color;
 
 		//set textured to 1, texture index set in VulkanInterface
-		currentCharacterInfo.textured = 1;
+		currentCharacterInfo.displayProperties.x = 1;
 
 		//get object position from transform component
 
@@ -89,17 +88,16 @@ void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, std::s
 
 		charactersInCurrentLine++;
 
-		currentCharacterInfo.objectPosition = glm::vec3(currentCharacterPosition, 0.0f);
-		currentCharacterInfo.scale = glm::vec3(widthScale * scale.x, heightScale * scale.y, scale.z);
+		currentCharacterInfo.objectPosition = glm::vec4(currentCharacterPosition, 0.0f, 0.0f);
+		currentCharacterInfo.scale = glm::vec4(widthScale * scale.x, heightScale * scale.y, scale.z, 1.0f);
 
-		currentCharacterInfo.isTextCharacter = 1;
-		currentCharacterInfo.characterTextureSize = glm::vec2(currentGlyphInfo.width, currentGlyphInfo.height);
-		currentCharacterInfo.textureOffset = glm::vec2(currentGlyphInfo.locationX, currentGlyphInfo.locationY);
+		currentCharacterInfo.displayProperties.w = 1;
+		currentCharacterInfo.characterTextureSizeAndOffset.x = currentGlyphInfo.width;
+		currentCharacterInfo.characterTextureSizeAndOffset.y = currentGlyphInfo.height;
+		currentCharacterInfo.textureOffset = glm::vec4(currentGlyphInfo.locationX, currentGlyphInfo.locationY, 0.0f, 0.0f);
 
-		currentCharacterInfo.characterOffset = glm::vec2(
-			((currentGlyphInfo.xOffset / currentFont->GetMaximumWidth()) * m_fontSize) * GetPixelToScreen().x, 
-			((currentGlyphInfo.yOffset / currentFont->GetBaseHeight()) * m_fontSize) * GetPixelToScreen().y
-		);
+		currentCharacterInfo.characterTextureSizeAndOffset.z = ((currentGlyphInfo.xOffset / currentFont->GetMaximumWidth()) * m_fontSize) * GetPixelToScreen().x;
+		currentCharacterInfo.characterTextureSizeAndOffset.w = ((currentGlyphInfo.yOffset / currentFont->GetBaseHeight()) * m_fontSize) * GetPixelToScreen().y;
 
 		cursorPosition.x += (((currentGlyphInfo.xAdvance / currentFont->GetMaximumWidth()) * m_fontSize) * GetPixelToScreen().x);
 

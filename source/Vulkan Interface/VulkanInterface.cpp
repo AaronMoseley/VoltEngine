@@ -1070,11 +1070,11 @@ void VulkanInterface::UpdateUniformBuffer(uint32_t currentImage, std::map<Vulkan
 		lightInfos.push_back(lightInfo);
     }
 
-    globalInfo.lightCount = lightInfos.size();
+    globalInfo.lightCount.x = lightInfos.size();
 
 	VulkanCommonFunctions::UIGlobalInfo uiGlobalInfo{};
-	uiGlobalInfo.screenWidth = m_vulkanWindow->swapChainImageSize().width();
-	uiGlobalInfo.screenHeight = m_vulkanWindow->swapChainImageSize().height();
+	uiGlobalInfo.screenSize.x = m_vulkanWindow->swapChainImageSize().width();
+	uiGlobalInfo.screenSize.y = m_vulkanWindow->swapChainImageSize().height();
 
 	lightInfoBuffers[currentImage]->LoadData(lightInfos.data(), lightInfos.size() * sizeof(VulkanCommonFunctions::LightInfo));
 	uniformBuffers[currentImage]->LoadData(&globalInfo, sizeof(globalInfo));
