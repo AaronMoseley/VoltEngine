@@ -91,7 +91,8 @@ void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, std::s
 		currentCharacterInfo.objectPosition = glm::vec4(currentCharacterPosition, 0.0f, 0.0f);
 		currentCharacterInfo.scale = glm::vec4(widthScale * scale.x, heightScale * scale.y, scale.z, 1.0f);
 
-		currentCharacterInfo.displayProperties.w = 1;
+		//whether the instance is a character in text
+		currentCharacterInfo.displayProperties.z = 1;
 		currentCharacterInfo.characterTextureSizeAndOffset.x = currentGlyphInfo.width;
 		currentCharacterInfo.characterTextureSizeAndOffset.y = currentGlyphInfo.height;
 		currentCharacterInfo.textureOffset = glm::vec4(currentGlyphInfo.locationX, currentGlyphInfo.locationY, 0.0f, 0.0f);

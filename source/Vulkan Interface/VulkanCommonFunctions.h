@@ -20,58 +20,58 @@ namespace VulkanCommonFunctions {
     static const size_t MAX_OBJECTS = 10000;
     
     struct alignas(256) GlobalInfo {
-        alignas(16) glm::mat4 view;
-        alignas(16) glm::mat4 proj;
-        alignas(16) glm::vec4 cameraPosition;
+         glm::mat4 view;
+         glm::mat4 proj;
+         glm::vec4 cameraPosition;
         //only x is used
-        alignas(16) glm::uvec4 lightCount;
+         glm::uvec4 lightCount;
     };
 
     static_assert(sizeof(GlobalInfo) % 16 == 0);
 
-    struct alignas(16) LightInfo {
-        alignas(16) glm::vec4 lightPosition;
-        alignas(16) glm::vec4 lightColor;
+    struct  LightInfo {
+         glm::vec4 lightPosition;
+         glm::vec4 lightColor;
 
-        alignas(16) glm::vec4 lightAmbient;
-        alignas(16) glm::vec4 lightDiffuse;
-        alignas(16) glm::vec4 lightSpecular;
+         glm::vec4 lightAmbient;
+         glm::vec4 lightDiffuse;
+         glm::vec4 lightSpecular;
 
         //only x is used
-        alignas(16) glm::vec4 maxLightDistance;
+         glm::vec4 maxLightDistance;
     };
 
     static_assert(sizeof(LightInfo) % 16 == 0);
 
     struct alignas(256) UIGlobalInfo {
         //x is width, y is height
-        alignas(16) glm::uvec4 screenSize;
+         glm::uvec4 screenSize;
     };
 
     static_assert(sizeof(UIGlobalInfo) % 16 == 0);
 
-    struct alignas(16) InstanceInfo {
-        alignas(16) glm::mat4 modelMatrix;
-        alignas(16) glm::mat4 modelMatrixInverse;
+    struct  InstanceInfo {
+         glm::mat4 modelMatrix;
+         glm::mat4 modelMatrixInverse;
 
-        alignas(16) glm::vec4 scale;
+         glm::vec4 scale;
 
-        alignas(16) glm::vec4 ambient;
-        alignas(16) glm::vec4 diffuse;
-        alignas(16) glm::vec4 specular;
+         glm::vec4 ambient;
+         glm::vec4 diffuse;
+         glm::vec4 specular;
         //x is opacity, y is shininess
-        alignas(16) glm::vec4 opacityAndShininess;
+         glm::vec4 opacityAndShininess;
 
         //x is lit boolean, y is textured boolean, z is texture index, w is billboarded boolean
-        alignas(16) glm::uvec4 displayProperties;
+         glm::uvec4 displayProperties;
     };
 
     static_assert(sizeof(InstanceInfo) % 16 == 0);
 
-    struct alignas(16) Vertex {
-        alignas(16) glm::vec4 pos;
-        alignas(16) glm::vec4 normal;
-        alignas(16) glm::vec4 texCoord;
+    struct  Vertex {
+         glm::vec4 pos;
+         glm::vec4 normal;
+         glm::vec4 texCoord;
 
         static std::array<VkVertexInputBindingDescription, 2> GetBindingDescriptions() {
             std::array<VkVertexInputBindingDescription, 2> result;
@@ -138,22 +138,22 @@ namespace VulkanCommonFunctions {
 
     static_assert(sizeof(Vertex) % 16 == 0);
 
-    struct alignas(16) UIInstanceInfo {
-        alignas(16) glm::vec4 objectPosition;
-        alignas(16) glm::vec4 scale;
-        alignas(16) glm::vec4 color;
-        alignas(16) glm::vec4 textureOffset;
+    struct  UIInstanceInfo {
+         glm::vec4 objectPosition;
+         glm::vec4 scale;
+         glm::vec4 color;
+         glm::vec4 textureOffset;
         //x, y is texture size, z, w is offset
-        alignas(16) glm::vec4 characterTextureSizeAndOffset;
+         glm::vec4 characterTextureSizeAndOffset;
         //x is textured boolean, y is texture index, z is isTextCharacter boolean
-        alignas(16) glm::uvec4 displayProperties;
+         glm::uvec4 displayProperties;
     };
 
     static_assert(sizeof(UIInstanceInfo) % 16 == 0);
 
-    struct alignas(16) UIVertex {
-        alignas(16) glm::vec4 position;
-        alignas(16) glm::vec4 texCoord;
+    struct  UIVertex {
+         glm::vec4 position;
+         glm::vec4 texCoord;
 
         static std::array<VkVertexInputBindingDescription, 2> GetBindingDescriptions() {
             std::array<VkVertexInputBindingDescription, 2> result;

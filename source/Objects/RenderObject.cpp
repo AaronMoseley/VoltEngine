@@ -84,7 +84,8 @@ VulkanCommonFunctions::UIInstanceInfo RenderObject::GetUIInstanceInfo(const std:
 	result.scale = glm::vec4(transform->GetWorldScale(), 1.0f);
 	result.color = glm::vec4(imageComponent->GetColor(), imageComponent->GetOpacity());
 	result.displayProperties.x = (imageComponent->GetTextured()) ? 1 : 0;
-	result.displayProperties.w = 0;
+	//whether the instance is a character in text
+	result.displayProperties.z = 0;
 
 	auto iterator = std::find(textureFilePaths.begin(), textureFilePaths.end(), imageComponent->GetTexturePath());
 
