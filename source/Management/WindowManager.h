@@ -69,6 +69,7 @@ public slots:
 	void AddMouseButtonUp(Qt::MouseButton releasedButton);
 
 	void CursorMoved(float xpos, float ypos);
+	void UpdateManualMousePosition(float xpos, float ypos);
 
 private:
 	VulkanWindow* m_vulkanWindow = nullptr;
@@ -86,6 +87,8 @@ private:
 	size_t m_width = 0;
 	size_t m_height = 0;
 
+	glm::vec2 m_currentMousePosition = glm::vec2(0.0f, 0.0f);
+	glm::vec2 m_lastMousePosition = glm::vec2(0.0f, 0.0f);
 	glm::vec2 m_mouseDelta = glm::vec2(0.0f, 0.0f);
 	bool m_firstMouseMovement = true;
 

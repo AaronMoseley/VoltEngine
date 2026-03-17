@@ -57,14 +57,9 @@ void FirstPersonController::Update(float deltaTime)
 	glm::vec3 rotationDelta = glm::vec3(0.0f);
 	glm::vec2 mouseDelta = GetWindowManager()->GetMouseDelta();
 
-    if (mouseDelta.x > 0.01f)
-    {
-        int temp = 0;
-    }
-
 	rotationDelta.x = mouseDelta.y * m_mouseSensitivity;
     rotationDelta.y = mouseDelta.x * m_mouseSensitivity;
-	transform->Rotate(rotationDelta);
+	transform->Rotate(rotationDelta * deltaTime);
 
     if (transform->GetRotation().x > 89.0f)
     {

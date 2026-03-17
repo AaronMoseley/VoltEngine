@@ -45,6 +45,7 @@ signals:
 	void MouseButtonUp(Qt::MouseButton releasedButton);
 
 	void MouseMoved(float x, float y);
+	void ManualMouseMove(float x, float y);
 
 private:
 	std::shared_ptr<VulkanInterface> m_vulkanInterface;
@@ -55,6 +56,7 @@ private:
 
 	VkPhysicalDeviceDescriptorIndexingFeatures m_indexingFeatures{};
 
+	bool m_manuallyMovingMouse = false;
 	bool m_lockCursor = false;
 	bool m_isTrackingMouse = true;
 };

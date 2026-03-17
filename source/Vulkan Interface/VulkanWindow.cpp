@@ -37,13 +37,22 @@ void VulkanWindow::mouseReleaseEvent(QMouseEvent* event)
 
 void VulkanWindow::mouseMoveEvent(QMouseEvent* event)
 {
+	if (m_manuallyMovingMouse)
+	{
+		m_manuallyMovingMouse = false;
+		emit ManualMouseMove(((float)event->pos().x() / size().width()), ((float)event->pos().y() / size().height()));
+		return;
+	}
+
 	if (m_isTrackingMouse)
 	{
-		emit MouseMoved(((float)event->pos().x() / size().width()) - 0.5f, ((float)event->pos().y() / size().height()) - 0.5f);
+		emit MouseMoved(((float)event->pos().x() / size().width()), ((float)event->pos().y() / size().height()));
 	}
 
 	if (m_lockCursor)
 	{
+		m_manuallyMovingMouse = true;
+
 		QPoint center = mapToGlobal(QPoint(width() / 2, height() / 2));
 		QCursor::setPos(center);
 	}

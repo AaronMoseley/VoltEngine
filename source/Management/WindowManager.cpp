@@ -29,11 +29,15 @@ void WindowManager::InitializeWindow(QVulkanInstance* vulkanInstance)
     QObject::connect(m_vulkanWindow, &VulkanWindow::MouseButtonUp, this, &WindowManager::AddMouseButtonUp);
 
     QObject::connect(m_vulkanWindow, &VulkanWindow::MouseMoved, this, &WindowManager::CursorMoved);
+    QObject::connect(m_vulkanWindow, &VulkanWindow::ManualMouseMove, this, &WindowManager::UpdateManualMousePosition);
 
     m_wrappingWidget = QWidget::createWindowContainer(m_vulkanWindow);
     m_wrappingWidget->resize(m_width, m_height);
     m_wrappingWidget->setFocusPolicy(Qt::StrongFocus);
     m_wrappingWidget->setFocus();
+    m_wrappingWidget->setMouseTracking(true);
+    m_wrappingWidget->grabMouse();
+    m_wrappingWidget->grabKeyboard();
 
 	addWidget(m_wrappingWidget);
 }
@@ -90,10 +94,21 @@ void WindowManager::AddMouseButtonUp(Qt::MouseButton releasedButton)
     m_pressedMouseButtonsThisFrame.erase(releasedButton);
 }
 
+void WindowManager::UpdateManualMousePosition(float xpos, float ypos)
+{
+    m_currentMousePosition = {xpos, ypos};
+    m_currentMousePosition.y = -m_currentMousePosition.y;
+    m_lastMousePosition = m_currentMousePosition;
+}
+
 void WindowManager::CursorMoved(float xpos, float ypos)
 {
-    m_mouseDelta = {xpos, ypos};
-	m_mouseDelta.y = -m_mouseDelta.y;
+    m_lastMousePosition = m_currentMousePosition;
+
+    m_currentMousePosition = {xpos, ypos};
+	m_currentMousePosition.y = -m_currentMousePosition.y;
+
+    m_mouseDelta = m_currentMousePosition - m_lastMousePosition;
 }
 
 void WindowManager::Shutdown()
