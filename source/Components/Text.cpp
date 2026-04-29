@@ -102,8 +102,6 @@ void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const 
 		currentCharacterInfo.characterTextureSizeAndOffset.z = ((currentGlyphInfo.xOffset / currentFont->GetMaximumWidth()) * m_fontSize) * GetPixelToScreen(screenSize);
 		currentCharacterInfo.characterTextureSizeAndOffset.w = ((currentGlyphInfo.yOffset / currentFont->GetBaseHeight()) * m_fontSize) * GetPixelToScreen(screenSize);
 
-		qDebug() << (((currentGlyphInfo.xAdvance / currentFont->GetMaximumWidth()) * m_fontSize) * pixelToScreenX) * scale.x << " " << widthScale * scale.x;;
-
 		cursorPosition.x += (currentGlyphInfo.scaleMultiplierX * m_fontSize) * pixelToScreenX;
 		cursorPosition.x += (((currentGlyphInfo.xAdvance / currentFont->GetMaximumWidth()) * m_fontSize) * pixelToScreenX) * scale.x;
 
