@@ -71,6 +71,8 @@ public slots:
 	void CursorMoved(float xpos, float ypos);
 	void UpdateManualMousePosition(float xpos, float ypos);
 
+	void OnResize(QSize newSize, QSize oldSize);
+
 private:
 	VulkanWindow* m_vulkanWindow = nullptr;
 	std::shared_ptr<VulkanInterface> m_vulkanInterface = nullptr;

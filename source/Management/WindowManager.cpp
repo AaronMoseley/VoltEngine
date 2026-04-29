@@ -31,6 +31,8 @@ void WindowManager::InitializeWindow(QVulkanInstance* vulkanInstance)
     QObject::connect(m_vulkanWindow, &VulkanWindow::MouseMoved, this, &WindowManager::CursorMoved);
     QObject::connect(m_vulkanWindow, &VulkanWindow::ManualMouseMove, this, &WindowManager::UpdateManualMousePosition);
 
+    QObject::connect(m_vulkanWindow, &VulkanWindow::Resized, this, &WindowManager::OnResize);
+
     m_wrappingWidget = QWidget::createWindowContainer(m_vulkanWindow);
     m_wrappingWidget->resize(m_width, m_height);
     m_wrappingWidget->setFocusPolicy(Qt::StrongFocus);
@@ -48,6 +50,14 @@ void WindowManager::NewFrame()
 
 	m_mouseDelta = glm::vec2(0.0f, 0.0f);
 	m_scrollDelta = glm::vec2(0.0f, 0.0f);
+}
+
+void WindowManager::OnResize(QSize newSize, QSize oldSize)
+{
+    if (m_scene != nullptr)
+    {
+        m_scene->OnResize(newSize, oldSize);
+    }
 }
 
 bool WindowManager::KeyPressed(Qt::Key keyCode)

@@ -51,6 +51,8 @@ public:
 		m_updateCallbacks.push_back(callback);
 	}
 
+	void OnResize(QSize newSize, QSize oldSize);
+
 private:
 	void UpdateMeshData(std::shared_ptr<RenderObject> currentObject);
 	void UpdateUIData(std::shared_ptr<RenderObject> currentObject);

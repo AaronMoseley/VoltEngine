@@ -77,6 +77,21 @@ void Scene::Update()
     m_windowManager->NewFrame();
 }
 
+void Scene::OnResize(QSize newSize, QSize oldSize)
+{
+    for (auto it = m_uiObjects.begin(); it != m_uiObjects.end(); it++)
+    {
+        std::shared_ptr<Text> textComponent = it->second->GetComponent<Text>();
+
+        if (textComponent == nullptr)
+        {
+            continue;
+        }
+
+        textComponent->SetTextDataDirty(true);
+    }
+}
+
 void Scene::UpdateUIData(std::shared_ptr<RenderObject> currentObject)
 {
     if (currentObject == nullptr)

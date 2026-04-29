@@ -23,7 +23,8 @@ void DemoBehavior::Start()
     uiTextObjectTransform->SetPosition(glm::vec3(0.0f, 0.75f, 0.0f));
     uiTextObjectTransform->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
     std::shared_ptr<Text> uiTextComponent = uiTextObject->AddComponent<Text>();
-    uiTextComponent->SetTextString("\"the quick brown fox\"\njumps over the\nlazy dog\n\nTHE QUICK BROWN FOX\nJUMPS OVER THE\nLAZY DOG\n\n: ' \" / \\ . , ; | ! @ # $ % ^ & * ( ) { } [ ]");
+    //uiTextComponent->SetTextString("\"the quick brown fox\"\njumps over the\nlazy dog\n\nTHE QUICK BROWN FOX\nJUMPS OVER THE\nLAZY DOG\n\n: ' \" / \\ . , ; | ! @ # $ % ^ & * ( ) { } [ ]");
+    uiTextComponent->SetTextString("Test");
     std::shared_ptr<Font> newFont = GetScene()->AddFont("fonts/jetbrainsmononl-medium.png", "fonts/jetbrainsmononl-medium.fnt");
     uiTextComponent->SetFontName("JetBrains Mono NL Medium");
     GetScene()->AddUIObject(uiTextObject);

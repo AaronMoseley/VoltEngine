@@ -8,7 +8,7 @@ Text::Text()
 	SetIndices(m_squareIndices);
 }
 
-void Text::UpdateInstanceBuffer(std::pair<size_t, size_t> screenSize, std::shared_ptr<Font> currentFont, size_t textureIndex, GraphicsBuffer::BufferCreateInfo bufferCreateInfo)
+void Text::UpdateInstanceBuffer(const std::pair<size_t, size_t>& screenSize, const std::shared_ptr<Font>& currentFont, const size_t textureIndex, GraphicsBuffer::BufferCreateInfo bufferCreateInfo)
 {
 	if (m_textDataDirty == false)
 	{
@@ -36,7 +36,7 @@ void Text::UpdateInstanceBuffer(std::pair<size_t, size_t> screenSize, std::share
 	m_instanceBuffer->LoadData(characterInfos.data(), bufferCreateInfo.size);
 }
 
-void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, std::shared_ptr<Font> currentFont, std::vector<VulkanCommonFunctions::UIInstanceInfo>& outCharacterInfo)
+void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const std::shared_ptr<Font>& currentFont, std::vector<VulkanCommonFunctions::UIInstanceInfo>& outCharacterInfo)
 {
 	glm::vec3 componentPosition = GetOwner()->GetComponent<Transform>()->GetWorldPosition();
 	glm::vec3 scale = GetOwner()->GetComponent<Transform>()->GetWorldScale();
@@ -54,16 +54,18 @@ void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, std::s
 		{
 			charactersInCurrentLine = 0;
 
-			cursorPosition.y -= (currentFont->GetLineHeight() / currentFont->GetBaseHeight()) * m_fontSize * GetPixelToScreen().y;
+			cursorPosition.y -= (currentFont->GetLineHeight() / currentFont->GetBaseHeight()) * m_fontSize * GetPixelToScreen(screenSize);
 			cursorPosition.y -= m_additionalLineSpacing;
 			cursorPosition.x = componentPosition.x;
 			continue;
 		}
 
+		float pixelToScreenX = 1.0f / static_cast<float>(screenSize.first);
+
 		Font::GlyphInfo currentGlyphInfo = currentFont->GetCharacterInfo(currentCharacter);
 
-		float heightScale = (currentGlyphInfo.scaleMultiplierY * m_fontSize) * GetPixelToScreen().y;
-		float widthScale = (currentGlyphInfo.scaleMultiplierX * m_fontSize) * GetPixelToScreen().x;
+		float heightScale = (currentGlyphInfo.scaleMultiplierY * m_fontSize) * GetPixelToScreen(screenSize);
+		float widthScale = (currentGlyphInfo.scaleMultiplierX * m_fontSize) * GetPixelToScreen(screenSize);
 
 		//create new instance info
 		VulkanCommonFunctions::UIInstanceInfo currentCharacterInfo = {};
@@ -97,10 +99,13 @@ void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, std::s
 		currentCharacterInfo.characterTextureSizeAndOffset.y = currentGlyphInfo.height;
 		currentCharacterInfo.textureOffset = glm::vec4(currentGlyphInfo.locationX, currentGlyphInfo.locationY, 0.0f, 0.0f);
 
-		currentCharacterInfo.characterTextureSizeAndOffset.z = ((currentGlyphInfo.xOffset / currentFont->GetMaximumWidth()) * m_fontSize) * GetPixelToScreen().x;
-		currentCharacterInfo.characterTextureSizeAndOffset.w = ((currentGlyphInfo.yOffset / currentFont->GetBaseHeight()) * m_fontSize) * GetPixelToScreen().y;
+		currentCharacterInfo.characterTextureSizeAndOffset.z = ((currentGlyphInfo.xOffset / currentFont->GetMaximumWidth()) * m_fontSize) * GetPixelToScreen(screenSize);
+		currentCharacterInfo.characterTextureSizeAndOffset.w = ((currentGlyphInfo.yOffset / currentFont->GetBaseHeight()) * m_fontSize) * GetPixelToScreen(screenSize);
 
-		cursorPosition.x += (((currentGlyphInfo.xAdvance / currentFont->GetMaximumWidth()) * m_fontSize) * GetPixelToScreen().x);
+		qDebug() << (((currentGlyphInfo.xAdvance / currentFont->GetMaximumWidth()) * m_fontSize) * pixelToScreenX) * scale.x << " " << widthScale * scale.x;;
+
+		cursorPosition.x += (currentGlyphInfo.scaleMultiplierX * m_fontSize) * pixelToScreenX;
+		cursorPosition.x += (((currentGlyphInfo.xAdvance / currentFont->GetMaximumWidth()) * m_fontSize) * pixelToScreenX) * scale.x;
 
 		outCharacterInfo.push_back(currentCharacterInfo);
 	}

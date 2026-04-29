@@ -27,6 +27,8 @@ public:
 	void keyPressEvent(QKeyEvent* event) override;
 	void keyReleaseEvent(QKeyEvent* event) override;
 
+	void resizeEvent(QResizeEvent* event) override;
+
 	void RegisterMouseMoveCallback(std::function<void(QMouseEvent*)> callback) { m_mouseMoveCallbacks.push_back(callback); };
 
 	void Shutdown();
@@ -46,6 +48,8 @@ signals:
 
 	void MouseMoved(float x, float y);
 	void ManualMouseMove(float x, float y);
+
+	void Resized(QSize newSize, QSize oldSize);
 
 private:
 	std::shared_ptr<VulkanInterface> m_vulkanInterface;

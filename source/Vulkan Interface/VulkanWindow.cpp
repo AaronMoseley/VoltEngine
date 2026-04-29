@@ -72,6 +72,11 @@ void VulkanWindow::keyReleaseEvent(QKeyEvent* event)
 	emit KeyUp(key);
 }
 
+void VulkanWindow::resizeEvent(QResizeEvent* event)
+{
+	emit Resized(event->size(), event->oldSize());
+}
+
 QVulkanWindowRenderer* VulkanWindow::createRenderer()
 {
 	m_vulkanWindowRenderer = new VulkanWindowRenderer(m_vulkanInterface, m_scene);
