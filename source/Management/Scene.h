@@ -75,5 +75,5 @@ private:
 	std::vector<std::shared_ptr<GraphicsBuffer>> m_buffersToDestroy;
 
 	double m_deltaTime = 0.0f;	// Time between current frame and last frame
-	double m_lastFrame = -1.0f; // Time of last frame
+	double m_lastFrameTime = -1.0f; // Time of last frame
 };

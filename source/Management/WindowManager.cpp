@@ -5,8 +5,7 @@
 
 WindowManager::WindowManager(QWidget* parentProgram, size_t width, size_t height, const std::string& title) :
     QVBoxLayout(parentProgram), m_parentProgram(parentProgram), m_wrappingWidget(nullptr), m_buttonLayout(nullptr),
-    m_width(width),
-    m_height(height), m_title(title)
+    m_width(width), m_height(height), m_title(title)
 {
 }
 
@@ -39,7 +38,6 @@ void WindowManager::InitializeWindow(QVulkanInstance* vulkanInstance)
     m_wrappingWidget->setFocusPolicy(Qt::StrongFocus);
     m_wrappingWidget->setFocus();
     m_wrappingWidget->setMouseTracking(true);
-    m_wrappingWidget->grabMouse();
     m_wrappingWidget->grabKeyboard();
 
 	addWidget(m_wrappingWidget);

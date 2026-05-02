@@ -16,12 +16,12 @@ void Scene::Update()
 
     double currentFrameTime = std::chrono::duration<double>(epoch).count();
 
-    if (m_lastFrame > 0.0f)
+    if (m_lastFrameTime > 0.0f)
     {
-        m_deltaTime = currentFrameTime - m_lastFrame;
+        m_deltaTime = currentFrameTime - m_lastFrameTime;
     }
 
-    m_lastFrame = currentFrameTime;
+    m_lastFrameTime = currentFrameTime;
 
     for (auto it = m_objects.begin(); it != m_objects.end(); it++)
     {

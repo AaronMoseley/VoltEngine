@@ -31,6 +31,4 @@ private:
 	WindowManager* m_windowManager;
 	std::shared_ptr<Scene> m_sceneManager;
 	std::shared_ptr<VulkanInterface> m_vulkanInterface;
-
-	//QVBoxLayout* m_mainLayout;
 };
