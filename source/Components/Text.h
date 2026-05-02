@@ -17,8 +17,8 @@ public:
 	void SetFontSize(const float fontSize) { m_fontSize = fontSize; m_textDataDirty = true; }
 	[[nodiscard]] float GetFontSize() const { return m_fontSize; }
 
-	const std::vector<VulkanCommonFunctions::UIVertex>& GetVertices() override { return m_squareVertices; };
-	const std::vector<uint16_t>& GetIndices() override { return m_squareIndices; };
+	const std::vector<VulkanCommonFunctions::UIVertex>& GetVertices() override { return kSquareVertices; };
+	const std::vector<uint16_t>& GetIndices() override { return kSquareIndices; };
 
 	void UpdateInstanceBuffer(const std::pair<size_t, size_t>& screenSize, const std::shared_ptr<Font>& currentFont, size_t textureIndex, GraphicsBuffer::BufferCreateInfo bufferCreateInfo);
 	std::shared_ptr<GraphicsBuffer> GetInstanceBuffer() { return m_instanceBuffer; }
@@ -34,9 +34,9 @@ private:
 	using UIMeshRenderer::SetVertices;
 	using UIMeshRenderer::SetIndices;
 
-	void GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const std::shared_ptr<Font>& currentFont, std::vector<VulkanCommonFunctions::UIInstanceInfo>& outCharacterInfo);
+	void GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const std::shared_ptr<Font>& currentFont, std::vector<VulkanCommonFunctions::UIInstanceInfo>& outCharacterInfo) const;
 
-	std::vector<VulkanCommonFunctions::UIVertex> m_squareVertices = {
+	const std::vector<VulkanCommonFunctions::UIVertex> kSquareVertices = {
 		//positions              //texture coords
 		{ {-1.0f,  1.0f, 0.0f, 0.0f},  {-0.5f, -0.5f, 0.0f, 0.0f} }, //top left
 		{ { 1.0f,  1.0f, 0.0f, 0.0f},  {0.5f, -0.5f, 0.0f, 0.0f} }, //top right
@@ -44,7 +44,7 @@ private:
 		{ {-1.0f, -1.0f, 0.0f, 0.0f},  {-0.5f, 0.5f, 0.0f, 0.0f} }  //bottom left
 	};
 
-	std::vector<uint16_t> m_squareIndices = { 0, 1, 2, 2, 3, 0 };
+	const std::vector<uint16_t> kSquareIndices = { 0, 1, 2, 2, 3, 0 };
 
 	std::shared_ptr<GraphicsBuffer> m_instanceBuffer = nullptr;
 

@@ -1,7 +1,7 @@
 #include "Font.h"
 #include "stb_image.h"
 
-Font::Font(std::string fontAtlasFilePath, std::string fontDescriptionFilePath)
+Font::Font(const std::string& fontAtlasFilePath, const std::string& fontDescriptionFilePath)
 	: m_fontAtlasFilePath(fontAtlasFilePath), m_fontDescriptionFilePath(fontDescriptionFilePath)
 {
 	LoadFontData();

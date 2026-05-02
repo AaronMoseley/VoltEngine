@@ -1,7 +1,7 @@
 #include "VulkanWindowRenderer.h"
 #include "Vulkan Interface/VulkanInterface.h"
 
-VulkanWindowRenderer::VulkanWindowRenderer(std::shared_ptr<VulkanInterface> vulkanInterface, std::shared_ptr<Scene> scene)
+VulkanWindowRenderer::VulkanWindowRenderer(const std::shared_ptr<VulkanInterface>& vulkanInterface, const std::shared_ptr<Scene>& scene)
 {
 	m_vulkanInterface = vulkanInterface;
 	m_scene = scene;

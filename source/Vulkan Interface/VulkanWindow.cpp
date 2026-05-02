@@ -1,7 +1,7 @@
 #include "VulkanWindow.h"
 #include "Vulkan Interface/VulkanInterface.h"
 
-VulkanWindow::VulkanWindow(std::shared_ptr<VulkanInterface> vulkanInterface, std::shared_ptr<Scene> scene) : QVulkanWindow(nullptr)
+VulkanWindow::VulkanWindow(const std::shared_ptr<VulkanInterface>& vulkanInterface, const std::shared_ptr<Scene>& scene) : QVulkanWindow(nullptr)
 {
 	m_vulkanInterface = vulkanInterface;
 	m_scene = scene;
@@ -10,7 +10,7 @@ VulkanWindow::VulkanWindow(std::shared_ptr<VulkanInterface> vulkanInterface, std
 	m_indexingFeatures.runtimeDescriptorArray = VK_TRUE;
 	m_indexingFeatures.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;
 
-	setEnabledFeaturesModifier([=](VkPhysicalDeviceFeatures2& features2) {
+	setEnabledFeaturesModifier([this](VkPhysicalDeviceFeatures2& features2) {
 		// Chain it to the pNext of the main features struct
 		m_indexingFeatures.pNext = features2.pNext;
 		features2.pNext = &m_indexingFeatures;
@@ -40,13 +40,13 @@ void VulkanWindow::mouseMoveEvent(QMouseEvent* event)
 	if (m_manuallyMovingMouse)
 	{
 		m_manuallyMovingMouse = false;
-		emit ManualMouseMove(((float)event->pos().x() / size().width()), ((float)event->pos().y() / size().height()));
+		emit ManualMouseMove((static_cast<float>(event->pos().x()) / size().width()), (static_cast<float>(event->pos().y()) / size().height()));
 		return;
 	}
 
 	if (m_isTrackingMouse)
 	{
-		emit MouseMoved(((float)event->pos().x() / size().width()), ((float)event->pos().y() / size().height()));
+		emit MouseMoved((static_cast<float>(event->pos().x()) / size().width()), (static_cast<float>(event->pos().y()) / size().height()));
 	}
 
 	if (m_lockCursor)
@@ -84,7 +84,7 @@ QVulkanWindowRenderer* VulkanWindow::createRenderer()
 	return m_vulkanWindowRenderer;
 }
 
-void VulkanWindow::Shutdown()
+void VulkanWindow::Shutdown() const
 {
 	m_vulkanWindowRenderer->Shutdown();
 }

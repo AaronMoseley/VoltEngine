@@ -13,7 +13,7 @@ class GraphicsBuffer {
 public:
 	struct BufferCreateInfo {
 		VmaAllocator allocator;
-		VkDeviceSize size;
+		VkDeviceSize size = 0;
 		VkBufferUsageFlags usage;
 		VkMemoryPropertyFlags properties;
 		VkDevice device;
@@ -21,13 +21,13 @@ public:
 		VkQueue graphicsQueue;
 	};
 
-	GraphicsBuffer(BufferCreateInfo createInfo);
+	GraphicsBuffer(const BufferCreateInfo& createInfo);
 
-	VkBuffer GetVkBuffer() { return m_buffer; }
+	VkBuffer GetVkBuffer() const { return m_buffer; }
 
-	void CopyBuffer(std::shared_ptr<GraphicsBuffer> destintationBuffer, VkDeviceSize copySize);
-	void LoadData(void* data, size_t memorySize);
-	void DestroyBuffer();
+	void CopyBuffer(const std::shared_ptr<GraphicsBuffer>& destintationBuffer, VkDeviceSize copySize) const;
+	void LoadData(const void* data, size_t memorySize) const;
+	void DestroyBuffer() const;
 
 private:
 	VkBuffer m_buffer = VK_NULL_HANDLE;

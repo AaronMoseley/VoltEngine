@@ -17,18 +17,18 @@ public:
 		VkQueue graphicsQueue;
 	};
 
-	GraphicsImage(GraphicsImageCreateInfo imageCreateInfo);
-	GraphicsImage(GraphicsImageCreateInfo imageCreateInfo, VkImage rawImage, VkImageView imageView);
+	GraphicsImage(const GraphicsImageCreateInfo& imageCreateInfo);
+	GraphicsImage(const GraphicsImageCreateInfo& imageCreateInfo, VkImage rawImage, VkImageView imageView);
 
-	VkImageView GetImageView() { return (m_createdImageView) ? m_imageView : VK_NULL_HANDLE; }
-	VkFormat GetImageFormat() { return m_imageFormat; }
+	VkImageView GetImageView() const { return (m_createdImageView) ? m_imageView : VK_NULL_HANDLE; }
+	VkFormat GetImageFormat() const { return m_imageFormat; }
 
 	void CreateImageView(VkImageAspectFlags aspectFlags);
-	void CopyFromBuffer(GraphicsBuffer* buffer);
-	void TransitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout);
-	VkImage GetVkImage() { return m_image; }
-	void DestroyImage();
-	void DestroyImageView();
+	void CopyFromBuffer(const GraphicsBuffer* buffer) const;
+	void TransitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout) const;
+	VkImage GetVkImage() const { return m_image; }
+	void DestroyImage() const;
+	void DestroyImageView() const;
 
 protected:
 	VkImage m_image;

@@ -7,30 +7,30 @@
 class VulkanWindow;
 
 struct GraphicsPipelineCreateInfo {
-	std::string vertexShaderFilePath;
-	std::string fragmentShaderFilePath;
-	VkDescriptorSetLayout descriptorSetLayout;
-	VkDevice device;
-	VulkanWindow* vulkanWindow;
-	bool uiBasedPipeline = false;
+	std::string m_vertexShaderFilePath;
+	std::string m_fragmentShaderFilePath;
+	VkDescriptorSetLayout m_descriptorSetLayout;
+	VkDevice m_device;
+	VulkanWindow* m_vulkanWindow;
+	bool m_uiBasedPipeline = false;
 };
 
 class GraphicsPipeline {
 public: 
-	GraphicsPipeline(GraphicsPipelineCreateInfo pipelineCreateInfo);
+	GraphicsPipeline(const GraphicsPipelineCreateInfo& pipelineCreateInfo);
 
 	void CreatePipeline();
 	void DestroyPipeline();
 
 	void SetDescriptorSetLayout(VkDescriptorSetLayout descriptorSetLayout) { m_descriptorSetLayout = descriptorSetLayout; }
 
-	VkPipeline GetVkPipeline() { return m_graphicsPipeline; }
-	VkPipelineLayout GetVkPipelineLayout() { return m_pipelineLayout; }
+	VkPipeline GetVkPipeline() const { return m_graphicsPipeline; }
+	VkPipelineLayout GetVkPipelineLayout() const { return m_pipelineLayout; }
 
 private:
 	void CreatePipelineLayout();
-	VkShaderModule CreateShaderModule(const std::vector<char>& code);
-	std::vector<char> ReadFile(const std::string& filename);
+	VkShaderModule CreateShaderModule(const std::vector<char>& code) const;
+	static std::vector<char> ReadFile(const std::string& filename);
 
 	VkPipelineLayout m_pipelineLayout = VK_NULL_HANDLE;
 	VkPipeline m_graphicsPipeline = VK_NULL_HANDLE;

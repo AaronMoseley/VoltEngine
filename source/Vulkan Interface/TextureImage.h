@@ -4,12 +4,12 @@
 
 class TextureImage : public GraphicsImage {
 public:
-	TextureImage(GraphicsImageCreateInfo imageCreateInfo) : GraphicsImage(imageCreateInfo) {};
+	TextureImage(const GraphicsImageCreateInfo& imageCreateInfo) : GraphicsImage(imageCreateInfo) {};
 
 	void CreateTextureSampler(float maxAnisotropy);
-	VkSampler GetTextureSampler() { return m_textureSampler; }
+	VkSampler GetTextureSampler() const { return m_textureSampler; }
 
-	void DestroyTextureImage();
+	void DestroyTextureImage() const;
 
 private:
 	VkSampler m_textureSampler = VK_NULL_HANDLE;

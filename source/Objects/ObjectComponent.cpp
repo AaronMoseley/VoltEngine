@@ -1,7 +1,7 @@
 #include "ObjectComponent.h"
 #include "Objects/RenderObject.h"
 
-Scene* ObjectComponent::GetScene()
+Scene* ObjectComponent::GetScene() const
 {
 	if (m_owner == nullptr)
 	{
@@ -11,7 +11,14 @@ Scene* ObjectComponent::GetScene()
 	return m_owner->GetSceneManager();
 }
 
-WindowManager* ObjectComponent::GetWindowManager()
+WindowManager* ObjectComponent::GetWindowManager() const
 {
+	RenderObject* owner = GetOwner();
+
+	if (owner == nullptr)
+	{
+		return nullptr;
+	}
+
 	return GetOwner()->GetWindowManager();
 }

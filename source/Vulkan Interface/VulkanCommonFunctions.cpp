@@ -50,19 +50,23 @@ namespace VulkanCommonFunctions {
 
         int i = 0;
         for (const auto& queueFamily : queueFamilies) {
-            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+            {
                 indices.m_graphicsFamily = i;
             }
 
             VkBool32 presentSupport = false;
             vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
 
-            if (presentSupport) {
+            if (presentSupport)
+                {
                 indices.m_presentFamily = i;
             }
 
             if (indices.IsComplete())
+            {
                 break;
+            }
 
             i++;
 

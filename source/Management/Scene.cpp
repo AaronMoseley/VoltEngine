@@ -2,7 +2,7 @@
 #include "Objects/RenderObject.h"
 #include "Components/Cube.h"
 
-Scene::Scene(WindowManager* windowManager, std::shared_ptr<VulkanInterface> vulkanInterface)
+Scene::Scene(WindowManager* windowManager, const std::shared_ptr<VulkanInterface>& vulkanInterface)
 {
 	m_windowManager = windowManager;
     m_vulkanInterface = vulkanInterface;
@@ -92,7 +92,7 @@ void Scene::OnResize(QSize newSize, QSize oldSize)
     }
 }
 
-void Scene::UpdateUIData(std::shared_ptr<RenderObject> currentObject)
+void Scene::UpdateUIData(const std::shared_ptr<RenderObject>& currentObject)
 {
     if (currentObject == nullptr)
     {
@@ -126,7 +126,7 @@ void Scene::UpdateUIData(std::shared_ptr<RenderObject> currentObject)
     }
 }
 
-void Scene::UpdateMeshData(std::shared_ptr<RenderObject> currentObject)
+void Scene::UpdateMeshData(const std::shared_ptr<RenderObject>& currentObject)
 {
     if (currentObject == nullptr)
     {
@@ -158,7 +158,7 @@ void Scene::UpdateMeshData(std::shared_ptr<RenderObject> currentObject)
     }
 }
 
-VulkanCommonFunctions::ObjectHandle Scene::AddObject(std::shared_ptr <RenderObject> newObject)
+VulkanCommonFunctions::ObjectHandle Scene::AddObject(const std::shared_ptr <RenderObject>& newObject)
 {
     if (m_objects.size() >= VulkanCommonFunctions::MAX_OBJECTS)
     {
@@ -191,7 +191,7 @@ VulkanCommonFunctions::ObjectHandle Scene::AddObject(std::shared_ptr <RenderObje
     return m_currentObjectHandle;
 }
 
-VulkanCommonFunctions::ObjectHandle Scene::AddUIObject(std::shared_ptr <RenderObject> newObject)
+VulkanCommonFunctions::ObjectHandle Scene::AddUIObject(const std::shared_ptr <RenderObject>& newObject)
 {
     if (m_uiObjects.size() >= VulkanCommonFunctions::MAX_OBJECTS)
     {
@@ -230,9 +230,7 @@ bool Scene::RemoveObject(VulkanCommonFunctions::ObjectHandle objectToRemove)
 
     currentObject->SetSceneManager(nullptr);
 
-    bool removalSuccessful = true;
-
-    removalSuccessful = m_objects.erase(objectToRemove);
+    bool removalSuccessful = m_objects.erase(objectToRemove);
 
     std::shared_ptr<GraphicsBuffer> instanceBuffer = currentObject->GetInstanceBuffer({});
     if (instanceBuffer != nullptr)
@@ -280,9 +278,7 @@ bool Scene::RemoveUIObject(VulkanCommonFunctions::ObjectHandle objectToRemove)
 
     currentObject->SetSceneManager(nullptr);
 
-    bool removalSuccessful = true;
-
-    removalSuccessful = m_uiObjects.erase(objectToRemove);
+    bool removalSuccessful = m_uiObjects.erase(objectToRemove);
 
     std::shared_ptr<GraphicsBuffer> instanceBuffer = currentObject->GetInstanceBuffer({});
     if (instanceBuffer != nullptr)
@@ -338,7 +334,7 @@ std::shared_ptr<RenderObject> Scene::GetUIRenderObject(VulkanCommonFunctions::Ob
     return m_uiObjects[handle];
 }
 
-void Scene::FinalizeUIMesh(std::shared_ptr<RenderObject> updatedObject)
+void Scene::FinalizeUIMesh(const std::shared_ptr<RenderObject>& updatedObject)
 {
     if (updatedObject == nullptr)
     {
@@ -375,7 +371,7 @@ void Scene::FinalizeUIMesh(std::shared_ptr<RenderObject> updatedObject)
     }
 }
 
-void Scene::FinalizeMesh(std::shared_ptr<RenderObject> updatedObject)
+void Scene::FinalizeMesh(const std::shared_ptr<RenderObject>& updatedObject)
 {
     if (updatedObject == nullptr)
     {
@@ -417,7 +413,7 @@ void Scene::FinalizeMesh(std::shared_ptr<RenderObject> updatedObject)
     }
 }
 
-void Scene::GenerateInstanceBuffer(std::shared_ptr<RenderObject> newObject)
+void Scene::GenerateInstanceBuffer(const std::shared_ptr<RenderObject>& newObject) const
 {
     if (newObject == nullptr)
     {
@@ -428,7 +424,7 @@ void Scene::GenerateInstanceBuffer(std::shared_ptr<RenderObject> newObject)
     newObject->SetInstanceBuffer(instanceBuffer);
 }
 
-void Scene::UpdateTexture(std::filesystem::path newTexturePath)
+void Scene::UpdateTexture(const std::filesystem::path& newTexturePath) const
 {
     if (m_vulkanInterface->HasTexture(newTexturePath))
     {
@@ -438,7 +434,7 @@ void Scene::UpdateTexture(std::filesystem::path newTexturePath)
     m_vulkanInterface->UpdateTextureResources(newTexturePath);
 }
 
-VulkanCommonFunctions::ObjectHandle Scene::GetObjectByTag(std::string tag)
+VulkanCommonFunctions::ObjectHandle Scene::GetObjectByTag(const std::string& tag)
 {
     for (auto it = m_objects.begin(); it != m_objects.end(); it++)
     {
@@ -452,7 +448,7 @@ VulkanCommonFunctions::ObjectHandle Scene::GetObjectByTag(std::string tag)
     return VulkanCommonFunctions::INVALID_OBJECT_HANDLE;
 }
 
-std::shared_ptr<Font> Scene::AddFont(std::string atlasFilePath, std::string descriptionFilePath)
+std::shared_ptr<Font> Scene::AddFont(const std::string& atlasFilePath, const std::string& descriptionFilePath) const
 {
     std::shared_ptr<Font> newFont = m_fontManager->AddFont(atlasFilePath, descriptionFilePath);
     m_vulkanInterface->UpdateTextureResources(atlasFilePath);

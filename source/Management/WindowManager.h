@@ -22,44 +22,44 @@ class WindowManager : public QVBoxLayout {
 public:
 	const char* DEFAULT_TITLE = "GLFW Window";
 
-	WindowManager(QWidget* parentProgram, size_t width, size_t height, std::string title);
+	WindowManager(QWidget* parentProgram, size_t width, size_t height, const std::string& title);
 
-	void SetVulkanInterface(std::shared_ptr<VulkanInterface> vulkanInterface) { m_vulkanInterface = vulkanInterface; }
-	void SetScene(std::shared_ptr<Scene> scene) { m_scene = scene; }
-	void BeginRendering();
+	void SetVulkanInterface(const std::shared_ptr<VulkanInterface>& vulkanInterface) { m_vulkanInterface = vulkanInterface; }
+	void SetScene(const std::shared_ptr<Scene>& scene) { m_scene = scene; }
+	void BeginRendering() const;
 
-	void AddButton(std::string title, const std::function<void()>& callback);
-	void RemoveButton(std::string title);
+	void AddButton(const std::string& title, const std::function<void()>& callback);
+	void RemoveButton(const std::string& title);
 
 	void InitializeWindow(QVulkanInstance* vulkanInstance);
 
-	QWidget* GetWrappingWidget() { return m_wrappingWidget; }
+	QWidget* GetWrappingWidget() const { return m_wrappingWidget; }
 
-	size_t GetWidth() { return m_width; }
-	size_t GetHeight() { return m_height; }
+	size_t GetWidth() const { return m_width; }
+	size_t GetHeight() const { return m_height; }
 
-	glm::vec2 GetMouseDelta() { return m_mouseDelta; };
-	glm::vec2 GetScrollDelta() { return m_scrollDelta; };
+	glm::vec2 GetMouseDelta() const { return m_mouseDelta; };
+	glm::vec2 GetScrollDelta() const { return m_scrollDelta; };
 
-	VulkanWindow* GetVulkanWindow() { return m_vulkanWindow; }
+	VulkanWindow* GetVulkanWindow() const { return m_vulkanWindow; }
 
 	void NewFrame();
 
-	bool KeyPressed(Qt::Key keyCode);
-	bool KeyPressedThisFrame(Qt::Key keyCode);
+	bool KeyPressed(Qt::Key keyCode) const;
+	bool KeyPressedThisFrame(Qt::Key keyCode) const;
 
-	bool MouseButtonPressed(Qt::MouseButton mouseButton);
-	bool MouseButtonPressedThisFrame(Qt::MouseButton mouseButton);
+	bool MouseButtonPressed(Qt::MouseButton mouseButton) const;
+	bool MouseButtonPressedThisFrame(Qt::MouseButton mouseButton) const;
 
-	void SetFrameBufferResized(bool resized) { m_framebufferResized = true; };
+	void SetFrameBufferResized() { m_framebufferResized = true; };
 
-	void Shutdown();
+	void Shutdown() const;
 
-	void SetLockCursor(bool lockCursor);
-	bool IsCursorLocked();
+	void SetLockCursor(bool lockCursor) const;
+	bool IsCursorLocked() const;
 
-	void SetIsTrackingMouse(bool isTracking);
-	bool IsTrackingMouse();
+	void SetIsTrackingMouse(bool isTracking) const;
+	bool IsTrackingMouse() const;
 
 public slots:
 	void AddKeyDown(Qt::Key pressedKey);
@@ -71,7 +71,7 @@ public slots:
 	void CursorMoved(float xpos, float ypos);
 	void UpdateManualMousePosition(float xpos, float ypos);
 
-	void OnResize(QSize newSize, QSize oldSize);
+	void OnResize(QSize newSize, QSize oldSize) const;
 
 private:
 	VulkanWindow* m_vulkanWindow = nullptr;

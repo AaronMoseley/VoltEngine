@@ -25,7 +25,7 @@ void TextureImage::CreateTextureSampler(float maxAnisotropy)
     }
 }
 
-void TextureImage::DestroyTextureImage()
+void TextureImage::DestroyTextureImage() const
 {
     vkDestroySampler(m_device, m_textureSampler, nullptr);
     DestroyImage();

@@ -1,6 +1,6 @@
 #include "GraphicsBuffer.h"
 
-GraphicsBuffer::GraphicsBuffer(BufferCreateInfo createInfo)
+GraphicsBuffer::GraphicsBuffer(const BufferCreateInfo& createInfo)
 {
 	m_allocator = createInfo.allocator;
 
@@ -28,7 +28,7 @@ GraphicsBuffer::GraphicsBuffer(BufferCreateInfo createInfo)
 	m_mappedData = allocationResult.pMappedData;
 }
 
-void GraphicsBuffer::CopyBuffer(std::shared_ptr<GraphicsBuffer> destintationBuffer, VkDeviceSize copySize)
+void GraphicsBuffer::CopyBuffer(const std::shared_ptr<GraphicsBuffer>& destintationBuffer, VkDeviceSize copySize) const
 {
     VkCommandBuffer commandBuffer = VulkanCommonFunctions::BeginSingleTimeCommands(m_device, m_commandPool);
 
@@ -41,7 +41,7 @@ void GraphicsBuffer::CopyBuffer(std::shared_ptr<GraphicsBuffer> destintationBuff
     VulkanCommonFunctions::EndSingleTimeCommands(commandBuffer, m_device, m_commandPool, m_graphicsQueue);
 }
 
-void GraphicsBuffer::LoadData(void* data, size_t memorySize)
+void GraphicsBuffer::LoadData(const void* data, size_t memorySize) const
 {
     if (memorySize > m_maxSize)
     {
@@ -57,7 +57,7 @@ void GraphicsBuffer::LoadData(void* data, size_t memorySize)
     }
 }
 
-void GraphicsBuffer::DestroyBuffer()
+void GraphicsBuffer::DestroyBuffer() const
 {
     vmaDestroyBuffer(m_allocator, m_buffer, m_allocation);
 }

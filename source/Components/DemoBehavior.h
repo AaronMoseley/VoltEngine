@@ -3,11 +3,6 @@
 #include "Objects/ObjectComponent.h"
 #include "Vulkan Interface/VulkanCommonFunctions.h"
 #include "Components/Transform.h"
-#include "Objects/RenderObject.h"
-#include "Components/Cube.h"
-#include "Components/Tetrahedron.h"
-#include "Components/LightSource.h"
-#include "Components/Text.h"
 
 class DemoBehavior : public ObjectComponent {
 public:
@@ -19,7 +14,7 @@ public:
     void WriteDebugText();
 
 private:
-    alignas(16) std::vector<glm::vec3> objectPositions = {
+    alignas(16) std::vector<glm::vec3> kObjectPositions = {
         glm::vec3(0.0f,  0.0f,  0.0f),
         glm::vec3(2.0f,  5.0f, -15.0f),
         glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -32,7 +27,7 @@ private:
         glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
-    std::vector<VulkanCommonFunctions::Vertex> squareVertices = {
+    std::vector<VulkanCommonFunctions::Vertex> kSquareVertices = {
         //positions                                     //normals                                       //texture coords
         {{-0.5f,  0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f}}, //top left
         {{ 0.5f,  0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f, 0.0f}}, //top right
@@ -40,12 +35,12 @@ private:
         {{-0.5f, -0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}}  //bottom left
     };
 
-    std::vector<uint16_t> squareIndices = {
+    std::vector<uint16_t> kSquareIndices = {
         0, 1, 2, 2, 3, 0
     };
 
-	float lightOrbitRadius = 5.0f;
-    VulkanCommonFunctions::ObjectHandle lightObjectHandle = 0;
-	std::set<VulkanCommonFunctions::ObjectHandle> objectHandles;
-	float currentTime = 0.0f;
+	float m_lightOrbitRadius = 5.0f;
+    VulkanCommonFunctions::ObjectHandle m_lightObjectHandle = 0;
+	std::set<VulkanCommonFunctions::ObjectHandle> m_objectHandles;
+	float m_currentTime = 0.0f;
 };

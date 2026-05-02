@@ -8,7 +8,7 @@
 
 bool DebugFilter(QVulkanInstance::DebugMessageSeverityFlags severity, QVulkanInstance::DebugMessageTypeFlags type, const void* message)
 {
-    auto* data = reinterpret_cast<const VkDebugUtilsMessengerCallbackDataEXT*>(message);
+    auto* data = static_cast<const VkDebugUtilsMessengerCallbackDataEXT*>(message);
 
     qDebug().noquote()
         << "[VK]"
@@ -33,9 +33,7 @@ int main(int argc, char* argv[]) {
     });
     instance.installDebugOutputFilter(DebugFilter);
 
-    bool success = instance.create();
-
-    if (!success)
+    if (bool success = instance.create(); !success)
     {
         qDebug() << "Failed to create Vulkan instance";
         return -1;

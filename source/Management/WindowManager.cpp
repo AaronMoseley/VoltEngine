@@ -3,13 +3,14 @@
 #include "Vulkan Interface/VulkanWindow.h"
 #include "Vulkan Interface/VulkanInterface.h"
 
-WindowManager::WindowManager(QWidget* parentProgram, size_t width, size_t height, std::string title) :
-	QVBoxLayout(parentProgram), m_parentProgram(parentProgram), m_width(width), m_height(height), m_title(title)
+WindowManager::WindowManager(QWidget* parentProgram, size_t width, size_t height, const std::string& title) :
+    QVBoxLayout(parentProgram), m_parentProgram(parentProgram), m_wrappingWidget(nullptr), m_buttonLayout(nullptr),
+    m_width(width),
+    m_height(height), m_title(title)
 {
-    
 }
 
-void WindowManager::BeginRendering()
+void WindowManager::BeginRendering() const
 {
     m_vulkanWindow->requestUpdate();
 }
@@ -52,7 +53,7 @@ void WindowManager::NewFrame()
 	m_scrollDelta = glm::vec2(0.0f, 0.0f);
 }
 
-void WindowManager::OnResize(QSize newSize, QSize oldSize)
+void WindowManager::OnResize(QSize newSize, QSize oldSize) const
 {
     if (m_scene != nullptr)
     {
@@ -60,22 +61,22 @@ void WindowManager::OnResize(QSize newSize, QSize oldSize)
     }
 }
 
-bool WindowManager::KeyPressed(Qt::Key keyCode)
+bool WindowManager::KeyPressed(Qt::Key keyCode) const
 {
     return m_pressedKeys.contains(keyCode);
 }
 
-bool WindowManager::KeyPressedThisFrame(Qt::Key keyCode)
+bool WindowManager::KeyPressedThisFrame(Qt::Key keyCode) const
 {
     return m_keysPressedThisFrame.contains(keyCode);
 }
 
-bool WindowManager::MouseButtonPressed(Qt::MouseButton mouseButton)
+bool WindowManager::MouseButtonPressed(Qt::MouseButton mouseButton) const
 {
     return m_pressedMouseButtons.contains(mouseButton);
 }
 
-bool WindowManager::MouseButtonPressedThisFrame(Qt::MouseButton mouseButton)
+bool WindowManager::MouseButtonPressedThisFrame(Qt::MouseButton mouseButton) const
 {
     return m_pressedMouseButtonsThisFrame.contains(mouseButton);
 }
@@ -121,33 +122,33 @@ void WindowManager::CursorMoved(float xpos, float ypos)
     m_mouseDelta = m_currentMousePosition - m_lastMousePosition;
 }
 
-void WindowManager::Shutdown()
+void WindowManager::Shutdown() const
 {
     m_vulkanWindow->Shutdown();
     QMetaObject::invokeMethod(m_parentProgram, "close", Qt::QueuedConnection);
 }
 
-void WindowManager::SetLockCursor(bool lockCursor)
+void WindowManager::SetLockCursor(bool lockCursor) const
 {
     m_vulkanWindow->SetLockCursor(lockCursor);
 }
 
-bool WindowManager::IsCursorLocked()
+bool WindowManager::IsCursorLocked() const
 {
     return m_vulkanWindow->IsCursorLocked();
 }
 
-void WindowManager::SetIsTrackingMouse(bool isTrackingMouse)
+void WindowManager::SetIsTrackingMouse(bool isTracking) const
 {
-    m_vulkanWindow->SetTrackingMouse(isTrackingMouse);
+    m_vulkanWindow->SetTrackingMouse(isTracking);
 }
 
-bool WindowManager::IsTrackingMouse()
+bool WindowManager::IsTrackingMouse() const
 {
     return m_vulkanWindow->IsTrackingMouse();
 }
 
-void WindowManager::AddButton(std::string title, const std::function<void()>& callback)
+void WindowManager::AddButton(const std::string& title, const std::function<void()>& callback)
 {
     if (m_buttons.contains(title))
     {
@@ -163,7 +164,7 @@ void WindowManager::AddButton(std::string title, const std::function<void()>& ca
     m_buttons[title] = newButton;
 }
 
-void WindowManager::RemoveButton(std::string title)
+void WindowManager::RemoveButton(const std::string& title)
 {
     if (!m_buttons.contains(title))
     {

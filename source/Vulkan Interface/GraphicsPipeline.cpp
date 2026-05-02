@@ -1,14 +1,14 @@
 #include "GraphicsPipeline.h"
 #include "Vulkan Interface/VulkanWindow.h"
 
-GraphicsPipeline::GraphicsPipeline(GraphicsPipelineCreateInfo pipelineCreateInfo)
+GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineCreateInfo& pipelineCreateInfo)
 {
-	m_vertexShaderFilePath = pipelineCreateInfo.vertexShaderFilePath;
-	m_fragmentShaderFilePath = pipelineCreateInfo.fragmentShaderFilePath;
-	m_descriptorSetLayout = pipelineCreateInfo.descriptorSetLayout;
-	m_device = pipelineCreateInfo.device;
-	m_vulkanWindow = pipelineCreateInfo.vulkanWindow;
-	m_uiBasedPipeline = pipelineCreateInfo.uiBasedPipeline;
+	m_vertexShaderFilePath = pipelineCreateInfo.m_vertexShaderFilePath;
+	m_fragmentShaderFilePath = pipelineCreateInfo.m_fragmentShaderFilePath;
+	m_descriptorSetLayout = pipelineCreateInfo.m_descriptorSetLayout;
+	m_device = pipelineCreateInfo.m_device;
+	m_vulkanWindow = pipelineCreateInfo.m_vulkanWindow;
+	m_uiBasedPipeline = pipelineCreateInfo.m_uiBasedPipeline;
 	CreatePipeline();
 }
 
@@ -202,7 +202,8 @@ std::vector<char> GraphicsPipeline::ReadFile(const std::string& filename) {
     return buffer;
 }
 
-VkShaderModule GraphicsPipeline::CreateShaderModule(const std::vector<char>& code) {
+VkShaderModule GraphicsPipeline::CreateShaderModule(const std::vector<char>& code) const
+{
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.codeSize = code.size();

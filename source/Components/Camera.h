@@ -10,19 +10,19 @@ class Camera : public ObjectComponent {
 public:
 	Camera() {};
 
-	void SetFOV(float fov) { m_fov = fov; };
-	float GetFOV() { return m_fov; }
+	void SetFOV(const float fov) { m_fov = fov; };
+	float GetFOV() const { return m_fov; }
 
 	void SetNearPlane(float nearPlane) { m_nearPlane = nearPlane; };
-	float GetNearPlane() { return m_nearPlane; }
+	float GetNearPlane() const { return m_nearPlane; }
 
 	void SetFarPlane(float farPlane) { m_farPlane = farPlane; };
-	float GetFarPlane() { return m_farPlane; }
+	float GetFarPlane() const { return m_farPlane; }
 
 	void SetIsMainCamera(bool isMainCamera) { m_isMainCamera = isMainCamera; };
-	bool IsMainCamera() { return m_isMainCamera; }
+	bool IsMainCamera() const { return m_isMainCamera; }
 
-	glm::mat4 GetViewMatrix()
+	glm::mat4 GetViewMatrix() const
 	{
 		std::shared_ptr<Transform> transform = GetOwner()->GetComponent<Transform>();
 		glm::vec3 position = transform->GetPosition();

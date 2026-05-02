@@ -6,18 +6,18 @@ UIImage::UIImage()
 	m_textured = false;
 	m_textureDataDirty = false;
 
-	SetVertices(m_squareVertices);
-	SetIndices(m_squareIndices);
+	SetVertices(kSquareVertices);
+	SetIndices(kSquareIndices);
 }
 
-UIImage::UIImage(std::string imageFilePath)
+UIImage::UIImage(const std::string& imageFilePath)
 {
 	m_texturePath = imageFilePath;
 	m_textured = true;
 	m_textureDataDirty = true;
 
-	SetVertices(m_squareVertices);
-	SetIndices(m_squareIndices);
+	SetVertices(kSquareVertices);
+	SetIndices(kSquareIndices);
 
 	CalculateMeshInfo();
 }
@@ -32,18 +32,18 @@ void UIImage::CalculateMeshInfo()
 
 	if (m_imageWidth > m_imageHeight)
 	{
-		float ratio = (float)m_imageHeight / (float)m_imageWidth;
+		float ratio = static_cast<float>(m_imageHeight) / static_cast<float>(m_imageWidth);
 		for (size_t i = 0; i < m_vertices.size(); i++)
 		{
-			m_vertices[i].position.y *= ratio;
+			m_vertices[i].m_position.y *= ratio;
 		}
 	}
 	else if (m_imageHeight > m_imageWidth)
 	{
-		float ratio = (float)m_imageWidth / (float)m_imageHeight;
+		float ratio = static_cast<float>(m_imageWidth) / static_cast<float>(m_imageHeight);
 		for (size_t i = 0; i < m_vertices.size(); i++)
 		{
-			m_vertices[i].position.x *= ratio;
+			m_vertices[i].m_position.x *= ratio;
 		}
 	}
 

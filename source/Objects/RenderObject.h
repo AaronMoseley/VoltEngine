@@ -5,26 +5,18 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
 #include "Vulkan Interface/VulkanCommonFunctions.h"
-#include "Components/MeshRenderer.h"
 #include "Objects/ObjectComponent.h"
 #include "Vulkan Interface/GraphicsBuffer.h"
-#include "Components/Transform.h"
 
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-
-#include <array>
 #include <filesystem>
 #include <vector>
 #include <string>
-#include <vulkan/vulkan_core.h>
-#include <map>
 #include <memory>
 
 class Scene;
 class WindowManager;
 
-class alignas(16) RenderObject : public std::enable_shared_from_this<RenderObject> {
+class alignas(16) RenderObject {
 public:
 	RenderObject();
 
@@ -34,7 +26,7 @@ public:
 		std::shared_ptr<T> newComponent = std::make_shared<T>();
 		m_components.push_back(newComponent);
 
-		newComponent->SetOwner(shared_from_this());
+		newComponent->SetOwner(this);
 
 		return newComponent;
 	}
@@ -61,17 +53,17 @@ public:
 	VulkanCommonFunctions::UIInstanceInfo GetUIInstanceInfo(const std::vector<std::filesystem::path>& textureFilePaths);
 	std::shared_ptr<GraphicsBuffer> GetInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths);
 	std::shared_ptr<GraphicsBuffer> GetUIInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths);
-	void SetInstanceBuffer(std::shared_ptr<GraphicsBuffer> instanceBuffer) { m_instanceBuffer = instanceBuffer; }
+	void SetInstanceBuffer(const std::shared_ptr<GraphicsBuffer>& instanceBuffer) { m_instanceBuffer = instanceBuffer; }
 
 	void SetSceneManager(Scene* sceneManager) { m_sceneManager = sceneManager; }
-	Scene* GetSceneManager() { return m_sceneManager; }
+	Scene* GetSceneManager() const { return m_sceneManager; }
 
 	void SetWindowManager(WindowManager* windowManager) { m_windowManager = windowManager; }
-	WindowManager* GetWindowManager() { return m_windowManager; }
+	WindowManager* GetWindowManager() const { return m_windowManager; }
 
-	bool IsInitialized() { return m_initialized; }
+	bool IsInitialized() const { return m_initialized; }
 
-	void SetTag(std::string tag) { m_tag = tag; }
+	void SetTag(const std::string& tag) { m_tag = tag; }
 	std::string GetTag() { return m_tag; }
 
 private:

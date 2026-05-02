@@ -10,14 +10,15 @@ public:
         m_meshName = "Cube";
 	}
 
-    const std::vector<VulkanCommonFunctions::Vertex>& GetVertices() override { return cubeVertices; };
-	const std::vector<uint16_t>& GetIndices() override { return cubeIndices; };
+    const std::vector<VulkanCommonFunctions::Vertex>& GetVertices() override { return kCubeVertices; };
+	const std::vector<uint16_t>& GetIndices() override { return kCubeIndices; };
 
 private:
     using MeshRenderer::SetIndices;
 	using MeshRenderer::SetVertices;
 
-    const std::vector<VulkanCommonFunctions::Vertex> cubeVertices = {
+    const std::vector<VulkanCommonFunctions::Vertex> kCubeVertices =
+    {
         //top
         {{-0.5f, 0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 0.0f}},
         {{-0.5f, 0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}},
@@ -55,7 +56,8 @@ private:
         {{0.5f, 0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f, 0.0f}},
     };
 
-    const std::vector<uint16_t> cubeIndices = {
+    const std::vector<uint16_t> kCubeIndices =
+    {
         //top
         0, 1, 3,  3, 1, 2,
         //bottom

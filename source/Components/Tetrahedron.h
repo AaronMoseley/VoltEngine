@@ -10,14 +10,14 @@ public:
         m_meshName = "Tetrahedron";
     }
 
-	const std::vector<VulkanCommonFunctions::Vertex>& GetVertices() override { return tetrahedronVertices; };
-	const std::vector<uint16_t>& GetIndices() override { return tetrahedronIndices; };
+	const std::vector<VulkanCommonFunctions::Vertex>& GetVertices() override { return kTetrahedronVertices; };
+	const std::vector<uint16_t>& GetIndices() override { return kTetrahedronIndices; };
 
 private:
     using MeshRenderer::SetIndices;
     using MeshRenderer::SetVertices;
 
-    const std::vector<VulkanCommonFunctions::Vertex> tetrahedronVertices = {
+    const std::vector<VulkanCommonFunctions::Vertex> kTetrahedronVertices = {
         //front
         {{-sqrt(2.0f / 9.0f), -sqrt(2.0f / 3.0f), -1.0f / 3.0f, 0.0f}, {0.0f, 0.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}},
         {{sqrt(8.0f / 9.0f), 0.0f, -1.0f / 3.0f, 0.0f}, {0.0f, 0.0f, -1.0f, 0.0f}, {1.0f, 0.5f, 0.0f, 0.0f}},
@@ -39,7 +39,7 @@ private:
         {{-sqrt(2.0f / 9.0f), sqrt(2.0f / 3.0f), -1.0f / 3.0f, 0.0f}, {0.15713484f, 0.2721655f, 0.11111f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f}}
     };
 
-    const std::vector<uint16_t> tetrahedronIndices = {
+    const std::vector<uint16_t> kTetrahedronIndices = {
         //front
         0, 1, 2,
 

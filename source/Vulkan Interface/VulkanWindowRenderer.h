@@ -7,7 +7,7 @@ class VulkanInterface;
 
 class VulkanWindowRenderer : public QVulkanWindowRenderer {
 public:
-	VulkanWindowRenderer(std::shared_ptr<VulkanInterface> vulkanInterface, std::shared_ptr<Scene> scene);
+	VulkanWindowRenderer(const std::shared_ptr<VulkanInterface>& vulkanInterface, const std::shared_ptr<Scene>& scene);
 
 	void preInitResources() override;
 	void initResources() override;

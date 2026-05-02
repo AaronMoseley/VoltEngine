@@ -8,9 +8,9 @@ class Transform : public ObjectComponent {
 public:
 	Transform() {};
 
-	glm::vec3 GetPosition() { return m_position; }
-	glm::vec3 GetRotation() { return m_rotation; }
-	glm::vec3 GetScale() { return m_scale; }
+	glm::vec3 GetPosition() const { return m_position; }
+	glm::vec3 GetRotation() const { return m_rotation; }
+	glm::vec3 GetScale() const { return m_scale; }
 
 	glm::vec3 GetWorldPosition() 
 	{
@@ -49,7 +49,7 @@ public:
 		return parent->GetWorldScale() * GetScale();
 	}
 
-	void SetParent(std::shared_ptr<Transform> parentTransform) { m_parentTransform = parentTransform; }
+	void SetParent(const std::shared_ptr<Transform>& parentTransform) { m_parentTransform = parentTransform; }
 	std::shared_ptr<Transform> GetParent() { return m_parentTransform; }
 
 	void SetRotation(glm::vec3 rotation) { m_rotation = glm::vec4(rotation, 1.0f); }
@@ -60,7 +60,7 @@ public:
 	void Move(glm::vec3 amountToMove) { m_position += glm::vec4(amountToMove, 0.0f); }
 	void Scale(glm::vec3 amountToScale) { m_scale += glm::vec4(amountToScale, 0.0f); }
 
-	glm::vec3 Forward()
+	glm::vec3 Forward() const
 	{
 		glm::vec3 forward;
 		forward.x = cos(glm::radians(m_rotation.y)) * cos(glm::radians(m_rotation.x));
@@ -69,12 +69,12 @@ public:
 		return glm::normalize(forward);
 	}
 
-	glm::vec3 Right()
+	glm::vec3 Right() const
 	{
 		return glm::normalize(glm::cross(Forward(), glm::vec3(0.0f, 1.0f, 0.0f)));
 	}
 
-	glm::vec3 Up()
+	glm::vec3 Up() const
 	{
 		return glm::normalize(glm::cross(Right(), Forward()));
 	}

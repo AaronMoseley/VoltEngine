@@ -1,6 +1,6 @@
 #include "UIMeshRenderer.h"
 
-void UIMeshRenderer::SetVertices(std::vector<VulkanCommonFunctions::UIVertex> vertices)
+void UIMeshRenderer::SetVertices(const std::vector<VulkanCommonFunctions::UIVertex>& vertices)
 {
 	m_vertexBufferSize = vertices.size();
 	m_vertices = vertices;
@@ -8,7 +8,7 @@ void UIMeshRenderer::SetVertices(std::vector<VulkanCommonFunctions::UIVertex> ve
 	SetDirtyData(true);
 }
 
-void UIMeshRenderer::SetIndices(std::vector<uint16_t> indices)
+void UIMeshRenderer::SetIndices(const std::vector<uint16_t>& indices)
 {
 	m_indexBufferSize = indices.size();
 	m_indices = indices;

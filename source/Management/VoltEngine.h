@@ -20,10 +20,10 @@ class VoltEngine : public QWidget
 public:
 	VoltEngine(QWidget* parent, QVulkanInstance* vulkanInstance, int screenWidth, int screenHeight);
 
-	void BeginRendering();
-	void RegisterUpdateCallback(std::function<void(float)> callback);
+	void BeginRendering() const;
+	void RegisterUpdateCallback(const std::function<void(float)>& callback) const;
 
-	WindowManager* GetWindowManager() { return m_windowManager; }
+	WindowManager* GetWindowManager() const { return m_windowManager; }
 	std::shared_ptr<Scene> GetCurrentScene() { return m_sceneManager; }
 	std::shared_ptr<VulkanInterface> GetVulkanInterface() { return m_vulkanInterface; }
 

@@ -4,8 +4,8 @@
 
 Text::Text()
 {
-	SetVertices(m_squareVertices);
-	SetIndices(m_squareIndices);
+	SetVertices(kSquareVertices);
+	SetIndices(kSquareIndices);
 }
 
 void Text::UpdateInstanceBuffer(const std::pair<size_t, size_t>& screenSize, const std::shared_ptr<Font>& currentFont, const size_t textureIndex, GraphicsBuffer::BufferCreateInfo bufferCreateInfo)
@@ -22,7 +22,7 @@ void Text::UpdateInstanceBuffer(const std::pair<size_t, size_t>& screenSize, con
 
 	for (size_t i = 0; i < characterInfos.size(); i++)
 	{
-		characterInfos[i].displayProperties.y = textureIndex;
+		characterInfos[i].m_displayProperties.y = textureIndex;
 	}
 
 	bufferCreateInfo.size = sizeof(VulkanCommonFunctions::UIInstanceInfo) * characterInfos.size();
@@ -36,7 +36,7 @@ void Text::UpdateInstanceBuffer(const std::pair<size_t, size_t>& screenSize, con
 	m_instanceBuffer->LoadData(characterInfos.data(), bufferCreateInfo.size);
 }
 
-void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const std::shared_ptr<Font>& currentFont, std::vector<VulkanCommonFunctions::UIInstanceInfo>& outCharacterInfo)
+void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const std::shared_ptr<Font>& currentFont, std::vector<VulkanCommonFunctions::UIInstanceInfo>& outCharacterInfo) const
 {
 	glm::vec3 componentPosition = GetOwner()->GetComponent<Transform>()->GetWorldPosition();
 	glm::vec3 scale = GetOwner()->GetComponent<Transform>()->GetWorldScale();
@@ -71,10 +71,10 @@ void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const 
 		VulkanCommonFunctions::UIInstanceInfo currentCharacterInfo = {};
 
 		//set color and opacity
-		currentCharacterInfo.color = m_color;
+		currentCharacterInfo.m_colorRGB = m_color;
 
 		//set textured to 1, texture index set in VulkanInterface
-		currentCharacterInfo.displayProperties.x = 1;
+		currentCharacterInfo.m_displayProperties.x = 1;
 
 		//get object position from transform component
 
@@ -90,17 +90,17 @@ void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const 
 
 		charactersInCurrentLine++;
 
-		currentCharacterInfo.objectPosition = glm::vec4(currentCharacterPosition, 0.0f, 0.0f);
-		currentCharacterInfo.scale = glm::vec4(widthScale * scale.x, heightScale * scale.y, scale.z, 1.0f);
+		currentCharacterInfo.m_objectWorldPosition = glm::vec4(currentCharacterPosition, 0.0f, 0.0f);
+		currentCharacterInfo.m_scale = glm::vec4(widthScale * scale.x, heightScale * scale.y, scale.z, 1.0f);
 
 		//whether the instance is a character in text
-		currentCharacterInfo.displayProperties.z = 1;
-		currentCharacterInfo.characterTextureSizeAndOffset.x = currentGlyphInfo.width;
-		currentCharacterInfo.characterTextureSizeAndOffset.y = currentGlyphInfo.height;
-		currentCharacterInfo.textureOffset = glm::vec4(currentGlyphInfo.locationX, currentGlyphInfo.locationY, 0.0f, 0.0f);
+		currentCharacterInfo.m_displayProperties.z = 1;
+		currentCharacterInfo.m_characterTextureSizeAndPositionOffset.x = currentGlyphInfo.width;
+		currentCharacterInfo.m_characterTextureSizeAndPositionOffset.y = currentGlyphInfo.height;
+		currentCharacterInfo.m_textureOffsetInAtlas = glm::vec4(currentGlyphInfo.locationX, currentGlyphInfo.locationY, 0.0f, 0.0f);
 
-		currentCharacterInfo.characterTextureSizeAndOffset.z = ((currentGlyphInfo.xOffset / currentFont->GetMaximumWidth()) * m_fontSize) * GetPixelToScreen(screenSize);
-		currentCharacterInfo.characterTextureSizeAndOffset.w = ((currentGlyphInfo.yOffset / currentFont->GetBaseHeight()) * m_fontSize) * GetPixelToScreen(screenSize);
+		currentCharacterInfo.m_characterTextureSizeAndPositionOffset.z = ((currentGlyphInfo.xOffset / currentFont->GetMaximumWidth()) * m_fontSize) * GetPixelToScreen(screenSize);
+		currentCharacterInfo.m_characterTextureSizeAndPositionOffset.w = ((currentGlyphInfo.yOffset / currentFont->GetBaseHeight()) * m_fontSize) * GetPixelToScreen(screenSize);
 
 		cursorPosition.x += (currentGlyphInfo.scaleMultiplierX * m_fontSize) * pixelToScreenX;
 		cursorPosition.x += (((currentGlyphInfo.xAdvance / currentFont->GetMaximumWidth()) * m_fontSize) * pixelToScreenX) * scale.x;

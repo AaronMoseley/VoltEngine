@@ -1,4 +1,8 @@
 #include "DemoBehavior.h"
+
+#include "Cube.h"
+#include "LightSource.h"
+#include "Tetrahedron.h"
 #include "Management/Scene.h"
 
 void DemoBehavior::Start()
@@ -23,13 +27,12 @@ void DemoBehavior::Start()
     uiTextObjectTransform->SetPosition(glm::vec3(0.0f, 0.75f, 0.0f));
     uiTextObjectTransform->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
     std::shared_ptr<Text> uiTextComponent = uiTextObject->AddComponent<Text>();
-    //uiTextComponent->SetTextString("\"the quick brown fox\"\njumps over the\nlazy dog\n\nTHE QUICK BROWN FOX\nJUMPS OVER THE\nLAZY DOG\n\n: ' \" / \\ . , ; | ! @ # $ % ^ & * ( ) { } [ ]");
-    uiTextComponent->SetTextString("Test");
+    uiTextComponent->SetTextString("\"the quick brown fox\"\njumps over the\nlazy dog\n\nTHE QUICK BROWN FOX\nJUMPS OVER THE\nLAZY DOG\n\n: ' \" / \\ . , ; | ! @ # $ % ^ & * ( ) { } [ ]");
     std::shared_ptr<Font> newFont = GetScene()->AddFont("fonts/jetbrainsmononl-medium.png", "fonts/jetbrainsmononl-medium.fnt");
     uiTextComponent->SetFontName("JetBrains Mono NL Medium");
     GetScene()->AddUIObject(uiTextObject);
 
-    std::srand(std::time(0));
+    std::srand(std::time(nullptr));
 
     std::shared_ptr<RenderObject> lightCube = std::make_shared<RenderObject>();
 
@@ -48,23 +51,23 @@ void DemoBehavior::Start()
     lightMesh->SetColor(glm::vec3(1.0f, 1.0f, 1.0f));
     lightCube->AddComponent<LightSource>();
 
-    lightObjectHandle = GetScene()->AddObject(lightCube);
+    m_lightObjectHandle = GetScene()->AddObject(lightCube);
 
     glm::vec3 color = glm::vec3(0.6588f, 0.2235f, 0.0392f);
     //glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 
-    for (int i = 0; i < objectPositions.size(); i++)
+    for (int i = 0; i < kObjectPositions.size(); i++)
     {
         std::shared_ptr<RenderObject> newObject = std::make_shared<RenderObject>();
 
         std::shared_ptr<Transform> newObjectTransform = newObject->AddComponent<Transform>();
-        newObjectTransform->SetPosition(objectPositions[i]);
-        newObjectTransform->SetRotation(glm::vec3(((double)rand() / (RAND_MAX)) * 360.0f, ((double)rand() / (RAND_MAX)) * 360.0f, ((double)rand() / (RAND_MAX)) * 360.0f));
+        newObjectTransform->SetPosition(kObjectPositions[i]);
+        newObjectTransform->SetRotation(glm::vec3((static_cast<double>(rand()) / (RAND_MAX)) * 360.0f, (static_cast<double>(rand()) / (RAND_MAX)) * 360.0f, (static_cast<double>(rand()) / (RAND_MAX)) * 360.0f));
         newObjectTransform->SetScale(glm::vec3(0.5f));
 
         newObjectTransform->SetParent(lightTransform);
 
-        if ((double)rand() / (RAND_MAX) >= 0.5f)
+        if (static_cast<double>(rand()) / (RAND_MAX) >= 0.5f)
         {
             newObject->AddComponent<Cube>();
         }
@@ -74,9 +77,9 @@ void DemoBehavior::Start()
 
         std::shared_ptr<MeshRenderer> currentMesh = newObject->GetComponent<MeshRenderer>();
 
-        currentMesh->SetOpacity(((double)rand() / (RAND_MAX)));
+        currentMesh->SetOpacity((static_cast<double>(rand()) / (RAND_MAX)));
 
-        if ((double)rand() / (RAND_MAX) >= 0.5f)
+        if (static_cast<double>(rand()) / (RAND_MAX) >= 0.5f)
         {
             currentMesh->SetIsBillboarded(true);
             newObject->GetComponent<Transform>()->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
@@ -99,15 +102,15 @@ void DemoBehavior::Start()
         currentMesh->SetLit(false);
 
         VulkanCommonFunctions::ObjectHandle newObjectHandle = GetScene()->AddObject(newObject);
-        objectHandles.insert(newObjectHandle);
+        m_objectHandles.insert(newObjectHandle);
     }
 }
 
 void DemoBehavior::Update(float deltaTime)
 {
-    currentTime += deltaTime;
+    m_currentTime += deltaTime;
 
-    std::shared_ptr<RenderObject> lightObject = GetScene()->GetRenderObject(lightObjectHandle);
+    std::shared_ptr<RenderObject> lightObject = GetScene()->GetRenderObject(m_lightObjectHandle);
     if (lightObject != nullptr)
     {
         lightObject->GetComponent<Transform>()->Rotate(glm::vec3(0.0f, deltaTime * 10.0f, 0.0f));
@@ -123,7 +126,7 @@ void DemoBehavior::Update(float deltaTime)
         lightObject->GetComponent<MeshRenderer>()->SetIndices(triangleIndices);
     }*/
 
-    for (auto it = objectHandles.begin(); it != objectHandles.end(); it++)
+    for (auto it = m_objectHandles.begin(); it != m_objectHandles.end(); it++)
     {
         std::shared_ptr<RenderObject> currentObject = GetScene()->GetRenderObject(*it);
 
@@ -142,11 +145,11 @@ void DemoBehavior::Update(float deltaTime)
         std::shared_ptr<RenderObject> newObject = std::make_shared<RenderObject>();
 
         std::shared_ptr<Transform> newObjectTransform = newObject->AddComponent<Transform>();
-        newObjectTransform->SetPosition(glm::vec3(((double)rand() / (RAND_MAX)) * positionRange, ((double)rand() / (RAND_MAX)) * positionRange, ((double)rand() / (RAND_MAX)) * positionRange));
-        newObjectTransform->SetRotation(glm::vec3(((double)rand() / (RAND_MAX)) * 360.0f, ((double)rand() / (RAND_MAX)) * 360.0f, ((double)rand() / (RAND_MAX)) * 360.0f));
+        newObjectTransform->SetPosition(glm::vec3((static_cast<double>(rand()) / (RAND_MAX)) * positionRange, (static_cast<double>(rand()) / (RAND_MAX)) * positionRange, (static_cast<double>(rand()) / (RAND_MAX)) * positionRange));
+        newObjectTransform->SetRotation(glm::vec3((static_cast<double>(rand()) / (RAND_MAX)) * 360.0f, (static_cast<double>(rand()) / (RAND_MAX)) * 360.0f, (static_cast<double>(rand()) / (RAND_MAX)) * 360.0f));
         newObjectTransform->SetScale(glm::vec3(0.5f));
 
-        if ((double)rand() / (RAND_MAX) >= 0.5f)
+        if (static_cast<double>(rand()) / (RAND_MAX) >= 0.5f)
         {
             newObject->AddComponent<Cube>();
         }
@@ -156,9 +159,9 @@ void DemoBehavior::Update(float deltaTime)
 
         std::shared_ptr<MeshRenderer> currentMesh = newObject->GetComponent<MeshRenderer>();
 
-        currentMesh->SetOpacity((double)rand() / (RAND_MAX));
+        currentMesh->SetOpacity(static_cast<double>(rand()) / (RAND_MAX));
 
-        if ((double)rand() / (RAND_MAX) >= 0.5f)
+        if (static_cast<double>(rand()) / (RAND_MAX) >= 0.5f)
         {
             currentMesh->SetIsBillboarded(true);
             newObject->GetComponent<Transform>()->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
@@ -178,12 +181,11 @@ void DemoBehavior::Update(float deltaTime)
             currentMesh->SetTextured(false);
         }
 
-        if ((double)rand() / (RAND_MAX) >= 0.95f)
+        if (static_cast<double>(rand()) / (RAND_MAX) >= 0.95f)
         {
             std::shared_ptr<LightSource> newLightSource = newObject->AddComponent<LightSource>();
 
-            glm::vec3 lightColor = glm::vec3(((double)rand() / (RAND_MAX)), ((double)rand() / (RAND_MAX)), ((double)rand() / (RAND_MAX)));
-            //glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+            glm::vec3 lightColor = glm::vec3((static_cast<double>(rand()) / (RAND_MAX)), (static_cast<double>(rand()) / (RAND_MAX)), (static_cast<double>(rand()) / (RAND_MAX)));
 
             newLightSource->SetColor(lightColor);
             newObject->GetComponent<MeshRenderer>()->SetColor(lightColor);
@@ -191,14 +193,14 @@ void DemoBehavior::Update(float deltaTime)
         }
 
         VulkanCommonFunctions::ObjectHandle newObjectHandle = GetScene()->AddObject(newObject);
-        objectHandles.insert(newObjectHandle);
+        m_objectHandles.insert(newObjectHandle);
     }
 
     if (GetWindowManager()->KeyPressed(Qt::Key::Key_E) && GetScene()->GetObjectCount() > 1)
     {
-        VulkanCommonFunctions::ObjectHandle removeObjectHandle = *objectHandles.rbegin();
+        VulkanCommonFunctions::ObjectHandle removeObjectHandle = *m_objectHandles.rbegin();
         bool correctlyRemoved = GetScene()->RemoveObject(removeObjectHandle);
-        objectHandles.erase(removeObjectHandle);
+        m_objectHandles.erase(removeObjectHandle);
 
         if (!correctlyRemoved)
         {

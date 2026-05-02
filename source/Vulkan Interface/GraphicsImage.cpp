@@ -1,6 +1,6 @@
 #include "GraphicsImage.h"
 
-GraphicsImage::GraphicsImage(GraphicsImageCreateInfo imageCreateInfo)
+GraphicsImage::GraphicsImage(const GraphicsImageCreateInfo& imageCreateInfo)
 {
     VkImageCreateInfo imageInfo{};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -34,7 +34,7 @@ GraphicsImage::GraphicsImage(GraphicsImageCreateInfo imageCreateInfo)
     }
 }
 
-GraphicsImage::GraphicsImage(GraphicsImageCreateInfo imageCreateInfo, VkImage rawImage, VkImageView imageView)
+GraphicsImage::GraphicsImage(const GraphicsImageCreateInfo& imageCreateInfo, VkImage rawImage, VkImageView imageView)
 {
     m_allocator = imageCreateInfo.allocator;
     m_device = imageCreateInfo.device;
@@ -67,7 +67,7 @@ void GraphicsImage::CreateImageView(VkImageAspectFlags aspectFlags)
 	m_createdImageView = true;
 }
 
-void GraphicsImage::CopyFromBuffer(GraphicsBuffer* buffer)
+void GraphicsImage::CopyFromBuffer(const GraphicsBuffer* buffer) const
 {
     VkCommandBuffer commandBuffer = VulkanCommonFunctions::BeginSingleTimeCommands(m_device, m_commandPool);
 
@@ -83,8 +83,8 @@ void GraphicsImage::CopyFromBuffer(GraphicsBuffer* buffer)
 
     region.imageOffset = { 0, 0, 0 };
     region.imageExtent = {
-        (uint32_t)m_imageSize.first,
-        (uint32_t)m_imageSize.second,
+        static_cast<uint32_t>(m_imageSize.first),
+        static_cast<uint32_t>(m_imageSize.second),
         1
     };
 
@@ -100,7 +100,7 @@ void GraphicsImage::CopyFromBuffer(GraphicsBuffer* buffer)
     VulkanCommonFunctions::EndSingleTimeCommands(commandBuffer, m_device, m_commandPool, m_graphicsQueue);
 }
 
-void GraphicsImage::TransitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout)
+void GraphicsImage::TransitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout) const
 {
     VkCommandBuffer commandBuffer = VulkanCommonFunctions::BeginSingleTimeCommands(m_device, m_commandPool);
 
@@ -170,7 +170,7 @@ void GraphicsImage::TransitionImageLayout(VkImageLayout oldLayout, VkImageLayout
     VulkanCommonFunctions::EndSingleTimeCommands(commandBuffer, m_device, m_commandPool, m_graphicsQueue);
 }
 
-void GraphicsImage::DestroyImage()
+void GraphicsImage::DestroyImage() const
 {
     if (m_createdImageView)
     {
@@ -180,7 +180,7 @@ void GraphicsImage::DestroyImage()
     vmaDestroyImage(m_allocator, m_image, m_imageMemory);
 }
 
-void GraphicsImage::DestroyImageView()
+void GraphicsImage::DestroyImageView() const
 {
     if (m_createdImageView)
     {

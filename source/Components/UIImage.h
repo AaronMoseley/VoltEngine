@@ -8,15 +8,15 @@
 class UIImage : public UIMeshRenderer {
 public:
 	UIImage();
-	UIImage(std::string imageFilePath);
+	UIImage(const std::string& imageFilePath);
 
 	void SetOpacity(float opacity) { m_opacity = opacity; }
-	float GetOpacity() { return m_opacity; }
+	float GetOpacity() const { return m_opacity; }
 
-	bool GetTextured() { return m_textured; }
+	bool GetTextured() const { return m_textured; }
 	std::string GetTexturePath() { return m_texturePath; }
 
-	void SetTexture(std::string texturePath) {
+	void SetTexture(const std::string& texturePath) {
 		m_texturePath = texturePath;
 		m_textured = true;
 		m_textureDataDirty = true;
@@ -26,20 +26,20 @@ public:
 
 	void CalculateMeshInfo();
 
-	glm::vec3 GetColor() { return m_color; }
+	glm::vec3 GetColor() const { return m_color; }
 	void SetColor(glm::vec3 color) { m_color = color; }
 
 	void SetTextureDataDirty(bool dirty) { m_textureDataDirty = dirty; }
-	bool IsTextureDataDirty() { return m_textureDataDirty; }
+	bool IsTextureDataDirty() const { return m_textureDataDirty; }
 
-	const std::vector<VulkanCommonFunctions::UIVertex>& GetVertices() override { return m_squareVertices; };
-	const std::vector<uint16_t>& GetIndices() override { return m_squareIndices; };
+	const std::vector<VulkanCommonFunctions::UIVertex>& GetVertices() override { return kSquareVertices; };
+	const std::vector<uint16_t>& GetIndices() override { return kSquareIndices; };
 
 private:
 	using UIMeshRenderer::SetVertices;
 	using UIMeshRenderer::SetIndices;
 
-	alignas(16) std::vector<VulkanCommonFunctions::UIVertex> m_squareVertices = {
+	alignas(16) std::vector<VulkanCommonFunctions::UIVertex> kSquareVertices = {
 		//positions              //texture coords
 		{ {-1.0f,  1.0f, 0.0f, 0.0f},  {0.0f, 0.0f, 0.0f, 0.0f} }, //top left
 		{ { 1.0f,  1.0f, 0.0f, 0.0f},  {1.0f, 0.0f, 0.0f, 0.0f} }, //top right
@@ -47,7 +47,7 @@ private:
 		{ {-1.0f, -1.0f, 0.0f, 0.0f},  {0.0f, 1.0f, 0.0f, 0.0f} }  //bottom left
 	};
 
-	alignas(16) std::vector<uint16_t> m_squareIndices = { 0, 1, 2, 2, 3, 0 };
+	alignas(16) std::vector<uint16_t> kSquareIndices = { 0, 1, 2, 2, 3, 0 };
 
 	float m_opacity = 1.0f;
 

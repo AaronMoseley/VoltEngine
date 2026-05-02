@@ -30,23 +30,23 @@ public:
 		float xAdvance;
 	};
 
-	Font(std::string fontAtlasFilePath, std::string fontDescriptionFilePath);
+	Font(const std::string& fontAtlasFilePath, const std::string& fontDescriptionFilePath);
 
 	std::string GetFontName() const { return m_fontName; }
 	GlyphInfo GetCharacterInfo(char character);
 
 	std::string GetAtlasFilePath() { return m_fontAtlasFilePath; }
 
-	float GetCharacterSpacingMultiplier() { return m_characterSpacingMultiplier; }
+	float GetCharacterSpacingMultiplier() const { return m_characterSpacingMultiplier; }
 	void SetCharacterSpacingMultiplier(float characterSpacingMultiplier) { m_characterSpacingMultiplier = characterSpacingMultiplier; }
 
-	float GetMaximumWidth() { return m_maxCharacterWidth; }
-	float GetBaseHeight() { return m_baseHeight; }
-	float GetLineHeight() { return m_lineHeight; }
+	float GetMaximumWidth() const { return m_maxCharacterWidth; }
+	float GetBaseHeight() const { return m_baseHeight; }
+	float GetLineHeight() const { return m_lineHeight; }
 
 private:
 	void LoadFontData();
-	void SplitBySpace(const std::string& str, std::vector<std::string>& outTokens);
+	static void SplitBySpace(const std::string& str, std::vector<std::string>& outTokens);
 
 	std::string m_fontName = "";
 

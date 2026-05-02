@@ -2,9 +2,6 @@
 
 #include "Management/WindowManager.h"
 
-#include <string>
-#include <memory>
-
 class RenderObject;
 class Scene;
 
@@ -16,20 +13,20 @@ public:
 	virtual void Start() {};
 	virtual void Update(float deltaTime) {};
 
-	std::shared_ptr<RenderObject> GetOwner() { return m_owner; }
-	void SetOwner(std::shared_ptr<RenderObject> owner) { m_owner = std::shared_ptr<RenderObject>(owner); }
-	Scene* GetScene();
+	RenderObject* GetOwner() const { return m_owner; }
+	void SetOwner(RenderObject* owner) { m_owner = owner; }
+	Scene* GetScene() const;
 
-	WindowManager* GetWindowManager();
+	WindowManager* GetWindowManager() const;
 
-	void SetEnabled(bool enabled) { m_enabled = enabled; }
-	bool IsEnabled() { return m_enabled; }
+	void SetEnabled(const bool enabled) { m_enabled = enabled; }
+	bool IsEnabled() const { return m_enabled; }
 
-	bool HasStarted() { return m_started; }
-	void SetStarted(bool started) { m_started = started; }
+	bool HasStarted() const { return m_started; }
+	void SetStarted(const bool started) { m_started = started; }
 
 private:
-	std::shared_ptr<RenderObject> m_owner = nullptr;
+	RenderObject* m_owner = nullptr;
 	bool m_enabled = true;
 	bool m_started = false;
 };
