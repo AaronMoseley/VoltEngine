@@ -4,7 +4,7 @@
 #include "Vulkan Interface/VulkanInterface.h"
 
 WindowManager::WindowManager(QWidget* parentProgram, size_t width, size_t height, const std::string& title) :
-    QVBoxLayout(parentProgram), m_parentProgram(parentProgram), m_wrappingWidget(nullptr), m_buttonLayout(nullptr),
+    QVBoxLayout(parentProgram), m_parentProgram(parentProgram), m_wrappingWidget(nullptr), m_menuLayout(nullptr),
     m_width(width), m_height(height), m_title(title)
 {
 }
@@ -16,8 +16,8 @@ void WindowManager::BeginRendering() const
 
 void WindowManager::InitializeWindow(QVulkanInstance* vulkanInstance)
 {
-	m_buttonLayout = new QHBoxLayout();
-	addLayout(m_buttonLayout);
+	m_menuLayout = new QHBoxLayout();
+	addLayout(m_menuLayout);
 
     m_vulkanWindow = new VulkanWindow(m_vulkanInterface, m_scene);
     m_vulkanWindow->setVulkanInstance(vulkanInstance);
@@ -146,6 +146,31 @@ bool WindowManager::IsTrackingMouse() const
     return m_vulkanWindow->IsTrackingMouse();
 }
 
+void WindowManager::RemoveWidgetFromMenu(const std::string& widgetName)
+{
+    if (!m_buttons.contains(widgetName))
+    {
+        qDebug() << "Menu widget with name " << widgetName << " does not exist!";
+        return;
+    }
+
+    QWidget* widgetToRemove = m_menuWidgets[widgetName];
+    m_menuLayout->removeWidget(widgetToRemove);
+    delete widgetToRemove;
+    m_menuWidgets.erase(widgetName);
+}
+
+void WindowManager::AddWidgetToMenu(const std::string& widgetName, QWidget* newWidget)
+{
+    if (m_buttons.contains(widgetName))
+    {
+        qDebug() << "Menu widget with name " << widgetName << " already exists!";
+    }
+
+    m_menuLayout->addWidget(newWidget);
+    m_menuWidgets[widgetName] = newWidget;
+}
+
 void WindowManager::AddButton(const std::string& title, const std::function<void()>& callback)
 {
     if (m_buttons.contains(title))
@@ -158,7 +183,7 @@ void WindowManager::AddButton(const std::string& title, const std::function<void
         callback();
     });
 
-	m_buttonLayout->addWidget(newButton);
+	m_menuLayout->addWidget(newButton);
     m_buttons[title] = newButton;
 }
 
@@ -169,8 +194,9 @@ void WindowManager::RemoveButton(const std::string& title)
         qDebug() << "Button with title " << title << " does not exist!";
         return;
     }
+
     QPushButton* buttonToRemove = m_buttons[title];
-    m_buttonLayout->removeWidget(buttonToRemove);
+    m_menuLayout->removeWidget(buttonToRemove);
     delete buttonToRemove;
     m_buttons.erase(title);
 }

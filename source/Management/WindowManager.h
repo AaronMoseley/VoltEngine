@@ -28,6 +28,9 @@ public:
 	void SetScene(const std::shared_ptr<Scene>& scene) { m_scene = scene; }
 	void BeginRendering() const;
 
+	void AddWidgetToMenu(const std::string& widgetName, QWidget* newWidget);
+	void RemoveWidgetFromMenu(const std::string& widgetName);
+
 	void AddButton(const std::string& title, const std::function<void()>& callback);
 	void RemoveButton(const std::string& title);
 
@@ -80,8 +83,9 @@ private:
 
 	QWidget* m_parentProgram;
 	QWidget* m_wrappingWidget;
-	QHBoxLayout* m_buttonLayout;
+	QHBoxLayout* m_menuLayout;
 
+	std::map<std::string, QWidget*> m_menuWidgets;
 	std::map<std::string, QPushButton*> m_buttons;
 
 	//members
