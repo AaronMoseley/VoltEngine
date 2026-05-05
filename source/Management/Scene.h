@@ -12,7 +12,7 @@
 
 class RenderObject;
 
-class alignas(16) Scene {
+class Scene {
 public:
 	Scene(WindowManager* windowManager, const std::shared_ptr<VulkanInterface>& vulkanInterface);
 

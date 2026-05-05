@@ -19,7 +19,7 @@ namespace VulkanCommonFunctions {
     static constexpr VulkanCommonFunctions::ObjectHandle INVALID_OBJECT_HANDLE = 0;
     static constexpr size_t MAX_OBJECTS = 10000;
     
-    struct alignas(256) GlobalInfo {
+    struct GlobalInfo {
          glm::mat4 m_viewMatrix;
          glm::mat4 m_projectionMatrix;
          glm::vec4 m_cameraPosition;
@@ -43,7 +43,7 @@ namespace VulkanCommonFunctions {
 
     static_assert(sizeof(LightInfo) % 16 == 0);
 
-    struct alignas(256) UIGlobalInfo {
+    struct UIGlobalInfo {
         //x is width, y is height
          glm::uvec4 m_screenSize;
     };

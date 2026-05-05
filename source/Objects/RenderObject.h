@@ -16,7 +16,7 @@
 class Scene;
 class WindowManager;
 
-class alignas(16) RenderObject {
+class RenderObject {
 public:
 	RenderObject();
 

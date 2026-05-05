@@ -39,7 +39,7 @@ private:
 	using UIMeshRenderer::SetVertices;
 	using UIMeshRenderer::SetIndices;
 
-	alignas(16) std::vector<VulkanCommonFunctions::UIVertex> kSquareVertices = {
+	std::vector<VulkanCommonFunctions::UIVertex> kSquareVertices = {
 		//positions              //texture coords
 		{ {-1.0f,  1.0f, 0.0f, 0.0f},  {0.0f, 0.0f, 0.0f, 0.0f} }, //top left
 		{ { 1.0f,  1.0f, 0.0f, 0.0f},  {1.0f, 0.0f, 0.0f, 0.0f} }, //top right
@@ -47,7 +47,7 @@ private:
 		{ {-1.0f, -1.0f, 0.0f, 0.0f},  {0.0f, 1.0f, 0.0f, 0.0f} }  //bottom left
 	};
 
-	alignas(16) std::vector<uint16_t> kSquareIndices = { 0, 1, 2, 2, 3, 0 };
+	std::vector<uint16_t> kSquareIndices = { 0, 1, 2, 2, 3, 0 };
 
 	float m_opacity = 1.0f;
 
@@ -59,5 +59,5 @@ private:
 	int m_imageWidth = 0;
 	int m_imageHeight = 0;
 
-	alignas(16) glm::vec3 m_color = glm::vec3(1.0f);
+	glm::vec3 m_color = glm::vec3(1.0f);
 };

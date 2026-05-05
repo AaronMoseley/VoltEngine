@@ -14,7 +14,7 @@ public:
     void WriteDebugText();
 
 private:
-    alignas(16) std::vector<glm::vec3> kObjectPositions = {
+    const std::vector<glm::vec3> kObjectPositions = {
         glm::vec3(0.0f,  0.0f,  0.0f),
         glm::vec3(2.0f,  5.0f, -15.0f),
         glm::vec3(-1.5f, -2.2f, -2.5f),
