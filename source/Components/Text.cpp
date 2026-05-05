@@ -36,14 +36,15 @@ void Text::UpdateInstanceBuffer(const std::pair<size_t, size_t>& screenSize, con
 	m_instanceBuffer->LoadData(characterInfos.data(), bufferCreateInfo.size);
 }
 
-void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const std::shared_ptr<Font>& currentFont, std::vector<VulkanCommonFunctions::UIInstanceInfo>& outCharacterInfo) const
+void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const std::shared_ptr<Font>& currentFont, std::vector<VulkanCommonFunctions::UIInstanceInfo>& outCharacterInfo)
 {
 	glm::vec3 componentPosition = GetOwner()->GetComponent<Transform>()->GetWorldPosition();
 	glm::vec3 scale = GetOwner()->GetComponent<Transform>()->GetWorldScale();
 
 	size_t charactersInCurrentLine = 0;
 
-	glm::vec2 cursorPosition = componentPosition;
+	glm::vec2 startPosition = glm::vec2(componentPosition) + kAnchorPositionScreenCoordinates[m_anchorPoint];
+	glm::vec2 cursorPosition = startPosition;
 
 	//foreach character
 	for (size_t i = 0; i < m_textString.size(); i++)
@@ -56,7 +57,7 @@ void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const 
 
 			cursorPosition.y -= (currentFont->GetLineHeight() / currentFont->GetBaseHeight()) * m_fontSize * GetPixelToScreen(screenSize);
 			cursorPosition.y -= m_additionalLineSpacing;
-			cursorPosition.x = componentPosition.x;
+			cursorPosition.x = startPosition.x;
 			continue;
 		}
 

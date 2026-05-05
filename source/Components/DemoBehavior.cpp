@@ -24,7 +24,7 @@ void DemoBehavior::Start()
 
     std::shared_ptr<RenderObject> uiTextObject = std::make_shared<RenderObject>();
     std::shared_ptr<Transform> uiTextObjectTransform = uiTextObject->AddComponent<Transform>();
-    uiTextObjectTransform->SetPosition(glm::vec3(0.0f, 0.75f, 0.0f));
+    uiTextObjectTransform->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     uiTextObjectTransform->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
     std::shared_ptr<Text> uiTextComponent = uiTextObject->AddComponent<Text>();
     uiTextComponent->SetTextString("\"the quick brown fox\"\njumps over the\nlazy dog\n\nTHE QUICK BROWN FOX\nJUMPS OVER THE\nLAZY DOG\n\n: ' \" / \\ . , ; | ! @ # $ % ^ & * ( ) { } [ ]");
