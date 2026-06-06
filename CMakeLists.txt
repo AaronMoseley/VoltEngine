@@ -50,6 +50,10 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdPartyLibraries/glm
 )
 
+# tiny-gltf (header-only)
+target_include_directories(${PROJECT_NAME}
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdPartyLibraries/tiny-gltf)
+
 # ---------------------------
 # Include Directories
 # ---------------------------
@@ -92,6 +96,10 @@ if (WIN32)
         WIN32_LEAN_AND_MEAN
     )
 endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+        TINYGLTF3_ENABLE_FS
+)
 
 # ---------------------------
 # Set startup project folder (Visual Studio)

@@ -6,6 +6,8 @@
 
 #include "Management/VoltEngine.h"
 
+#include "tiny_gltf.h"
+
 bool DebugFilter(QVulkanInstance::DebugMessageSeverityFlags severity, QVulkanInstance::DebugMessageTypeFlags type, const void* message)
 {
     auto* data = static_cast<const VkDebugUtilsMessengerCallbackDataEXT*>(message);
