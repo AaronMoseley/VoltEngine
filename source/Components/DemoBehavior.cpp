@@ -22,7 +22,6 @@ void DemoBehavior::Start()
     std::shared_ptr<GLTFModel> gltfMesh = testingGLTFModel->AddComponent<GLTFModel>();
     gltfMesh->SetSourcePath("Avocado.gltf");
     gltfMesh->SetTexture("Avocado_baseColor.png");
-    gltfMesh->SetTextured(true);
     gltfMesh->ReverseWindingOrder();
     testingGLTFModel->AddComponent<LightSource>();
     GetScene()->AddObject(testingGLTFModel);

@@ -14,7 +14,13 @@ void GLTFModel::SetSourcePath(const std::filesystem::path& sourceFilePath)
 
 void GLTFModel::ReverseWindingOrder()
 {
-	std::reverse(m_indices.begin(), m_indices.end());
+	if (IsIndexed())
+	{
+		std::reverse(m_indices.begin(), m_indices.end());
+	} else
+	{
+		std::reverse(m_vertices.begin(), m_vertices.end());
+	}
 }
 
 void GLTFModel::ReadModel()
@@ -45,6 +51,11 @@ void GLTFModel::ReadModel()
 	std::vector<glm::vec3> positions(positionBytes.size() / sizeof(glm::vec3));
 	memcpy(positions.data(), positionBytes.data(), positionBytes.size());
 
+	if (positions.size() > 0)
+	{
+		m_modelOrigin = positions[0];
+	}
+
 	//read normal
 	std::vector<uint8_t> normalBytes;
 	ReadAttribute<glm::vec3>(kNormalAttributeName, normalBytes);
@@ -53,14 +64,9 @@ void GLTFModel::ReadModel()
 
 	//read texture coordinate
 	std::vector<uint8_t> textureCoordinateBytes;
-	ReadAttribute<glm::vec2>(kPositionAttributeName, textureCoordinateBytes);
+	ReadAttribute<glm::vec2>(kTextureCoordinateAttributeName, textureCoordinateBytes);
 	std::vector<glm::vec2> textureCoordinates(textureCoordinateBytes.size() / sizeof(glm::vec2));
 	memcpy(textureCoordinates.data(), textureCoordinateBytes.data(), textureCoordinateBytes.size());
-
-	if (positions.size() > 0)
-	{
-		m_modelOrigin = positions[0];
-	}
 
 	//create vector of vertices
 	size_t vertexCount = std::max(std::max(positions.size(), normals.size()), textureCoordinates.size());
@@ -70,7 +76,6 @@ void GLTFModel::ReadModel()
 		if (i < positions.size())
 		{
 			m_vertices[i].m_position = glm::vec4(positions[i] - m_modelOrigin, 0.0f);
-			qDebug() << m_vertices[i].m_position.x << " " << m_vertices[i].m_position.y << " " << m_vertices[i].m_position.z;
 		}
 
 		if (i < normals.size())
