@@ -33,6 +33,8 @@ file(GLOB_RECURSE PROJECT_HEADERS
 add_executable(${PROJECT_NAME}
     ${PROJECT_SOURCES}
     ${PROJECT_HEADERS}
+        source/Components/GLTFModel.cpp
+        source/Components/GLTFModel.h
 )
 
 # ---------------------------

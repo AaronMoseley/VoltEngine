@@ -402,10 +402,13 @@ void Scene::FinalizeMesh(const std::shared_ptr<RenderObject>& updatedObject)
 	}
 
     std::shared_ptr<GraphicsBuffer> vertexBuffer = m_vulkanInterface->CreateVertexBuffer(meshComponent);
-    std::shared_ptr<GraphicsBuffer> indexBuffer = m_vulkanInterface->CreateIndexBuffer(meshComponent);
+    meshComponent->SetVertexBuffer(vertexBuffer);
 
-	meshComponent->SetVertexBuffer(vertexBuffer);
-	meshComponent->SetIndexBuffer(indexBuffer);
+    if (meshComponent->IsIndexed())
+    {
+        std::shared_ptr<GraphicsBuffer> indexBuffer = m_vulkanInterface->CreateIndexBuffer(meshComponent);
+        meshComponent->SetIndexBuffer(indexBuffer);
+    }
 
     if (updatedObject->GetInstanceBuffer({}) == nullptr)
     {

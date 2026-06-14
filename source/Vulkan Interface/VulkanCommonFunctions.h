@@ -68,7 +68,7 @@ namespace VulkanCommonFunctions {
 
     static_assert(sizeof(InstanceInfo) % 16 == 0);
 
-    struct  Vertex {
+    struct Vertex {
          glm::vec4 m_position;
          glm::vec4 m_normalVector;
          glm::vec4 m_textureCoordinate;
