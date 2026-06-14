@@ -8,6 +8,7 @@ public:
     Cube() : MeshRenderer()
 	{
         m_meshName = "Cube";
+        SetIndexed(true);
 	}
 
     const std::vector<VulkanCommonFunctions::Vertex>& GetVertices() override { return kCubeVertices; };

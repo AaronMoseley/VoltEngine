@@ -17,13 +17,13 @@ void DemoBehavior::Start()
 
     std::shared_ptr<RenderObject> testingGLTFModel = std::make_shared<RenderObject>();
     std::shared_ptr<Transform> gltfModelTransform = testingGLTFModel->AddComponent<Transform>();
+    std::shared_ptr<GLTFModel> gltfMesh = testingGLTFModel->AddComponent<GLTFModel>();
+    testingGLTFModel->AddComponent<LightSource>();
     gltfModelTransform->SetPosition(glm::vec3(-20.0f, 0.0f, 0.0f));
     gltfModelTransform->SetScale(glm::vec3(100.0f, 100.0f, 100.0f));
-    std::shared_ptr<GLTFModel> gltfMesh = testingGLTFModel->AddComponent<GLTFModel>();
     gltfMesh->SetSourcePath("Avocado.gltf");
     gltfMesh->SetTexture("Avocado_baseColor.png");
     gltfMesh->ReverseWindingOrder();
-    testingGLTFModel->AddComponent<LightSource>();
     GetScene()->AddObject(testingGLTFModel);
 
 	std::shared_ptr<RenderObject> uiImageTexture = std::make_shared<RenderObject>();

@@ -701,23 +701,35 @@ std::shared_ptr<GraphicsBuffer> VulkanInterface::CreateVertexBuffer(const std::s
 
 void VulkanInterface::UpdateObjectBuffers(const std::shared_ptr<MeshRenderer>& objectMesh)
 {
-    if (objectMesh->GetMeshName() == MeshRenderer::kCustomMeshName)
+    const std::string meshName = objectMesh->GetMeshName();
+    if (meshName == MeshRenderer::kCustomMeshName)
     {
         return;
     }
 
-    if (m_vertexBuffers.contains(objectMesh->GetMeshName()) || (objectMesh->IsIndexed() && m_indexBuffers.contains(objectMesh->GetMeshName())))
+    if (m_vertexBuffers.contains(meshName) || (objectMesh->IsIndexed() && m_indexBuffers.contains(meshName)))
     {
         return;
     }
 
-    std::shared_ptr<GraphicsBuffer> indexBuffer = CreateIndexBuffer(objectMesh);
-    m_indexBuffers[objectMesh->GetMeshName()] = indexBuffer;
-    m_indexBufferSizes[objectMesh->GetMeshName()] = static_cast<uint16_t>(objectMesh->GetIndices().size());
+    size_t vertexCount = objectMesh->GetVertices().size();
+    size_t indexCount = objectMesh->GetIndices().size();
+
+    if (vertexCount == 0)
+    {
+        return;
+    }
+
+    if (objectMesh->IsIndexed() && indexCount > 0)
+    {
+        std::shared_ptr<GraphicsBuffer> indexBuffer = CreateIndexBuffer(objectMesh);
+        m_indexBuffers[meshName] = indexBuffer;
+        m_indexBufferSizes[meshName] = static_cast<uint16_t>(indexCount);
+    }
 
     std::shared_ptr<GraphicsBuffer> vertexBuffer = CreateVertexBuffer(objectMesh);
-    m_vertexBuffers[objectMesh->GetMeshName()] = vertexBuffer;
-    m_vertexBufferSizes[objectMesh->GetMeshName()] = static_cast<uint16_t>(objectMesh->GetVertices().size());
+    m_vertexBuffers[meshName] = vertexBuffer;
+    m_vertexBufferSizes[meshName] = static_cast<uint16_t>(vertexCount);
 
     CreateInstanceBuffer(objectMesh);
 }

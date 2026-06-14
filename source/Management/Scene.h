@@ -54,6 +54,8 @@ public:
 
 	void OnResize(QSize newSize, QSize oldSize);
 
+	bool MeshAlreadyAdded(const std::string& meshName) const;
+
 private:
 	void UpdateMeshData(const std::shared_ptr<RenderObject>& currentObject);
 	void UpdateUIData(const std::shared_ptr<RenderObject>& currentObject);

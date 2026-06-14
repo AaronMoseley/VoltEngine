@@ -142,6 +142,11 @@ void Scene::UpdateMeshData(const std::shared_ptr<RenderObject>& currentObject)
 
     if (meshComponent->GetMeshName() != MeshRenderer::kCustomMeshName)
     {
+        if (meshComponent->IsMeshDataDirty())
+        {
+            m_vulkanInterface->UpdateObjectBuffers(meshComponent);
+        }
+
         return;
     }
 
@@ -156,6 +161,11 @@ void Scene::UpdateMeshData(const std::shared_ptr<RenderObject>& currentObject)
         UpdateTexture(meshComponent->GetTexturePath());
         meshComponent->SetTextureDataDirty(false);
     }
+}
+
+bool Scene::MeshAlreadyAdded(const std::string& meshName) const
+{
+    return m_vulkanInterface->HasVertexBuffer(meshName);
 }
 
 VulkanCommonFunctions::ObjectHandle Scene::AddObject(const std::shared_ptr <RenderObject>& newObject)
@@ -260,7 +270,9 @@ bool Scene::RemoveObject(VulkanCommonFunctions::ObjectHandle objectToRemove)
     std::string objectName = meshComponent->GetMeshName();
 
     if (!m_meshNameToObjectMap.contains(objectName))
+    {
         return false;
+    }
 
     removalSuccessful = removalSuccessful && m_meshNameToObjectMap[objectName].erase(objectToRemove);
 

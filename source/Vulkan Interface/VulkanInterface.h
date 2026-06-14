@@ -44,6 +44,9 @@ public:
     void UpdateTextureResources(const std::filesystem::path& newTextureFilePath, bool alreadyInitialized=true);
     void CreateDepthResources();
 
+	bool HasVertexBuffer(const std::string& meshName) const { return m_vertexBuffers.contains(meshName); };
+	bool HasIndexBuffer(const std::string& meshName) const { return m_indexBuffers.contains(meshName); };
+
     void InitializeVulkan();
 
     void CleanupSwapChain() const;

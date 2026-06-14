@@ -8,6 +8,7 @@ public:
     Tetrahedron() : MeshRenderer()
     {
         m_meshName = "Tetrahedron";
+        SetIndexed(true);
     }
 
 	const std::vector<VulkanCommonFunctions::Vertex>& GetVertices() override { return kTetrahedronVertices; };

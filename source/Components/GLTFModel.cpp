@@ -1,19 +1,41 @@
 #include "GLTFModel.h"
 
+#include "Management/Scene.h"
+
 GLTFModel::GLTFModel() : MeshRenderer()
 {
 
+}
+
+void GLTFModel::Start()
+{
+	if (GetScene()->MeshAlreadyAdded(m_meshName))
+	{
+		return;
+	}
+
+	ReadModel();
+	SetDirtyData(true);
 }
 
 void GLTFModel::SetSourcePath(const std::filesystem::path& sourceFilePath)
 {
 	m_meshName = sourceFilePath.string();
 	m_sourcePath = sourceFilePath;
-	ReadModel();
 }
 
-void GLTFModel::ReverseWindingOrder()
+void GLTFModel::ReverseWindingOrder(bool changeFlag)
 {
+	if (changeFlag)
+	{
+		m_reverseWindingOrder = !m_reverseWindingOrder;
+	}
+
+	if (m_readFile == false)
+	{
+		return;
+	}
+
 	if (IsIndexed())
 	{
 		std::reverse(m_indices.begin(), m_indices.end());
@@ -91,6 +113,13 @@ void GLTFModel::ReadModel()
 
 	//read indices
 	ReadIndices();
+
+	m_readFile = true;
+
+	if (m_reverseWindingOrder)
+	{
+		ReverseWindingOrder(false);
+	}
 }
 
 void GLTFModel::ReadIndices()

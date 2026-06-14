@@ -12,12 +12,14 @@ class GLTFModel : public MeshRenderer {
 public:
 	GLTFModel();
 
+	void Start() override;
+
 	void SetSourcePath(const std::filesystem::path& sourceFilePath);
 
 	template <typename T>
 	void GetAttribute(const std::string& attributeName, std::vector<T>& outAttributeData);
 
-	void ReverseWindingOrder();
+	void ReverseWindingOrder(bool changeFlag=true);
 
 	const std::vector<VulkanCommonFunctions::Vertex>& GetVertices() override { return m_vertices; };
 	const std::vector<uint16_t>& GetIndices() override { return m_indices; };
@@ -35,6 +37,9 @@ private:
 
 	void ReadModel();
 	void ReadIndices();
+
+	bool m_readFile = false;
+	bool m_reverseWindingOrder = false;
 
 	template <typename T>
 	void ReadAttribute(const std::string& attributeName, std::vector<uint8_t>& outBytes) const;
