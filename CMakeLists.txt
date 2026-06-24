@@ -35,6 +35,14 @@ add_executable(${PROJECT_NAME}
     ${PROJECT_HEADERS}
         source/Components/GLTFModel.cpp
         source/Components/GLTFModel.h
+        source/Management/Material.cpp
+        source/Management/Material.h
+        source/Management/MaterialRegistry.cpp
+        source/Management/MaterialRegistry.h
+        source/Materials/GenericObjectMaterial.cpp
+        source/Materials/GenericObjectMaterial.h
+        source/Materials/GenericUIObjectMaterial.cpp
+        source/Materials/GenericUIObjectMaterial.h
 )
 
 # ---------------------------

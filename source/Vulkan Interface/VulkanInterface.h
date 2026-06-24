@@ -94,8 +94,6 @@ private:
     void DrawUIImageCommandBuffer(VkCommandBuffer commandBuffer, const std::shared_ptr<RenderObject>& currentObject) const;
     void DrawUITextCommandBuffer(VkCommandBuffer commandBuffer, const std::shared_ptr<RenderObject>& currentObject, const std::shared_ptr<FontManager>& fontManager);
 
-    static constexpr int MAX_FRAMES_IN_FLIGHT = 3;
-
     VkInstance m_vulkanInstance{};
     VkDebugUtilsMessengerEXT m_debugMessenger{};
     VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
@@ -141,7 +139,7 @@ private:
 
     bool m_framebufferResized = false;
 
-    std::array<std::map<std::string, std::shared_ptr<GraphicsBuffer>>, MAX_FRAMES_IN_FLIGHT> m_instanceBuffers;
+    std::array<std::map<std::string, std::shared_ptr<GraphicsBuffer>>, VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT> m_instanceBuffers;
 
 	VkDeviceSize m_uniformBufferAlignment = 1;
 

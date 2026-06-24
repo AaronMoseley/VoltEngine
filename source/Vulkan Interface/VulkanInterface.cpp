@@ -157,19 +157,19 @@ void VulkanInterface::CreateAllDescriptorSets() {
 }
 
 void VulkanInterface::CreatePrimaryDescriptorSets() {
-    std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_primaryDescriptorSetLayout);
+    std::vector<VkDescriptorSetLayout> layouts(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT, m_primaryDescriptorSetLayout);
     VkDescriptorSetAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = m_primaryDescriptorPool;
-    allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    allocInfo.descriptorSetCount = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
     allocInfo.pSetLayouts = layouts.data();
 
-    m_primaryDescriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
+    m_primaryDescriptorSets.resize(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
     if (vkAllocateDescriptorSets(m_vkDevice, &allocInfo, m_primaryDescriptorSets.data()) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate descriptor sets!");
     }
 
-    for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    for (size_t i = 0; i < VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT; i++) {
         VkDescriptorBufferInfo bufferInfo{};
         bufferInfo.buffer = m_uniformBuffers[i]->GetVkBuffer();
         bufferInfo.offset = 0;
@@ -224,19 +224,19 @@ void VulkanInterface::CreatePrimaryDescriptorSets() {
 
 void VulkanInterface::CreateUIDescriptorSets()
 {
-    std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_uiDescriptorSetLayout);
+    std::vector<VkDescriptorSetLayout> layouts(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT, m_uiDescriptorSetLayout);
     VkDescriptorSetAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = m_uiDescriptorPool;
-    allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    allocInfo.descriptorSetCount = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
     allocInfo.pSetLayouts = layouts.data();
 
-    m_uiDescriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
+    m_uiDescriptorSets.resize(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
     if (vkAllocateDescriptorSets(m_vkDevice, &allocInfo, m_uiDescriptorSets.data()) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate descriptor sets!");
     }
 
-    for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    for (size_t i = 0; i < VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT; i++) {
         std::vector<VkDescriptorImageInfo> imageInfos;
 
         VkDescriptorBufferInfo globalBufferInfo{};
@@ -289,17 +289,17 @@ void VulkanInterface::CreatePrimaryDescriptorPool() {
     
     std::array<VkDescriptorPoolSize, 3> poolSizes{};
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    poolSizes[0].descriptorCount = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-    poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    poolSizes[1].descriptorCount = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
     poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    poolSizes[2].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) * m_textureFilePaths.size();
+    poolSizes[2].descriptorCount = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT) * m_textureFilePaths.size();
 
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
     poolInfo.pPoolSizes = poolSizes.data();
-    poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    poolInfo.maxSets = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
 
     if (vkCreateDescriptorPool(m_vkDevice, &poolInfo, nullptr, &m_primaryDescriptorPool) != VK_SUCCESS) {
         throw std::runtime_error("failed to create descriptor pool!");
@@ -314,15 +314,15 @@ void VulkanInterface::CreateUIDescriptorPool() {
 
     std::array<VkDescriptorPoolSize, 2> poolSizes{};
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    poolSizes[0].descriptorCount = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT) * m_textureFilePaths.size();
+    poolSizes[1].descriptorCount = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT) * m_textureFilePaths.size();
 
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
     poolInfo.pPoolSizes = poolSizes.data();
-    poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    poolInfo.maxSets = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
 
     if (vkCreateDescriptorPool(m_vkDevice, &poolInfo, nullptr, &m_uiDescriptorPool) != VK_SUCCESS) {
         throw std::runtime_error("failed to create descriptor pool!");
@@ -331,13 +331,13 @@ void VulkanInterface::CreateUIDescriptorPool() {
 
 void VulkanInterface::CreateUniformBuffers() {
     VkDeviceSize uniformBufferSize = sizeof(VulkanCommonFunctions::GlobalInfo);
-    m_uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+    m_uniformBuffers.resize(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
 
     VkDeviceSize lightBufferSize = sizeof(VulkanCommonFunctions::LightInfo) * kMaxLightCount;
-    m_lightInfoBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+    m_lightInfoBuffers.resize(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
 
 	VkDeviceSize uiUniformBufferSize = sizeof(VulkanCommonFunctions::UIGlobalInfo);
-	m_uiUniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+	m_uiUniformBuffers.resize(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
 
 	GraphicsBuffer::BufferCreateInfo uniformBufferCreateInfo{};
 	uniformBufferCreateInfo.allocator = m_vmaAllocator;
@@ -366,7 +366,7 @@ void VulkanInterface::CreateUniformBuffers() {
     uiUniformBufferCreateInfo.commandPool = m_commandPool;
     uiUniformBufferCreateInfo.graphicsQueue = m_graphicsQueue;
 
-    for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    for (size_t i = 0; i < VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT; i++) {
         std::shared_ptr<GraphicsBuffer> uniformBuffer = std::make_shared<GraphicsBuffer>(uniformBufferCreateInfo);
         std::shared_ptr<GraphicsBuffer> lightBuffer = std::make_shared<GraphicsBuffer>(lightBufferCreateInfo);
         std::shared_ptr<GraphicsBuffer> uiUniformBuffer = std::make_shared<GraphicsBuffer>(uiUniformBufferCreateInfo);
@@ -830,7 +830,7 @@ void VulkanInterface::CreateInstanceBuffer(const std::shared_ptr<MeshRenderer>& 
         return;
     }
 
-    for (uint32_t frameIndex = 0; frameIndex < MAX_FRAMES_IN_FLIGHT; frameIndex++)
+    for (uint32_t frameIndex = 0; frameIndex < VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT; frameIndex++)
     {
         std::shared_ptr<GraphicsBuffer> instanceBuffer = CreateInstanceBuffer(VulkanCommonFunctions::MAX_OBJECTS);
 		m_instanceBuffers[frameIndex][object->GetMeshName()] = instanceBuffer;
@@ -1019,7 +1019,7 @@ void VulkanInterface::DrawFrame(float deltaTime, const std::shared_ptr<Scene>& s
 
     EndDrawFrameCommandBuffer(commandBuffer);
 
-    m_currentFrameIndex = (m_currentFrameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
+    m_currentFrameIndex = (m_currentFrameIndex + 1) % VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT;
     m_renderedFirstFrame = true;
 
     m_vulkanWindow->frameReady();
@@ -1107,7 +1107,7 @@ void VulkanInterface::Cleanup() {
 	m_mainGraphicsPipeline->DestroyPipeline();
     m_uiGraphicsPipeline->DestroyPipeline();
 
-    for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    for (size_t i = 0; i < VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT; i++) {
 		m_uniformBuffers[i]->DestroyBuffer();
 		m_lightInfoBuffers[i]->DestroyBuffer();
         m_uiUniformBuffers[i]->DestroyBuffer();
@@ -1134,7 +1134,7 @@ void VulkanInterface::Cleanup() {
 		it->second->DestroyBuffer();
     }
 
-    for (uint32_t frameIndex = 0; frameIndex < MAX_FRAMES_IN_FLIGHT; frameIndex++)
+    for (uint32_t frameIndex = 0; frameIndex < VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT; frameIndex++)
     {
         for (auto it = m_instanceBuffers[frameIndex].begin(); it != m_instanceBuffers[frameIndex].end(); it++)
         {
