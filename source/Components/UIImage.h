@@ -33,7 +33,7 @@ public:
 	bool IsTextureDataDirty() const { return m_textureDataDirty; }
 
 	const std::vector<VulkanCommonFunctions::UIVertex>& GetVertices() override { return kSquareVertices; };
-	const std::vector<uint16_t>& GetIndices() override { return kSquareIndices; };
+	const std::vector<uint32_t>& GetIndices() override { return kSquareIndices; };
 
 private:
 	using UIMeshRenderer::SetVertices;
@@ -47,7 +47,7 @@ private:
 		{ {-1.0f, -1.0f, 0.0f, 0.0f},  {0.0f, 1.0f, 0.0f, 0.0f} }  //bottom left
 	};
 
-	std::vector<uint16_t> kSquareIndices = { 0, 1, 2, 2, 3, 0 };
+	std::vector<uint32_t> kSquareIndices = { 0, 1, 2, 2, 3, 0 };
 
 	float m_opacity = 1.0f;
 

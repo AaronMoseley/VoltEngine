@@ -14,7 +14,7 @@ public:
 		m_vertices = vertices;
 	}
 
-	UIMeshRenderer(const std::vector<VulkanCommonFunctions::UIVertex>& vertices, const std::vector<uint16_t>& indices)
+	UIMeshRenderer(const std::vector<VulkanCommonFunctions::UIVertex>& vertices, const std::vector<uint32_t>& indices)
 	{
 		m_vertices = vertices; m_indices = indices; m_useIndices = true;
 	}
@@ -23,8 +23,8 @@ public:
 	void SetVertices(const std::vector<VulkanCommonFunctions::UIVertex>& vertices);
 	size_t GetVertexBufferSize() const { return m_vertexBufferSize; }
 
-	virtual const std::vector<uint16_t>& GetIndices() { return m_indices; }
-	void SetIndices(const std::vector<uint16_t>& indices);
+	virtual const std::vector<uint32_t>& GetIndices() { return m_indices; }
+	void SetIndices(const std::vector<uint32_t>& indices);
 	size_t GetIndexBufferSize() const { return m_indexBufferSize; }
 
 	void SetDirtyData(bool dirty) { m_meshDataDirty = dirty; }
@@ -38,7 +38,7 @@ public:
 
 protected:
 	std::vector<VulkanCommonFunctions::UIVertex> m_vertices;
-	std::vector<uint16_t> m_indices;
+	std::vector<uint32_t> m_indices;
 
 	std::shared_ptr<GraphicsBuffer> m_vertexBuffer = nullptr;
 	std::shared_ptr<GraphicsBuffer> m_indexBuffer = nullptr;

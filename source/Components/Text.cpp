@@ -8,15 +8,8 @@ Text::Text()
 	SetIndices(kSquareIndices);
 }
 
-void Text::UpdateInstanceBuffer(const std::pair<size_t, size_t>& screenSize, const std::shared_ptr<Font>& currentFont, const size_t textureIndex, GraphicsBuffer::BufferCreateInfo bufferCreateInfo)
+void Text::GetInstanceInfo(const std::pair<size_t, size_t>& screenSize, const std::shared_ptr<Font>& currentFont, const size_t textureIndex, std::vector<std::byte>& outData)
 {
-	if (m_textDataDirty == false)
-	{
-		return;
-	}
-
-	m_textDataDirty = false;
-
 	std::vector<VulkanCommonFunctions::UIInstanceInfo> characterInfos;
 	GetCharacterInstanceInfo(screenSize, currentFont, characterInfos);
 
@@ -25,15 +18,7 @@ void Text::UpdateInstanceBuffer(const std::pair<size_t, size_t>& screenSize, con
 		characterInfos[i].m_displayProperties.y = textureIndex;
 	}
 
-	bufferCreateInfo.size = sizeof(VulkanCommonFunctions::UIInstanceInfo) * characterInfos.size();
-
-	//will need to account for resizing the buffer when the number of characters changes
-	if (m_instanceBuffer == nullptr)
-	{
-		m_instanceBuffer = std::make_shared<GraphicsBuffer>(bufferCreateInfo);
-	}
-
-	m_instanceBuffer->LoadData(characterInfos.data(), bufferCreateInfo.size);
+	memcpy(outData.data(), characterInfos.data(), outData.size());
 }
 
 void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const std::shared_ptr<Font>& currentFont, std::vector<VulkanCommonFunctions::UIInstanceInfo>& outCharacterInfo)

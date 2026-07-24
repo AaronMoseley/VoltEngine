@@ -13,7 +13,7 @@ void MeshRenderer::SetVertices(const std::vector<VulkanCommonFunctions::Vertex>&
 	SetDirtyData(true);
 }
 
-void MeshRenderer::SetIndices(const std::vector<uint16_t>& indices)
+void MeshRenderer::SetIndices(const std::vector<uint32_t>& indices)
 {
 	if (GetMeshName() != kCustomMeshName)
 	{

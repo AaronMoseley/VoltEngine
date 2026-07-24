@@ -18,7 +18,7 @@ public:
 		m_vertices = vertices; m_meshName = name;
 	}
 
-	MeshRenderer(const std::vector<VulkanCommonFunctions::Vertex>& vertices, const std::vector<uint16_t>& indices, const std::string& name)
+	MeshRenderer(const std::vector<VulkanCommonFunctions::Vertex>& vertices, const std::vector<uint32_t>& indices, const std::string& name)
 	{
 		m_vertices = vertices; m_indices = indices; m_useIndices = true; m_meshName = name;
 	}
@@ -27,8 +27,8 @@ public:
 	void SetVertices(const std::vector<VulkanCommonFunctions::Vertex>& vertices);
 	size_t GetVertexBufferSize() const { return m_vertexBufferSize; }
 
-	virtual const std::vector<uint16_t>& GetIndices() { return m_indices; }
-	void SetIndices(const std::vector<uint16_t>& indices);
+	virtual const std::vector<uint32_t>& GetIndices() { return m_indices; }
+	void SetIndices(const std::vector<uint32_t>& indices);
 	size_t GetIndexBufferSize() const { return m_indexBufferSize; }
 
 	glm::vec3 GetColor() const { return m_color; }
@@ -76,7 +76,7 @@ public:
 
 protected:
 	std::vector<VulkanCommonFunctions::Vertex> m_vertices;
-	std::vector<uint16_t> m_indices;
+	std::vector<uint32_t> m_indices;
 
 	std::shared_ptr<GraphicsBuffer> m_vertexBuffer = nullptr;
 	std::shared_ptr<GraphicsBuffer> m_indexBuffer = nullptr;

@@ -143,7 +143,7 @@ void GLTFModel::ReadIndices()
 
 			for (size_t i = 0; i < accessor.count; i++)
 			{
-				uint16_t idx = 0;
+				uint32_t idx = 0;
 				switch (accessor.componentType)
 				{
 				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:

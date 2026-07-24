@@ -49,11 +49,9 @@ public:
 
 	std::vector<std::shared_ptr<ObjectComponent>> GetAllComponents() { return m_components; }
 
-    VulkanCommonFunctions::InstanceInfo GetInstanceInfo(const std::vector<std::filesystem::path>& textureFilePaths);
-	VulkanCommonFunctions::UIInstanceInfo GetUIInstanceInfo(const std::vector<std::filesystem::path>& textureFilePaths);
 	std::shared_ptr<GraphicsBuffer> GetInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths);
-	std::shared_ptr<GraphicsBuffer> GetUIInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths);
 	void SetInstanceBuffer(const std::shared_ptr<GraphicsBuffer>& instanceBuffer) { m_instanceBuffer = instanceBuffer; }
+	size_t GetInstanceCount();
 
 	void SetSceneManager(Scene* sceneManager) { m_sceneManager = sceneManager; }
 	Scene* GetSceneManager() const { return m_sceneManager; }
@@ -66,14 +64,23 @@ public:
 	void SetTag(const std::string& tag) { m_tag = tag; }
 	std::string GetTag() { return m_tag; }
 
-private:
+	std::string GetMaterialName() { return m_materialName; }
+	//Material name can only be set prior to adding to the scene, afterwards it has no effect
+	void SetMaterialName(const std::string& materialName) { m_materialName = materialName; }
+
+	void GetVertexBuffer(std::vector<size_t>& outBufferSizes, std::vector<std::shared_ptr<GraphicsBuffer>>& outBuffers);
+	void GetIndexBuffer(std::vector<size_t>& outBufferSizes, std::vector<std::shared_ptr<GraphicsBuffer>>& outBuffers);
+	bool IsIndexed();
+
+protected:
 	std::vector<std::shared_ptr<ObjectComponent>> m_components;
 	WindowManager* m_windowManager = nullptr;
 	std::shared_ptr<GraphicsBuffer> m_instanceBuffer = nullptr;
-	
+
 	Scene* m_sceneManager = nullptr;
 
 	std::string m_tag = "";
+	std::string m_materialName = "";
 
 	bool m_initialized = false;
 };

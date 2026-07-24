@@ -8,7 +8,7 @@ void UIMeshRenderer::SetVertices(const std::vector<VulkanCommonFunctions::UIVert
 	SetDirtyData(true);
 }
 
-void UIMeshRenderer::SetIndices(const std::vector<uint16_t>& indices)
+void UIMeshRenderer::SetIndices(const std::vector<uint32_t>& indices)
 {
 	m_indexBufferSize = indices.size();
 	m_indices = indices;

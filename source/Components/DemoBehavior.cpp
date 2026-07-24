@@ -16,6 +16,7 @@ void DemoBehavior::Start()
 	std::shared_ptr<Transform> cameraTransform = cameraObject->GetComponent<Transform>();
 
     std::shared_ptr<RenderObject> testingGLTFModel = std::make_shared<RenderObject>();
+    testingGLTFModel->SetMaterialName("GenericObjectMaterial");
     std::shared_ptr<Transform> gltfModelTransform = testingGLTFModel->AddComponent<Transform>();
     std::shared_ptr<GLTFModel> gltfMesh = testingGLTFModel->AddComponent<GLTFModel>();
     testingGLTFModel->AddComponent<LightSource>();
@@ -27,6 +28,7 @@ void DemoBehavior::Start()
     GetScene()->AddObject(testingGLTFModel);
 
 	std::shared_ptr<RenderObject> uiImageTexture = std::make_shared<RenderObject>();
+    uiImageTexture->SetMaterialName("GenericUIObjectMaterial");
 	std::shared_ptr<Transform> imageTextureTransform = uiImageTexture->AddComponent<Transform>();
 	imageTextureTransform->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	imageTextureTransform->SetScale(glm::vec3(0.05f, 0.05f, 1.0f));
@@ -35,6 +37,7 @@ void DemoBehavior::Start()
     GetScene()->AddUIObject(uiImageTexture);
 
     std::shared_ptr<RenderObject> uiTextObject = std::make_shared<RenderObject>();
+    uiTextObject->SetMaterialName("GenericUIObjectMaterial");
     std::shared_ptr<Transform> uiTextObjectTransform = uiTextObject->AddComponent<Transform>();
     uiTextObjectTransform->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     uiTextObjectTransform->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
@@ -42,11 +45,12 @@ void DemoBehavior::Start()
     uiTextComponent->SetTextString("\"the quick brown fox\"\njumps over the\nlazy dog\n\nTHE QUICK BROWN FOX\nJUMPS OVER THE\nLAZY DOG\n\n: ' \" / \\ . , ; | ! @ # $ % ^ & * ( ) { } [ ]");
     std::shared_ptr<Font> newFont = GetScene()->AddFont("fonts/jetbrainsmononl-medium.png", "fonts/jetbrainsmononl-medium.fnt");
     uiTextComponent->SetFontName("JetBrains Mono NL Medium");
-    //GetScene()->AddUIObject(uiTextObject);
+    GetScene()->AddUIObject(uiTextObject);
 
     std::srand(std::time(nullptr));
 
     std::shared_ptr<RenderObject> lightCube = std::make_shared<RenderObject>();
+    lightCube->SetMaterialName("GenericObjectMaterial");
 
     std::shared_ptr<Transform> lightTransform = lightCube->AddComponent<Transform>();
     lightTransform->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -71,6 +75,7 @@ void DemoBehavior::Start()
     for (int i = 0; i < kObjectPositions.size(); i++)
     {
         std::shared_ptr<RenderObject> newObject = std::make_shared<RenderObject>();
+        newObject->SetMaterialName("GenericObjectMaterial");
 
         std::shared_ptr<Transform> newObjectTransform = newObject->AddComponent<Transform>();
         newObjectTransform->SetPosition(kObjectPositions[i]);
@@ -131,7 +136,7 @@ void DemoBehavior::Update(float deltaTime)
 	//used for testing dynamic mesh updates
     /*if (GetWindowManager()->KeyPressedThisFrame(Qt::Key::Key_T))
     {
-        std::vector<uint16_t> triangleIndices = {
+        std::vector<uint32_t> triangleIndices = {
         0, 1, 2
         };
 
@@ -155,6 +160,7 @@ void DemoBehavior::Update(float deltaTime)
         float positionRange = 100.0f;
 
         std::shared_ptr<RenderObject> newObject = std::make_shared<RenderObject>();
+        newObject->SetMaterialName("GenericObjectMaterial");
 
         std::shared_ptr<Transform> newObjectTransform = newObject->AddComponent<Transform>();
         newObjectTransform->SetPosition(glm::vec3((static_cast<double>(rand()) / (RAND_MAX)) * positionRange, (static_cast<double>(rand()) / (RAND_MAX)) * positionRange, (static_cast<double>(rand()) / (RAND_MAX)) * positionRange));

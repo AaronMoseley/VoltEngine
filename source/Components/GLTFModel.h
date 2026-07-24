@@ -22,7 +22,7 @@ public:
 	void ReverseWindingOrder(bool changeFlag=true);
 
 	const std::vector<VulkanCommonFunctions::Vertex>& GetVertices() override { return m_vertices; };
-	const std::vector<uint16_t>& GetIndices() override { return m_indices; };
+	const std::vector<uint32_t>& GetIndices() override { return m_indices; };
 
 private:
 	using MeshRenderer::SetIndices;
@@ -52,7 +52,7 @@ private:
 	std::filesystem::path m_sourcePath;
 
 	std::vector<VulkanCommonFunctions::Vertex> m_vertices;
-	std::vector<uint16_t> m_indices;
+	std::vector<uint32_t> m_indices;
 	std::map<std::string, std::vector<uint8_t>> m_customAttributes;
 };
 

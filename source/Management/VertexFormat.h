@@ -1,0 +1,12 @@
+#ifndef VOLTENGINE_VERTEXFORMAT_H
+#define VOLTENGINE_VERTEXFORMAT_H
+
+
+
+class VertexFormat {
+
+};
+
+
+
+#endif //VOLTENGINE_VERTEXFORMAT_H

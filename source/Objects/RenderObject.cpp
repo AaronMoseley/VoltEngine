@@ -3,101 +3,18 @@
 #include "Components/Transform.h"
 #include "Management/Scene.h"
 #include "Management/WindowManager.h"
+#include "Management/Material.h"
 
 RenderObject::RenderObject()
 {
 
 }
 
-VulkanCommonFunctions::InstanceInfo RenderObject::GetInstanceInfo(const std::vector<std::filesystem::path>& textureFilePaths)
+size_t RenderObject::GetInstanceCount()
 {
-	VulkanCommonFunctions::InstanceInfo result {};
+	std::shared_ptr<Material> material = MaterialRegistry::Get()->GetMaterialByName(GetMaterialName());
 
-	std::shared_ptr<Transform> transform = GetComponent<Transform>();
-
-	if (transform == nullptr)
-	{
-		return result;
-	}
-
-	std::shared_ptr<MeshRenderer> meshRenderer = GetComponent<MeshRenderer>();
-
-	if (meshRenderer == nullptr)
-	{
-		return result;
-	}
-
-	result.m_modelMatrix = glm::mat4(1.0f);
-	result.m_modelMatrix = glm::translate(result.m_modelMatrix, transform->GetWorldPosition());
-
-	result.m_modelMatrix = glm::scale(result.m_modelMatrix, transform->GetWorldScale());
-
-	glm::vec3 rotation = transform->GetWorldRotation();
-
-	result.m_modelMatrix = glm::rotate(result.m_modelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	result.m_modelMatrix = glm::rotate(result.m_modelMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	result.m_modelMatrix = glm::rotate(result.m_modelMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-	//need to transpose the matrix because hlsl expects column major matrices
-	result.m_modelMatrix = glm::transpose(result.m_modelMatrix);
-
-	result.m_modelMatrixInverse = glm::inverse(result.m_modelMatrix);
-
-	result.m_scale = glm::vec4(transform->GetWorldScale(), 1.0f);
-
-	result.m_ambient = glm::vec4(meshRenderer->GetColor(), 1.0f);
-	result.m_diffuse = glm::vec4(meshRenderer->GetColor(), 1.0f);
-	result.m_specular = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
-	result.m_opacityAndShininess.y = std::pow(2.0f, meshRenderer->GetShininess());
-
-	result.m_opacityAndShininess.x = meshRenderer->GetOpacity();
-
-	result.m_displayProperties.x = (meshRenderer->GetLit()) ? 1 : 0;
-
-	result.m_displayProperties.y = (meshRenderer->GetTextured()) ? 1 : 0;
-
-	result.m_displayProperties.w = (meshRenderer->IsBillboarded()) ? 1 : 0;
-
-	auto iterator = std::find(textureFilePaths.begin(), textureFilePaths.end(), meshRenderer->GetTexturePath());
-
-	result.m_displayProperties.z = std::distance(textureFilePaths.begin(), iterator);
-	if (result.m_displayProperties.z > textureFilePaths.size())
-	{
-		result.m_displayProperties.z = 0;
-	}
-
-	return result;
-}
-
-VulkanCommonFunctions::UIInstanceInfo RenderObject::GetUIInstanceInfo(const std::vector<std::filesystem::path>& textureFilePaths)
-{
-	VulkanCommonFunctions::UIInstanceInfo result {};
-	std::shared_ptr<Transform> transform = GetComponent<Transform>();
-	if (transform == nullptr)
-	{
-		return result;
-	}
-	std::shared_ptr<UIImage> imageComponent = GetComponent<UIImage>();
-	if (imageComponent == nullptr)
-	{
-		return result;
-	}
-	result.m_objectWorldPosition = glm::vec4(transform->GetWorldPosition(), 1.0f);
-	result.m_scale = glm::vec4(transform->GetWorldScale(), 1.0f);
-	result.m_colorRGB = glm::vec4(imageComponent->GetColor(), imageComponent->GetOpacity());
-	result.m_displayProperties.x = (imageComponent->GetTextured()) ? 1 : 0;
-	//whether the instance is a character in text
-	result.m_displayProperties.z = 0;
-
-	auto iterator = std::find(textureFilePaths.begin(), textureFilePaths.end(), imageComponent->GetTexturePath());
-
-	result.m_displayProperties.y = std::distance(textureFilePaths.begin(), iterator);
-	if (result.m_displayProperties.y > textureFilePaths.size())
-	{
-		result.m_displayProperties.y = 0;
-	}
-
-	return result;
+	return material->GetInstanceCount(this);
 }
 
 std::shared_ptr<GraphicsBuffer> RenderObject::GetInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths)
@@ -107,26 +24,80 @@ std::shared_ptr<GraphicsBuffer> RenderObject::GetInstanceBuffer(const std::vecto
 		return nullptr;
 	}
 
-	VulkanCommonFunctions::InstanceInfo info = GetInstanceInfo(textureFilePaths);
+	std::shared_ptr<Material> material = MaterialRegistry::Get()->GetMaterialByName(GetMaterialName());
 
-	std::array<VulkanCommonFunctions::InstanceInfo, 1> infoArray = { info };
+	size_t instanceInfoSize = material->GetInstanceInfoSize();
+	size_t instanceCount = GetInstanceCount();
+	std::vector<std::byte> instanceData(instanceInfoSize * instanceCount);
 
-	m_instanceBuffer->LoadData(infoArray.data(), sizeof(VulkanCommonFunctions::InstanceInfo));
+	material->GetInstanceInfo(this, textureFilePaths, instanceData);
+
+	m_instanceBuffer->LoadData(instanceData.data(), instanceInfoSize * instanceCount);
 
 	return m_instanceBuffer;
 }
 
-std::shared_ptr<GraphicsBuffer> RenderObject::GetUIInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths)
+void RenderObject::GetVertexBuffer(std::vector<size_t>& outBufferSizes, std::vector<std::shared_ptr<GraphicsBuffer>>& outBuffers)
 {
-	if (m_instanceBuffer == nullptr)
+	std::shared_ptr<MeshRenderer> meshComponent = GetComponent<MeshRenderer>();
+	if (meshComponent != nullptr)
 	{
-		return nullptr;
+		outBufferSizes.push_back(meshComponent->GetVertexBufferSize());
+		outBuffers.push_back(meshComponent->GetVertexBuffer());
 	}
 
-	VulkanCommonFunctions::UIInstanceInfo info = GetUIInstanceInfo(textureFilePaths);
-	std::array<VulkanCommonFunctions::UIInstanceInfo, 1> infoArray = { info };
+	std::shared_ptr<UIImage> imageComponent = GetComponent<UIImage>();
+	if (imageComponent != nullptr)
+	{
+		outBufferSizes.push_back(imageComponent->GetVertexBufferSize());
+		outBuffers.push_back(imageComponent->GetVertexBuffer());
+	}
 
-	m_instanceBuffer->LoadData(infoArray.data(), sizeof(VulkanCommonFunctions::UIInstanceInfo));
+	std::shared_ptr<Text> textComponent = GetComponent<Text>();
+	if (textComponent != nullptr)
+	{
+		outBufferSizes.push_back(textComponent->GetVertexBufferSize());
+		outBuffers.push_back(textComponent->GetVertexBuffer());
+	}
+}
 
-	return m_instanceBuffer;
+void RenderObject::GetIndexBuffer(std::vector<size_t>& outBufferSizes, std::vector<std::shared_ptr<GraphicsBuffer>>& outBuffers)
+{
+	std::shared_ptr<MeshRenderer> meshComponent = GetComponent<MeshRenderer>();
+
+	if (meshComponent != nullptr && meshComponent->IsIndexed())
+	{
+		outBufferSizes.push_back(meshComponent->GetIndexBufferSize());
+		outBuffers.push_back(meshComponent->GetIndexBuffer());
+	} else if (meshComponent != nullptr && !meshComponent->IsIndexed())
+	{
+		outBufferSizes.push_back(0);
+		outBuffers.push_back(nullptr);
+	}
+
+	std::shared_ptr<UIImage> imageComponent = GetComponent<UIImage>();
+	if (imageComponent != nullptr)
+	{
+		outBufferSizes.push_back(imageComponent->GetIndexBufferSize());
+		outBuffers.push_back(imageComponent->GetIndexBuffer());
+	}
+
+	std::shared_ptr<Text> textComponent = GetComponent<Text>();
+	if (textComponent != nullptr)
+	{
+		outBufferSizes.push_back(textComponent->GetIndexBufferSize());
+		outBuffers.push_back(textComponent->GetIndexBuffer());
+	}
+}
+
+bool RenderObject::IsIndexed()
+{
+	std::shared_ptr<MeshRenderer> meshComponent = GetComponent<MeshRenderer>();
+
+	if (meshComponent != nullptr)
+	{
+		return meshComponent->IsIndexed();
+	}
+
+	return false;
 }

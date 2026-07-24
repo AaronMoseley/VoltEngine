@@ -35,7 +35,7 @@ private:
         {{-0.5f, -0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}}  //bottom left
     };
 
-    std::vector<uint16_t> kSquareIndices = {
+    std::vector<uint32_t> kSquareIndices = {
         0, 1, 2, 2, 3, 0
     };
 

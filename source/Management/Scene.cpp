@@ -1,4 +1,7 @@
 #include "Scene.h"
+
+#include "MaterialRegistry.h"
+#include "Material.h"
 #include "Objects/RenderObject.h"
 #include "Components/Cube.h"
 
@@ -6,7 +9,6 @@ Scene::Scene(WindowManager* windowManager, const std::shared_ptr<VulkanInterface
 {
 	m_windowManager = windowManager;
     m_vulkanInterface = vulkanInterface;
-	m_fontManager = std::make_shared<FontManager>();
 }
 
 void Scene::Update()
@@ -191,7 +193,8 @@ VulkanCommonFunctions::ObjectHandle Scene::AddObject(const std::shared_ptr <Rend
 	m_vulkanInterface->UpdateObjectBuffers(meshComponent);
 
     std::string objectName = meshComponent->GetMeshName();
-    m_meshNameToObjectMap[objectName].insert(m_currentObjectHandle);
+    std::string materialName = newObject->GetMaterialName();
+    m_materialAndNameToObjectHandle[materialName][objectName].insert(m_currentObjectHandle);
 
     if (meshComponent->GetTextured())
     {
@@ -238,6 +241,8 @@ bool Scene::RemoveObject(VulkanCommonFunctions::ObjectHandle objectToRemove)
         return false;
     }
 
+    std::string materialName = currentObject->GetMaterialName();
+
     currentObject->SetSceneManager(nullptr);
 
     bool removalSuccessful = m_objects.erase(objectToRemove);
@@ -269,12 +274,12 @@ bool Scene::RemoveObject(VulkanCommonFunctions::ObjectHandle objectToRemove)
 
     std::string objectName = meshComponent->GetMeshName();
 
-    if (!m_meshNameToObjectMap.contains(objectName))
+    if (!m_materialAndNameToObjectHandle.contains(materialName) || !m_materialAndNameToObjectHandle[materialName].contains(objectName))
     {
         return false;
     }
 
-    removalSuccessful = removalSuccessful && m_meshNameToObjectMap[objectName].erase(objectToRemove);
+    removalSuccessful = removalSuccessful && m_materialAndNameToObjectHandle[objectName][materialName].erase(objectToRemove);
 
     return removalSuccessful;
 }
@@ -435,7 +440,10 @@ void Scene::GenerateInstanceBuffer(const std::shared_ptr<RenderObject>& newObjec
         return;
     }
 
-	std::shared_ptr<GraphicsBuffer> instanceBuffer = m_vulkanInterface->CreateInstanceBuffer(1);
+    std::shared_ptr<Material> material = MaterialRegistry::Get()->GetMaterialByName(newObject->GetMaterialName());
+
+    size_t instanceInfoSize = material->GetInstanceInfoSize();
+	std::shared_ptr<GraphicsBuffer> instanceBuffer = m_vulkanInterface->CreateInstanceBuffer(newObject->GetInstanceCount(), instanceInfoSize);
     newObject->SetInstanceBuffer(instanceBuffer);
 }
 
@@ -465,7 +473,7 @@ VulkanCommonFunctions::ObjectHandle Scene::GetObjectByTag(const std::string& tag
 
 std::shared_ptr<Font> Scene::AddFont(const std::string& atlasFilePath, const std::string& descriptionFilePath) const
 {
-    std::shared_ptr<Font> newFont = m_fontManager->AddFont(atlasFilePath, descriptionFilePath);
+    std::shared_ptr<Font> newFont = FontManager::Get()->AddFont(atlasFilePath, descriptionFilePath);
     m_vulkanInterface->UpdateTextureResources(atlasFilePath);
 
     return newFont;
@@ -506,16 +514,6 @@ void Scene::Cleanup()
         if (instanceBuffer != nullptr)
         {
             instanceBuffer->DestroyBuffer();
-        }
-
-        std::shared_ptr<Text> textComponent = it->second->GetComponent<Text>();
-        if (textComponent != nullptr)
-        {
-            std::shared_ptr<GraphicsBuffer> textInstanceBuffer = textComponent->GetInstanceBuffer();
-            if (textInstanceBuffer != nullptr)
-            {
-                textInstanceBuffer->DestroyBuffer();
-            }
         }
 
         std::shared_ptr<UIMeshRenderer> uiMeshComponent = it->second->GetComponent<UIMeshRenderer>();

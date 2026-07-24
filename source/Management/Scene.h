@@ -35,11 +35,9 @@ public:
 
 	void UpdateTexture(const std::filesystem::path& newTexturePath) const;
 
-	std::shared_ptr<FontManager> GetFontManager() { return m_fontManager; }
-
 	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> GetObjects() { return m_objects; };
 	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> GetUIObjects() { return m_uiObjects; };
-	std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>> GetMeshNameToObjectMap() { return m_meshNameToObjectMap; }
+	std::map<std::string, std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>>> GetMaterialAndNameToObjectMap() { return m_materialAndNameToObjectHandle; }
 
 	VulkanCommonFunctions::ObjectHandle GetObjectByTag(const std::string& tag);
 	std::shared_ptr<RenderObject> GetRenderObject(VulkanCommonFunctions::ObjectHandle handle);
@@ -61,13 +59,12 @@ private:
 	void UpdateUIData(const std::shared_ptr<RenderObject>& currentObject);
 
 	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> m_objects = {};
-	std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>> m_meshNameToObjectMap;
+	std::map<std::string, std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>>> m_materialAndNameToObjectHandle;
 
 	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> m_uiObjects = {};
 
 	WindowManager* m_windowManager;
 	std::shared_ptr<VulkanInterface> m_vulkanInterface;
-	std::shared_ptr<FontManager> m_fontManager;
 
 	VulkanCommonFunctions::ObjectHandle m_currentObjectHandle = 0;
 	VulkanCommonFunctions::ObjectHandle m_currentUIObjectHandle = 0;

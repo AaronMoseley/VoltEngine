@@ -1,11 +1,22 @@
 #include "MaterialRegistry.h"
 #include "Management/Material.h"
+#include "Vulkan Interface/GraphicsBuffer.h"
+#include "Vulkan Interface/TextureImage.h"
+#include "Vulkan Interface/VulkanWindow.h"
 
 std::shared_ptr<MaterialRegistry> MaterialRegistry::s_materialRegistrySingleton = nullptr;
 
 MaterialRegistry::MaterialRegistry()
 {
 
+}
+
+void MaterialRegistry::CleanupMaterials()
+{
+	for (auto it = m_registeredMaterials.begin(); it != m_registeredMaterials.end(); it++)
+	{
+		it->second->CleanupMaterial();
+	}
 }
 
 std::shared_ptr<MaterialRegistry> MaterialRegistry::Get()
@@ -18,7 +29,7 @@ std::shared_ptr<MaterialRegistry> MaterialRegistry::Get()
 	return s_materialRegistrySingleton;
 }
 
-Material* MaterialRegistry::GetMaterialByName(const std::string& materialName) const
+std::shared_ptr<Material> MaterialRegistry::GetMaterialByName(const std::string& materialName) const
 {
 	if (m_registeredMaterials.contains(materialName) == false)
 	{
@@ -28,21 +39,21 @@ Material* MaterialRegistry::GetMaterialByName(const std::string& materialName) c
 	return m_registeredMaterials.at(materialName);
 }
 
-const std::map<std::string, Material*>& MaterialRegistry::GetMaterials()
+const std::map<std::string, std::shared_ptr<Material>>& MaterialRegistry::GetMaterials()
 {
 	return m_registeredMaterials;
 }
 
-void MaterialRegistry::InitializeAllMaterials()
+void MaterialRegistry::InitializeAllMaterials(const MaterialCreationData& creationData)
 {
 	//need to add parameters that are used to initialize graphics buffers
 	for (auto it = m_registeredMaterials.begin(); it != m_registeredMaterials.end(); it++)
 	{
-		it->second->InitializeMaterial();
+		it->second->InitializeMaterial(creationData);
 	}
 }
 
-void MaterialRegistry::RegisterMaterial(Material* materialToRegister)
+void MaterialRegistry::RegisterMaterial(std::shared_ptr<Material> materialToRegister)
 {
 	m_registeredMaterials[materialToRegister->GetMaterialName()] = materialToRegister;
 }

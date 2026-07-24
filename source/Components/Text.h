@@ -31,10 +31,9 @@ public:
 	float GetFontSize() const { return m_fontSize; }
 
 	const std::vector<VulkanCommonFunctions::UIVertex>& GetVertices() override { return kSquareVertices; };
-	const std::vector<uint16_t>& GetIndices() override { return kSquareIndices; };
+	const std::vector<uint32_t>& GetIndices() override { return kSquareIndices; };
 
-	void UpdateInstanceBuffer(const std::pair<size_t, size_t>& screenSize, const std::shared_ptr<Font>& currentFont, size_t textureIndex, GraphicsBuffer::BufferCreateInfo bufferCreateInfo);
-	std::shared_ptr<GraphicsBuffer> GetInstanceBuffer() { return m_instanceBuffer; }
+	void GetInstanceInfo(const std::pair<size_t, size_t>& screenSize, const std::shared_ptr<Font>& currentFont, size_t textureIndex, std::vector<std::byte>& outData);
 
 	static float GetPixelToScreen(const std::pair<size_t, size_t>& screenSize)
 	{
@@ -80,9 +79,7 @@ private:
 
 	AnchorPosition m_anchorPoint = AnchorPosition::Center;
 
-	const std::vector<uint16_t> kSquareIndices = { 0, 1, 2, 2, 3, 0 };
-
-	std::shared_ptr<GraphicsBuffer> m_instanceBuffer = nullptr;
+	const std::vector<uint32_t> kSquareIndices = { 0, 1, 2, 2, 3, 0 };
 
 	std::string m_textString;
 	std::string m_fontName;

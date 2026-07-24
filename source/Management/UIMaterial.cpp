@@ -1,46 +1,6 @@
-#include "Material.h"
+#include "UIMaterial.h"
 
-void Material::InitializeMaterial(const MaterialRegistry::MaterialCreationData& creationData)
-{
-	m_allocator = creationData.m_allocator;
-	m_commandPool = creationData.m_commandPool;
-	m_graphicsQueue = creationData.m_graphicsQueue;
-	m_vulkanWindow = creationData.m_vulkanWindow;
-	m_vkDevice = creationData.m_vkDevice;
-
-	CreateDescriptorSetLayout(creationData);
-	CreateGraphicsPipeline();
-	CreateDescriptorPool(creationData);
-	CreateDescriptorSets(creationData);
-}
-
-void Material::CleanupMaterial()
-{
-	m_graphicsPipeline->DestroyPipeline();
-	vkDestroyDescriptorPool(m_vkDevice, m_descriptorPool, nullptr);
-	vkDestroyDescriptorSetLayout(m_vkDevice, m_descriptorSetLayout, nullptr);
-}
-
-void Material::CreateGraphicsPipeline()
-{
-	if (m_graphicsPipeline != VK_NULL_HANDLE)
-	{
-		m_graphicsPipeline->SetDescriptorSetLayout(m_descriptorSetLayout);
-		m_graphicsPipeline->CreatePipeline();
-		return;
-	}
-
-	GraphicsPipelineCreateInfo pipelineCreateInfo{};
-	pipelineCreateInfo.m_vertexShaderFilePath = GetVertexShaderPath();
-	pipelineCreateInfo.m_fragmentShaderFilePath = GetPixelShaderPath();
-	pipelineCreateInfo.m_descriptorSetLayout = m_descriptorSetLayout;
-	pipelineCreateInfo.m_device = m_vkDevice;
-	pipelineCreateInfo.m_vulkanWindow = m_vulkanWindow;
-	pipelineCreateInfo.m_uiBasedPipeline = IsUIBased();
-	m_graphicsPipeline = std::make_shared<GraphicsPipeline>(pipelineCreateInfo);
-}
-
-void Material::CreateDescriptorSetLayout(const MaterialRegistry::MaterialCreationData& creationData)
+void UIMaterial::CreateDescriptorSetLayout(const MaterialRegistry::MaterialCreationData& creationData)
 {
 	if (m_descriptorSetLayout != VK_NULL_HANDLE)
 	{
@@ -54,21 +14,14 @@ void Material::CreateDescriptorSetLayout(const MaterialRegistry::MaterialCreatio
 	globalInfoLayoutBinding.pImmutableSamplers = nullptr;
 	globalInfoLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 
-	VkDescriptorSetLayoutBinding lightInfoBinding{};
-	lightInfoBinding.binding = 1;
-	lightInfoBinding.descriptorCount = 1;
-	lightInfoBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-	lightInfoBinding.pImmutableSamplers = nullptr;
-	lightInfoBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-
 	VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-	samplerLayoutBinding.binding = 2;
+	samplerLayoutBinding.binding = 1;
 	samplerLayoutBinding.descriptorCount = creationData.m_textureFilePaths.size();
 	samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	samplerLayoutBinding.pImmutableSamplers = nullptr;
 	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-	std::array<VkDescriptorSetLayoutBinding, 3> bindings = { globalInfoLayoutBinding, lightInfoBinding, samplerLayoutBinding };
+	std::array<VkDescriptorSetLayoutBinding, 2> bindings = { globalInfoLayoutBinding, samplerLayoutBinding };
 	VkDescriptorSetLayoutCreateInfo layoutInfo{};
 	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
@@ -79,7 +32,7 @@ void Material::CreateDescriptorSetLayout(const MaterialRegistry::MaterialCreatio
 	}
 }
 
-void Material::CreateDescriptorSets(const MaterialRegistry::MaterialCreationData& creationData)
+void UIMaterial::CreateDescriptorSets(const MaterialRegistry::MaterialCreationData& creationData)
 {
 	std::vector<VkDescriptorSetLayout> layouts(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT, m_descriptorSetLayout);
     VkDescriptorSetAllocateInfo allocInfo{};
@@ -93,17 +46,12 @@ void Material::CreateDescriptorSets(const MaterialRegistry::MaterialCreationData
     }
 
     for (size_t i = 0; i < VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT; i++) {
-        VkDescriptorBufferInfo bufferInfo{};
-        bufferInfo.buffer = creationData.m_uniformBuffers[i]->GetVkBuffer();
-        bufferInfo.offset = 0;
-        bufferInfo.range = sizeof(VulkanCommonFunctions::GlobalInfo);
-
-        VkDescriptorBufferInfo lightBufferInfo{};
-        lightBufferInfo.buffer = creationData.m_lightInfoBuffers[i]->GetVkBuffer();
-        lightBufferInfo.offset = 0;
-        lightBufferInfo.range = sizeof(VulkanCommonFunctions::LightInfo) * creationData.m_maxLightCount;
-
         std::vector<VkDescriptorImageInfo> imageInfos;
+
+        VkDescriptorBufferInfo globalBufferInfo{};
+        globalBufferInfo.buffer = creationData.m_uiUniformBuffers[i]->GetVkBuffer();
+        globalBufferInfo.offset = 0;
+        globalBufferInfo.range = sizeof(VulkanCommonFunctions::UIGlobalInfo);
 
         for (auto it = creationData.m_textureFilePaths.begin(); it != creationData.m_textureFilePaths.end(); it++)
         {
@@ -115,7 +63,7 @@ void Material::CreateDescriptorSets(const MaterialRegistry::MaterialCreationData
             imageInfos.push_back(imageInfo);
         }
 
-        std::array<VkWriteDescriptorSet, 3> descriptorWrites{};
+        std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 
         descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWrites[0].dstSet = m_descriptorSets[i];
@@ -123,42 +71,32 @@ void Material::CreateDescriptorSets(const MaterialRegistry::MaterialCreationData
         descriptorWrites[0].dstArrayElement = 0;
         descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         descriptorWrites[0].descriptorCount = 1;
-        descriptorWrites[0].pBufferInfo = &bufferInfo;
+        descriptorWrites[0].pBufferInfo = &globalBufferInfo;
 
         descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWrites[1].dstSet = m_descriptorSets[i];
         descriptorWrites[1].dstBinding = 1;
         descriptorWrites[1].dstArrayElement = 0;
-        descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-        descriptorWrites[1].descriptorCount = 1;
-        descriptorWrites[1].pBufferInfo = &lightBufferInfo;
-
-        descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        descriptorWrites[2].dstSet = m_descriptorSets[i];
-        descriptorWrites[2].dstBinding = 2;
-        descriptorWrites[2].dstArrayElement = 0;
-        descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        descriptorWrites[2].descriptorCount = imageInfos.size();
-        descriptorWrites[2].pImageInfo = imageInfos.data();
+        descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descriptorWrites[1].descriptorCount = imageInfos.size();
+        descriptorWrites[1].pImageInfo = imageInfos.data();
 
         vkUpdateDescriptorSets(m_vkDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
     }
 }
 
-void Material::CreateDescriptorPool(const MaterialRegistry::MaterialCreationData& creationData)
+void UIMaterial::CreateDescriptorPool(const MaterialRegistry::MaterialCreationData& creationData)
 {
 	if (m_descriptorPool != VK_NULL_HANDLE)
 	{
 		vkDestroyDescriptorPool(m_vkDevice, m_descriptorPool, nullptr);
 	}
 
-	std::array<VkDescriptorPoolSize, 3> poolSizes{};
+	std::array<VkDescriptorPoolSize, 2> poolSizes{};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
-	poolSizes[1].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-	poolSizes[1].descriptorCount = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT);
-	poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	poolSizes[2].descriptorCount = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT) * creationData.m_textureFilePaths.size();
+	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSizes[1].descriptorCount = static_cast<uint32_t>(VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT) * creationData.m_textureFilePaths.size();
 
 	VkDescriptorPoolCreateInfo poolInfo{};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
