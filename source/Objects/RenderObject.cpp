@@ -10,6 +10,33 @@ RenderObject::RenderObject()
 
 }
 
+bool RenderObject::RequiresInstanceBufferRegeneration()
+{
+	if (m_instanceBuffer == nullptr)
+	{
+		return true;
+	}
+
+	std::shared_ptr<Material> material = MaterialRegistry::Get()->GetMaterialByName(GetMaterialName());
+
+	size_t instanceInfoSize = material->GetInstanceInfoSize();
+	size_t instanceCount = GetInstanceCount();
+
+	size_t requiredBufferSize = instanceInfoSize * instanceCount;
+
+	return requiredBufferSize > m_instanceBuffer->GetSize();
+}
+
+void RenderObject::SetInstanceBuffer(const std::shared_ptr<GraphicsBuffer>& instanceBuffer)
+{
+	if (m_instanceBuffer != nullptr)
+	{
+		m_instanceBuffer->DestroyBuffer();
+	}
+
+	m_instanceBuffer = instanceBuffer;
+}
+
 size_t RenderObject::GetInstanceCount()
 {
 	std::shared_ptr<Material> material = MaterialRegistry::Get()->GetMaterialByName(GetMaterialName());

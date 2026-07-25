@@ -39,6 +39,8 @@ private:
         0, 1, 2, 2, 3, 0
     };
 
+    std::shared_ptr<RenderObject> m_uiTextObject = nullptr;
+
 	float m_lightOrbitRadius = 5.0f;
     VulkanCommonFunctions::ObjectHandle m_lightObjectHandle = 0;
 	std::set<VulkanCommonFunctions::ObjectHandle> m_objectHandles;

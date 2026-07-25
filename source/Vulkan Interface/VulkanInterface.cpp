@@ -302,6 +302,15 @@ void VulkanInterface::DrawSingleObjectCommandBuffer(VkCommandBuffer commandBuffe
 	std::vector<size_t> indexBufferSizes;
 	renderObject->GetIndexBuffer(indexBufferSizes, indexBuffers);
 
+	if (renderObject->RequiresInstanceBufferRegeneration())
+	{
+		std::shared_ptr<Material> material = MaterialRegistry::Get()->GetMaterialByName(renderObject->GetMaterialName());
+
+		size_t instanceInfoSize = material->GetInstanceInfoSize();
+		std::shared_ptr<GraphicsBuffer> instanceBuffer = CreateInstanceBuffer(renderObject->GetInstanceCount(), instanceInfoSize);
+		renderObject->SetInstanceBuffer(instanceBuffer);
+	}
+
 	std::shared_ptr<GraphicsBuffer> instanceBuffer = renderObject->GetInstanceBuffer(m_textureFilePaths);
 
 	size_t instanceCount = renderObject->GetInstanceCount();

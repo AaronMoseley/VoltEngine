@@ -23,6 +23,8 @@ public:
 
 	VkBuffer GetVkBuffer() const { return m_buffer; }
 
+	size_t GetSize() const { return m_maxSize; }
+
 	void CopyBuffer(const std::shared_ptr<GraphicsBuffer>& destintationBuffer, VkDeviceSize copySize) const;
 	void LoadData(const void* data, size_t memorySize) const;
 	void DestroyBuffer() const;

@@ -36,16 +36,17 @@ void DemoBehavior::Start()
 	uiImageComponent->SetTexture("textures/Crosshair.png");
     GetScene()->AddUIObject(uiImageTexture);
 
-    std::shared_ptr<RenderObject> uiTextObject = std::make_shared<RenderObject>();
-    uiTextObject->SetMaterialName("GenericUIObjectMaterial");
-    std::shared_ptr<Transform> uiTextObjectTransform = uiTextObject->AddComponent<Transform>();
+    m_uiTextObject = std::make_shared<RenderObject>();
+    m_uiTextObject->SetMaterialName("GenericUIObjectMaterial");
+    std::shared_ptr<Transform> uiTextObjectTransform = m_uiTextObject->AddComponent<Transform>();
     uiTextObjectTransform->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     uiTextObjectTransform->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
-    std::shared_ptr<Text> uiTextComponent = uiTextObject->AddComponent<Text>();
-    uiTextComponent->SetTextString("\"the quick brown fox\"\njumps over the\nlazy dog\n\nTHE QUICK BROWN FOX\nJUMPS OVER THE\nLAZY DOG\n\n: ' \" / \\ . , ; | ! @ # $ % ^ & * ( ) { } [ ]");
+    std::shared_ptr<Text> uiTextComponent = m_uiTextObject->AddComponent<Text>();
+    //uiTextComponent->SetTextString("\"the quick brown fox\"\njumps over the\nlazy dog\n\nTHE QUICK BROWN FOX\nJUMPS OVER THE\nLAZY DOG\n\n: ' \" / \\ . , ; | ! @ # $ % ^ & * ( ) { } [ ]");
+    uiTextComponent->SetTextString("test test test");
     std::shared_ptr<Font> newFont = GetScene()->AddFont("fonts/jetbrainsmononl-medium.png", "fonts/jetbrainsmononl-medium.fnt");
     uiTextComponent->SetFontName("JetBrains Mono NL Medium");
-    GetScene()->AddUIObject(uiTextObject);
+    GetScene()->AddUIObject(m_uiTextObject);
 
     std::srand(std::time(nullptr));
 
@@ -153,6 +154,11 @@ void DemoBehavior::Update(float deltaTime)
         }
 
         currentObject->GetComponent<Transform>()->Rotate(glm::vec3(16.0f * deltaTime));
+    }
+
+    if (GetWindowManager()->KeyPressed(Qt::Key::Key_G))
+    {
+        m_uiTextObject->GetComponent<Text>()->SetTextString("\"the quick brown fox\"\njumps over the\nlazy dog\n\nTHE QUICK BROWN FOX\nJUMPS OVER THE\nLAZY DOG\n\n: ' \" / \\ . , ; | ! @ # $ % ^ & * ( ) { } [ ]");
     }
 
     if (GetWindowManager()->KeyPressed(Qt::Key::Key_R))

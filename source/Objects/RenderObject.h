@@ -50,8 +50,9 @@ public:
 	std::vector<std::shared_ptr<ObjectComponent>> GetAllComponents() { return m_components; }
 
 	std::shared_ptr<GraphicsBuffer> GetInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths);
-	void SetInstanceBuffer(const std::shared_ptr<GraphicsBuffer>& instanceBuffer) { m_instanceBuffer = instanceBuffer; }
+	void SetInstanceBuffer(const std::shared_ptr<GraphicsBuffer>& instanceBuffer);
 	size_t GetInstanceCount();
+	bool RequiresInstanceBufferRegeneration();
 
 	void SetSceneManager(Scene* sceneManager) { m_sceneManager = sceneManager; }
 	Scene* GetSceneManager() const { return m_sceneManager; }
