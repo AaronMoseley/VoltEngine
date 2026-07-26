@@ -41,8 +41,8 @@ public:
 	size_t GetInstanceCount(RenderObject* object) override { return 1; };
 
 protected:
-	std::filesystem::path GetVertexShaderPath() override { return "shaders/HLSL/VertexShader.spv"; }
-	std::filesystem::path GetPixelShaderPath() override { return "shaders/HLSL/PixelShader.spv"; }
+	std::filesystem::path GetVertexShaderPath() override { return "shaders/ObjectShadersVertex.spv"; }
+	std::filesystem::path GetPixelShaderPath() override { return "shaders/ObjectShadersPixel.spv"; }
 
 	void CreateVertexFormat() override;
 

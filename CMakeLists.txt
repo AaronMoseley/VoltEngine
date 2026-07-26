@@ -107,3 +107,15 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 # Set startup project folder (Visual Studio)
 # ---------------------------
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+
+add_custom_command(
+        TARGET ${PROJECT_NAME}
+        POST_BUILD
+        COMMAND
+        ${Python3_EXECUTABLE}
+        ${CMAKE_SOURCE_DIR}/scripts/post_build.py
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMENT "Running post-build script"
+)

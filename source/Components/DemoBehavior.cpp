@@ -22,8 +22,8 @@ void DemoBehavior::Start()
     testingGLTFModel->AddComponent<LightSource>();
     gltfModelTransform->SetPosition(glm::vec3(-20.0f, 0.0f, 0.0f));
     gltfModelTransform->SetScale(glm::vec3(100.0f, 100.0f, 100.0f));
-    gltfMesh->SetSourcePath("Avocado.gltf");
-    gltfMesh->SetTexture("Avocado_baseColor.png");
+    gltfMesh->SetSourcePath("models/Avocado/Avocado.gltf");
+    gltfMesh->SetTexture("models/Avocado/Avocado_baseColor.png");
     gltfMesh->ReverseWindingOrder();
     GetScene()->AddObject(testingGLTFModel);
 

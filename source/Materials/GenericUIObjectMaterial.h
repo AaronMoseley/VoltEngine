@@ -37,8 +37,8 @@ public:
 	size_t GetInstanceCount(RenderObject* object) override;
 
 protected:
-	std::filesystem::path GetVertexShaderPath() override { return "shaders/HLSL/UIVertexShader.spv"; }
-	std::filesystem::path GetPixelShaderPath() override { return "shaders/HLSL/UIPixelShader.spv"; }
+	std::filesystem::path GetVertexShaderPath() override { return "shaders/UIObjectShadersVertex.spv"; }
+	std::filesystem::path GetPixelShaderPath() override { return "shaders/UIObjectShadersPixel.spv"; }
 
 	bool UpdateInstanceInfoFromImage(RenderObject* object, const std::vector<std::filesystem::path>& textureFilePaths, std::vector<std::byte>& outData);
 	bool UpdateInstanceInfoFromText(RenderObject* object, const std::vector<std::filesystem::path>& textureFilePaths, std::vector<std::byte>& outData);
