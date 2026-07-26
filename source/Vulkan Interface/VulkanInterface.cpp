@@ -420,11 +420,6 @@ void VulkanInterface::UpdateObjectBuffers(const std::shared_ptr<IMeshRenderer>& 
 {
 	const std::string meshName = objectMesh->GetMeshName();
 
-	if (meshName == "Cube")
-	{
-		int temp = 1;
-	}
-
     if (meshName == IMeshRenderer::kCustomMeshName)
     {
         return;
