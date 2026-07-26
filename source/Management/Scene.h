@@ -31,8 +31,6 @@ public:
 	void FinalizeMesh(const std::shared_ptr<RenderObject>& updatedObject);
 	void GenerateInstanceBuffer(const std::shared_ptr<RenderObject>& updatedObject) const;
 
-	void FinalizeUIMesh(const std::shared_ptr<RenderObject>& updatedObject);
-
 	void UpdateTexture(const std::filesystem::path& newTexturePath) const;
 
 	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> GetObjects() { return m_objects; };
@@ -56,7 +54,6 @@ public:
 
 private:
 	void UpdateMeshData(const std::shared_ptr<RenderObject>& currentObject);
-	void UpdateUIData(const std::shared_ptr<RenderObject>& currentObject);
 
 	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> m_objects = {};
 	std::map<std::string, std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>>> m_materialAndNameToObjectHandle;
@@ -64,7 +61,6 @@ private:
 	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> m_uiObjects = {};
 
 	WindowManager* m_windowManager;
-	std::shared_ptr<VulkanInterface> m_vulkanInterface;
 
 	VulkanCommonFunctions::ObjectHandle m_currentObjectHandle = 0;
 	VulkanCommonFunctions::ObjectHandle m_currentUIObjectHandle = 0;

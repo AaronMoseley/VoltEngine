@@ -2,10 +2,10 @@
 #define VOLTENGINE_MATERIAL_H
 
 #include "MaterialRegistry.h"
-#include "Scene.h"
+#include "Vulkan Interface/GraphicsPipeline.h"
 #include "Vulkan Interface/VulkanCommonFunctions.h"
-#include "Components/MeshRenderer.h"
 #include "Objects/RenderObject.h"
+#include "Management/VertexFormat.h"
 
 class Material {
 public:
@@ -28,6 +28,7 @@ public:
 protected:
 	void CreateGraphicsPipeline();
 
+	virtual void CreateVertexFormat() = 0;
 	virtual void CreateDescriptorSetLayout(const MaterialRegistry::MaterialCreationData& creationData);
 	virtual void CreateDescriptorSets(const MaterialRegistry::MaterialCreationData& creationData);
 	virtual void CreateDescriptorPool(const MaterialRegistry::MaterialCreationData& creationData);
@@ -35,14 +36,13 @@ protected:
 	virtual std::filesystem::path GetVertexShaderPath() { return ""; }
 	virtual std::filesystem::path GetPixelShaderPath() { return ""; }
 
-	//will remove
-	virtual bool IsUIBased() = 0;
-
 	std::array<VkDescriptorSet, VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT> m_descriptorSets;
 
 	std::string m_materialName = "DefaultMaterial";
 
 	std::shared_ptr<GraphicsPipeline> m_graphicsPipeline = nullptr;
+
+	std::shared_ptr<VertexFormat> m_vertexFormat = nullptr;
 
 	VkDescriptorSetLayout m_descriptorSetLayout = VK_NULL_HANDLE;
 	VmaAllocator m_allocator = VK_NULL_HANDLE;

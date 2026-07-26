@@ -7,14 +7,22 @@ class Scene;
 
 class ObjectComponent {
 public:
-	ObjectComponent() {};
+	ObjectComponent()
+	{
+
+	}
+
 	virtual ~ObjectComponent() = default;
 
 	virtual void Start() {};
 	virtual void Update(float deltaTime) {};
 
 	RenderObject* GetOwner() const { return m_owner; }
-	void SetOwner(RenderObject* owner) { m_owner = owner; }
+	void SetOwner(RenderObject* owner)
+	{
+		m_owner = owner;
+		OwnerSetCallback();
+	}
 	Scene* GetScene() const;
 
 	WindowManager* GetWindowManager() const;
@@ -24,6 +32,8 @@ public:
 
 	bool HasStarted() const { return m_started; }
 	void SetStarted(const bool started) { m_started = started; }
+
+	virtual void OwnerSetCallback() {}
 
 private:
 	RenderObject* m_owner = nullptr;

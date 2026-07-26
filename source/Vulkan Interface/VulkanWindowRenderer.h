@@ -19,7 +19,6 @@ public:
 	void Shutdown();
 
 private:
-	std::shared_ptr<VulkanInterface> m_vulkanInterface;
 	std::shared_ptr<Scene> m_scene;
 
 	bool m_isShuttingDown = false;

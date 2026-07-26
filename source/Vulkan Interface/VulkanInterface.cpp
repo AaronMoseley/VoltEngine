@@ -7,6 +7,8 @@
 #include "Components/Camera.h"
 #include "Components/LightSource.h"
 
+std::shared_ptr<VulkanInterface> VulkanInterface::s_vulkanInterfaceSingleton = nullptr;
+
 VulkanInterface::VulkanInterface(WindowManager* windowManager)
 {
     m_windowManager = windowManager;
@@ -252,9 +254,9 @@ std::shared_ptr<GraphicsBuffer> VulkanInterface::CreateInstanceBuffer(size_t max
 	return instanceBuffer;
 }
 
-void VulkanInterface::CreateInstanceBuffersFromObject(std::shared_ptr<MeshRenderer> objectMesh)
+void VulkanInterface::CreateInstanceBuffersFromObject(std::shared_ptr<IMeshRenderer> objectMesh)
 {
-	if (objectMesh->GetMeshName() == MeshRenderer::kCustomMeshName)
+	if (objectMesh->GetMeshName() == IMeshRenderer::kCustomMeshName)
 	{
 		return;
 	}
@@ -378,44 +380,9 @@ bool VulkanInterface::CheckValidationLayerSupport() const
     return true;
 }
 
-std::shared_ptr<GraphicsBuffer> VulkanInterface::CreateUIVertexBuffer(const std::shared_ptr<UIMeshRenderer>& imageObject) const
+std::shared_ptr<GraphicsBuffer> VulkanInterface::CreateVertexBuffer(const std::shared_ptr<IMeshRenderer>& meshInfo) const
 {
-    VkDeviceSize bufferSize = sizeof(VulkanCommonFunctions::UIVertex) * imageObject->GetVertices().size();
-
-    GraphicsBuffer::BufferCreateInfo stagingBufferCreateInfo = {};
-    stagingBufferCreateInfo.size = bufferSize;
-    stagingBufferCreateInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-    stagingBufferCreateInfo.properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-    stagingBufferCreateInfo.allocator = m_vmaAllocator;
-    stagingBufferCreateInfo.commandPool = m_commandPool;
-    stagingBufferCreateInfo.graphicsQueue = m_graphicsQueue;
-    stagingBufferCreateInfo.device = m_vkDevice;
-
-    const std::vector< VulkanCommonFunctions::UIVertex>& vertices = imageObject->GetVertices();
-
-    std::shared_ptr<GraphicsBuffer> stagingBuffer = std::make_shared<GraphicsBuffer>(stagingBufferCreateInfo);
-    stagingBuffer->LoadData((void*)vertices.data(), (size_t)bufferSize);
-
-    GraphicsBuffer::BufferCreateInfo vertexBufferCreateInfo = {};
-    vertexBufferCreateInfo.size = bufferSize;
-    vertexBufferCreateInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-    vertexBufferCreateInfo.properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-    vertexBufferCreateInfo.allocator = m_vmaAllocator;
-    vertexBufferCreateInfo.commandPool = m_commandPool;
-    vertexBufferCreateInfo.graphicsQueue = m_graphicsQueue;
-    vertexBufferCreateInfo.device = m_vkDevice;
-
-    std::shared_ptr<GraphicsBuffer> vertexBuffer = std::make_shared<GraphicsBuffer>(vertexBufferCreateInfo);
-
-    stagingBuffer->CopyBuffer(vertexBuffer, bufferSize);
-    stagingBuffer->DestroyBuffer();
-
-    return vertexBuffer;
-}
-
-std::shared_ptr<GraphicsBuffer> VulkanInterface::CreateVertexBuffer(const std::shared_ptr<MeshRenderer>& meshInfo) const
-{
-    VkDeviceSize bufferSize = sizeof(VulkanCommonFunctions::Vertex) * meshInfo->GetVertices().size();
+    VkDeviceSize bufferSize = meshInfo->GetVertexDataSize() * meshInfo->GetVertexCount();
 
     GraphicsBuffer::BufferCreateInfo stagingBufferCreateInfo = {};
 	stagingBufferCreateInfo.size = bufferSize;
@@ -426,10 +393,11 @@ std::shared_ptr<GraphicsBuffer> VulkanInterface::CreateVertexBuffer(const std::s
 	stagingBufferCreateInfo.graphicsQueue = m_graphicsQueue;
     stagingBufferCreateInfo.device = m_vkDevice;
 
-	const std::vector< VulkanCommonFunctions::Vertex>& vertices = meshInfo->GetVertices();
+	std::vector<std::byte> vertexData;
+	meshInfo->GetVertexData(vertexData);
 
 	std::shared_ptr<GraphicsBuffer> stagingBuffer = std::make_shared<GraphicsBuffer>(stagingBufferCreateInfo);
-    stagingBuffer->LoadData((void*)vertices.data(), (size_t)bufferSize);
+    stagingBuffer->LoadData(vertexData.data(), vertexData.size());
 
     GraphicsBuffer::BufferCreateInfo vertexBufferCreateInfo = {};
     vertexBufferCreateInfo.size = bufferSize;
@@ -448,10 +416,16 @@ std::shared_ptr<GraphicsBuffer> VulkanInterface::CreateVertexBuffer(const std::s
     return vertexBuffer;
 }
 
-void VulkanInterface::UpdateObjectBuffers(const std::shared_ptr<MeshRenderer>& objectMesh)
+void VulkanInterface::UpdateObjectBuffers(const std::shared_ptr<IMeshRenderer>& objectMesh)
 {
 	const std::string meshName = objectMesh->GetMeshName();
-    if (meshName == MeshRenderer::kCustomMeshName)
+
+	if (meshName == "Cube")
+	{
+		int temp = 1;
+	}
+
+    if (meshName == IMeshRenderer::kCustomMeshName)
     {
         return;
     }
@@ -461,8 +435,8 @@ void VulkanInterface::UpdateObjectBuffers(const std::shared_ptr<MeshRenderer>& o
         return;
     }
 
-    size_t vertexCount = objectMesh->GetVertices().size();
-    size_t indexCount = objectMesh->GetIndices().size();
+    size_t vertexCount = objectMesh->GetVertexCount();
+    size_t indexCount = objectMesh->GetIndexCount();
 
     if (vertexCount == 0)
     {
@@ -483,9 +457,9 @@ void VulkanInterface::UpdateObjectBuffers(const std::shared_ptr<MeshRenderer>& o
     CreateInstanceBuffersFromObject(objectMesh);
 }
 
-std::shared_ptr<GraphicsBuffer> VulkanInterface::CreateUIIndexBuffer(const std::shared_ptr<UIMeshRenderer>& imageObject) const
+std::shared_ptr<GraphicsBuffer> VulkanInterface::CreateIndexBuffer(const std::shared_ptr<IMeshRenderer>& meshInfo) const
 {
-    VkDeviceSize bufferSize = sizeof(uint32_t) * imageObject->GetIndices().size();
+    VkDeviceSize bufferSize = sizeof(uint32_t) * meshInfo->GetIndexCount();
 
     GraphicsBuffer::BufferCreateInfo stagingBufferCreateInfo = {};
     stagingBufferCreateInfo.size = bufferSize;
@@ -496,46 +470,11 @@ std::shared_ptr<GraphicsBuffer> VulkanInterface::CreateUIIndexBuffer(const std::
     stagingBufferCreateInfo.graphicsQueue = m_graphicsQueue;
     stagingBufferCreateInfo.device = m_vkDevice;
 
-    const std::vector<uint32_t>& indices = imageObject->GetIndices();
+	std::vector<uint32_t> indices;
+	meshInfo->GetIndices(indices);
 
     std::shared_ptr<GraphicsBuffer> stagingBuffer = std::make_shared<GraphicsBuffer>(stagingBufferCreateInfo);
-    stagingBuffer->LoadData((void*)indices.data(), (size_t)bufferSize);
-
-    GraphicsBuffer::BufferCreateInfo indexBufferCreateInfo = {};
-    indexBufferCreateInfo.size = bufferSize;
-    indexBufferCreateInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-    indexBufferCreateInfo.properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-    indexBufferCreateInfo.allocator = m_vmaAllocator;
-    indexBufferCreateInfo.commandPool = m_commandPool;
-    indexBufferCreateInfo.graphicsQueue = m_graphicsQueue;
-    indexBufferCreateInfo.device = m_vkDevice;
-
-    std::shared_ptr<GraphicsBuffer> indexBuffer = std::make_shared<GraphicsBuffer>(indexBufferCreateInfo);
-
-    stagingBuffer->CopyBuffer(indexBuffer, bufferSize);
-
-    stagingBuffer->DestroyBuffer();
-
-    return indexBuffer;
-}
-
-std::shared_ptr<GraphicsBuffer> VulkanInterface::CreateIndexBuffer(const std::shared_ptr<MeshRenderer>&  meshInfo) const
-{
-    VkDeviceSize bufferSize = sizeof(uint32_t) * meshInfo->GetIndices().size();
-
-    GraphicsBuffer::BufferCreateInfo stagingBufferCreateInfo = {};
-    stagingBufferCreateInfo.size = bufferSize;
-    stagingBufferCreateInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-    stagingBufferCreateInfo.properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-    stagingBufferCreateInfo.allocator = m_vmaAllocator;
-    stagingBufferCreateInfo.commandPool = m_commandPool;
-    stagingBufferCreateInfo.graphicsQueue = m_graphicsQueue;
-    stagingBufferCreateInfo.device = m_vkDevice;
-
-	const std::vector<uint32_t>& indices = meshInfo->GetIndices();
-
-    std::shared_ptr<GraphicsBuffer> stagingBuffer = std::make_shared<GraphicsBuffer>(stagingBufferCreateInfo);
-    stagingBuffer->LoadData((void*)indices.data(), (size_t)bufferSize);
+    stagingBuffer->LoadData(indices.data(), bufferSize);
 
     GraphicsBuffer::BufferCreateInfo indexBufferCreateInfo = {};
     indexBufferCreateInfo.size = bufferSize;
@@ -591,6 +530,7 @@ void VulkanInterface::UpdateInstanceBuffer(const std::string& objectName, const 
 {
     std::vector<std::byte> objectInfo;
 
+	size_t instanceDataSize = 0;
     for (auto it = objectHandles.begin(); it != objectHandles.end(); it++)
     {
         VulkanCommonFunctions::ObjectHandle currentHandle = *it;
@@ -602,7 +542,12 @@ void VulkanInterface::UpdateInstanceBuffer(const std::string& objectName, const 
 
         std::shared_ptr<RenderObject> object = objects[currentHandle];
 
-		std::shared_ptr<MeshRenderer> meshRenderer = object->GetComponent<MeshRenderer>();
+    	if (instanceDataSize == 0)
+    	{
+    		instanceDataSize = object->GetInstanceDataSize();
+    	}
+
+		std::shared_ptr<IMeshRenderer> meshRenderer = object->GetComponent<IMeshRenderer>();
 
         if (meshRenderer != nullptr && meshRenderer->IsEnabled())
         {
@@ -620,7 +565,7 @@ void VulkanInterface::UpdateInstanceBuffer(const std::string& objectName, const 
         return; 
     }
 
-    VkDeviceSize bufferSize = objectHandles.size() * sizeof(VulkanCommonFunctions::InstanceInfo);
+    VkDeviceSize bufferSize = objectHandles.size() * instanceDataSize;
 
 	std::shared_ptr<GraphicsBuffer> instanceBuffer = m_instanceBuffers[m_currentFrameIndex][objectName];
 
@@ -653,7 +598,7 @@ void VulkanInterface::DrawFrame(float deltaTime, const std::shared_ptr<Scene>& s
     	{
     		std::string objectName = it2->first;
 
-    		if (objectName != MeshRenderer::kCustomMeshName)
+    		if (objectName != IMeshRenderer::kCustomMeshName)
     		{
     			UpdateInstanceBuffer(objectName, it2->second, objects);
     		}
@@ -676,7 +621,7 @@ void VulkanInterface::DrawFrame(float deltaTime, const std::shared_ptr<Scene>& s
         {
             std::string objectName = it2->first;
 
-            if (objectName == MeshRenderer::kCustomMeshName)
+            if (objectName == IMeshRenderer::kCustomMeshName)
             {
             	for (auto it3 = it2->second.begin(); it3 != it2->second.end(); it3++)
             	{
@@ -824,4 +769,19 @@ void VulkanInterface::Cleanup() {
     }
 
     vmaDestroyAllocator(m_vmaAllocator);
+}
+
+void VulkanInterface::CreateVulkanInterface(WindowManager* windowManager)
+{
+	if (s_vulkanInterfaceSingleton != nullptr)
+	{
+		return;
+	}
+
+	s_vulkanInterfaceSingleton = std::make_shared<VulkanInterface>(windowManager);
+}
+
+std::shared_ptr<VulkanInterface> VulkanInterface::Get()
+{
+	return s_vulkanInterfaceSingleton;
 }

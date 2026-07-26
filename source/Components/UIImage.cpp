@@ -1,28 +1,17 @@
 #include "UIImage.h"
 #include "stb_image.h"
 
-UIImage::UIImage()
+UIImage::UIImage() : GenericUIObjectMeshRenderer(kSquareVertices, kSquareIndices)
 {
-	m_textured = false;
-	m_textureDataDirty = false;
 
-	SetVertices(kSquareVertices);
-	SetIndices(kSquareIndices);
 }
 
-UIImage::UIImage(const std::string& imageFilePath)
+UIImage::UIImage(const std::string& imageFilePath) : GenericUIObjectMeshRenderer(kSquareVertices, kSquareIndices)
 {
-	m_texturePath = imageFilePath;
-	m_textured = true;
-	m_textureDataDirty = true;
-
-	SetVertices(kSquareVertices);
-	SetIndices(kSquareIndices);
-
-	CalculateMeshInfo();
+	SetTexture(imageFilePath);
 }
 
-void UIImage::CalculateMeshInfo()
+void UIImage::TextureSetCallback()
 {
 	int channels;
 	if (!stbi_info(m_texturePath.c_str(), &m_imageWidth, &m_imageHeight, &channels))

@@ -51,6 +51,7 @@ public:
 
 	std::shared_ptr<GraphicsBuffer> GetInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths);
 	void SetInstanceBuffer(const std::shared_ptr<GraphicsBuffer>& instanceBuffer);
+	size_t GetInstanceDataSize();
 	size_t GetInstanceCount();
 	bool RequiresInstanceBufferRegeneration();
 

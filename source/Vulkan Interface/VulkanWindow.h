@@ -53,7 +53,6 @@ protected:
 	void resizeEvent(QResizeEvent* event) override;
 
 private:
-	std::shared_ptr<VulkanInterface> m_vulkanInterface;
 	std::shared_ptr<Scene> m_scene;
 	VulkanWindowRenderer* m_vulkanWindowRenderer = nullptr;
 

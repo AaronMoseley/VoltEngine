@@ -8,7 +8,6 @@
 Scene::Scene(WindowManager* windowManager, const std::shared_ptr<VulkanInterface>& vulkanInterface)
 {
 	m_windowManager = windowManager;
-    m_vulkanInterface = vulkanInterface;
 }
 
 void Scene::Update()
@@ -68,7 +67,7 @@ void Scene::Update()
             components[i]->Update(m_deltaTime);
         }
 
-        UpdateUIData(it->second);
+        UpdateMeshData(it->second);
     }
 
     for (size_t i = 0; i < m_updateCallbacks.size(); i++)
@@ -94,40 +93,6 @@ void Scene::OnResize(QSize newSize, QSize oldSize)
     }
 }
 
-void Scene::UpdateUIData(const std::shared_ptr<RenderObject>& currentObject)
-{
-    if (currentObject == nullptr)
-    {
-        return;
-    }
-
-    std::shared_ptr<UIMeshRenderer> meshComponent = currentObject->GetComponent<UIMeshRenderer>();
-
-    if(meshComponent == nullptr)
-    {
-        return;
-    }
-
-    if (meshComponent->IsMeshDataDirty())
-    {
-        FinalizeUIMesh(currentObject);
-        meshComponent->SetDirtyData(false);
-    }
-
-    std::shared_ptr<UIImage> imageComponent = currentObject->GetComponent<UIImage>();
-
-    if (imageComponent == nullptr)
-    {
-        return;
-    }
-
-    if (imageComponent->IsTextureDataDirty())
-    {
-        UpdateTexture(imageComponent->GetTexturePath());
-        imageComponent->SetTextureDataDirty(false);
-    }
-}
-
 void Scene::UpdateMeshData(const std::shared_ptr<RenderObject>& currentObject)
 {
     if (currentObject == nullptr)
@@ -135,18 +100,18 @@ void Scene::UpdateMeshData(const std::shared_ptr<RenderObject>& currentObject)
         return;
     }
 
-    std::shared_ptr<MeshRenderer> meshComponent = currentObject->GetComponent<MeshRenderer>();
+    std::shared_ptr<IMeshRenderer> meshComponent = currentObject->GetComponent<IMeshRenderer>();
 
     if (meshComponent == nullptr)
     {
         return;
     }
 
-    if (meshComponent->GetMeshName() != MeshRenderer::kCustomMeshName)
+    if (meshComponent->GetMeshName() != IMeshRenderer::kCustomMeshName)
     {
         if (meshComponent->IsMeshDataDirty())
         {
-            m_vulkanInterface->UpdateObjectBuffers(meshComponent);
+            VulkanInterface::Get()->UpdateObjectBuffers(meshComponent);
         }
 
         return;
@@ -167,7 +132,7 @@ void Scene::UpdateMeshData(const std::shared_ptr<RenderObject>& currentObject)
 
 bool Scene::MeshAlreadyAdded(const std::string& meshName) const
 {
-    return m_vulkanInterface->HasVertexBuffer(meshName);
+    return VulkanInterface::Get()->HasVertexBuffer(meshName);
 }
 
 VulkanCommonFunctions::ObjectHandle Scene::AddObject(const std::shared_ptr <RenderObject>& newObject)
@@ -183,14 +148,14 @@ VulkanCommonFunctions::ObjectHandle Scene::AddObject(const std::shared_ptr <Rend
     newObject->SetSceneManager(this);
     newObject->SetWindowManager(m_windowManager);
 
-    std::shared_ptr<MeshRenderer> meshComponent = newObject->GetComponent<MeshRenderer>();
+    std::shared_ptr<IMeshRenderer> meshComponent = newObject->GetComponent<IMeshRenderer>();
 
     if (meshComponent == nullptr)
     {
         return m_currentObjectHandle;
     }
 
-	m_vulkanInterface->UpdateObjectBuffers(meshComponent);
+	VulkanInterface::Get()->UpdateObjectBuffers(meshComponent);
 
     std::string objectName = meshComponent->GetMeshName();
     std::string materialName = newObject->GetMaterialName();
@@ -253,7 +218,7 @@ bool Scene::RemoveObject(VulkanCommonFunctions::ObjectHandle objectToRemove)
 		m_buffersToDestroy.push_back(instanceBuffer);
     }
 
-    std::shared_ptr<MeshRenderer> meshComponent = currentObject->GetComponent<MeshRenderer>();
+    std::shared_ptr<IMeshRenderer> meshComponent = currentObject->GetComponent<IMeshRenderer>();
 
     if (meshComponent == nullptr)
     {
@@ -303,7 +268,7 @@ bool Scene::RemoveUIObject(VulkanCommonFunctions::ObjectHandle objectToRemove)
         m_buffersToDestroy.push_back(instanceBuffer);
     }
 
-    std::shared_ptr<UIMeshRenderer> meshComponent = currentObject->GetComponent<UIMeshRenderer>();
+    std::shared_ptr<IMeshRenderer> meshComponent = currentObject->GetComponent<IMeshRenderer>();
 
     if (meshComponent == nullptr)
     {
@@ -351,43 +316,6 @@ std::shared_ptr<RenderObject> Scene::GetUIRenderObject(VulkanCommonFunctions::Ob
     return m_uiObjects[handle];
 }
 
-void Scene::FinalizeUIMesh(const std::shared_ptr<RenderObject>& updatedObject)
-{
-    if (updatedObject == nullptr)
-    {
-        return;
-    }
-
-    std::shared_ptr<UIMeshRenderer> meshComponent = updatedObject->GetComponent<UIMeshRenderer>();
-    if (meshComponent == nullptr)
-    {
-        return;
-    }
-
-    std::shared_ptr<GraphicsBuffer> oldVertexBuffer = meshComponent->GetVertexBuffer();
-    if (oldVertexBuffer != nullptr)
-    {
-        m_buffersToDestroy.push_back(oldVertexBuffer);
-    }
-
-    std::shared_ptr<GraphicsBuffer> oldIndexBuffer = meshComponent->GetIndexBuffer();
-    if (oldIndexBuffer != nullptr)
-    {
-        m_buffersToDestroy.push_back(oldIndexBuffer);
-    }
-
-    std::shared_ptr<GraphicsBuffer> vertexBuffer = m_vulkanInterface->CreateUIVertexBuffer(meshComponent);
-    std::shared_ptr<GraphicsBuffer> indexBuffer = m_vulkanInterface->CreateUIIndexBuffer(meshComponent);
-
-    meshComponent->SetVertexBuffer(vertexBuffer);
-    meshComponent->SetIndexBuffer(indexBuffer);
-
-    if (updatedObject->GetInstanceBuffer({}) == nullptr)
-    {
-        GenerateInstanceBuffer(updatedObject);
-    }
-}
-
 void Scene::FinalizeMesh(const std::shared_ptr<RenderObject>& updatedObject)
 {
     if (updatedObject == nullptr)
@@ -395,13 +323,13 @@ void Scene::FinalizeMesh(const std::shared_ptr<RenderObject>& updatedObject)
         return;
 	}
 
-	std::shared_ptr<MeshRenderer> meshComponent = updatedObject->GetComponent<MeshRenderer>();
+	std::shared_ptr<IMeshRenderer> meshComponent = updatedObject->GetComponent<IMeshRenderer>();
     if (meshComponent == nullptr)
     {
         return;
 	}
 
-    if (meshComponent->GetMeshName() != MeshRenderer::kCustomMeshName)
+    if (meshComponent->GetMeshName() != IMeshRenderer::kCustomMeshName)
     {
         return;
     }
@@ -418,12 +346,12 @@ void Scene::FinalizeMesh(const std::shared_ptr<RenderObject>& updatedObject)
 		m_buffersToDestroy.push_back(oldIndexBuffer);
 	}
 
-    std::shared_ptr<GraphicsBuffer> vertexBuffer = m_vulkanInterface->CreateVertexBuffer(meshComponent);
+    std::shared_ptr<GraphicsBuffer> vertexBuffer = VulkanInterface::Get()->CreateVertexBuffer(meshComponent);
     meshComponent->SetVertexBuffer(vertexBuffer);
 
     if (meshComponent->IsIndexed())
     {
-        std::shared_ptr<GraphicsBuffer> indexBuffer = m_vulkanInterface->CreateIndexBuffer(meshComponent);
+        std::shared_ptr<GraphicsBuffer> indexBuffer = VulkanInterface::Get()->CreateIndexBuffer(meshComponent);
         meshComponent->SetIndexBuffer(indexBuffer);
     }
 
@@ -443,18 +371,18 @@ void Scene::GenerateInstanceBuffer(const std::shared_ptr<RenderObject>& newObjec
     std::shared_ptr<Material> material = MaterialRegistry::Get()->GetMaterialByName(newObject->GetMaterialName());
 
     size_t instanceInfoSize = material->GetInstanceInfoSize();
-	std::shared_ptr<GraphicsBuffer> instanceBuffer = m_vulkanInterface->CreateInstanceBuffer(newObject->GetInstanceCount(), instanceInfoSize);
+	std::shared_ptr<GraphicsBuffer> instanceBuffer = VulkanInterface::Get()->CreateInstanceBuffer(newObject->GetInstanceCount(), instanceInfoSize);
     newObject->SetInstanceBuffer(instanceBuffer);
 }
 
 void Scene::UpdateTexture(const std::filesystem::path& newTexturePath) const
 {
-    if (m_vulkanInterface->HasTexture(newTexturePath))
+    if (VulkanInterface::Get()->HasTexture(newTexturePath))
     {
         return;
     }
 
-    m_vulkanInterface->UpdateTextureResources(newTexturePath);
+    VulkanInterface::Get()->UpdateTextureResources(newTexturePath);
 }
 
 VulkanCommonFunctions::ObjectHandle Scene::GetObjectByTag(const std::string& tag)
@@ -474,7 +402,7 @@ VulkanCommonFunctions::ObjectHandle Scene::GetObjectByTag(const std::string& tag
 std::shared_ptr<Font> Scene::AddFont(const std::string& atlasFilePath, const std::string& descriptionFilePath) const
 {
     std::shared_ptr<Font> newFont = FontManager::Get()->AddFont(atlasFilePath, descriptionFilePath);
-    m_vulkanInterface->UpdateTextureResources(atlasFilePath);
+    VulkanInterface::Get()->UpdateTextureResources(atlasFilePath);
 
     return newFont;
 }
@@ -490,7 +418,7 @@ void Scene::Cleanup()
             instanceBuffer->DestroyBuffer();
         }
 
-        std::shared_ptr<MeshRenderer> meshComponent = it->second->GetComponent<MeshRenderer>();
+        std::shared_ptr<IMeshRenderer> meshComponent = it->second->GetComponent<IMeshRenderer>();
         if (meshComponent != nullptr)
         {
             std::shared_ptr<GraphicsBuffer> vertexBuffer = meshComponent->GetVertexBuffer();
@@ -516,7 +444,7 @@ void Scene::Cleanup()
             instanceBuffer->DestroyBuffer();
         }
 
-        std::shared_ptr<UIMeshRenderer> uiMeshComponent = it->second->GetComponent<UIMeshRenderer>();
+        std::shared_ptr<IMeshRenderer> uiMeshComponent = it->second->GetComponent<IMeshRenderer>();
         if (uiMeshComponent != nullptr)
         {
             std::shared_ptr<GraphicsBuffer> vertexBuffer = uiMeshComponent->GetVertexBuffer();

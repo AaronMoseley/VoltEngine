@@ -93,7 +93,7 @@ void DemoBehavior::Start()
             newObject->AddComponent<Tetrahedron>();
         }
 
-        std::shared_ptr<MeshRenderer> currentMesh = newObject->GetComponent<MeshRenderer>();
+        std::shared_ptr<GenericObjectMeshRenderer> currentMesh = newObject->GetComponent<GenericObjectMeshRenderer>();
 
         currentMesh->SetOpacity((static_cast<double>(rand()) / (RAND_MAX)));
 
@@ -181,7 +181,7 @@ void DemoBehavior::Update(float deltaTime)
             newObject->AddComponent<Tetrahedron>();
         }
 
-        std::shared_ptr<MeshRenderer> currentMesh = newObject->GetComponent<MeshRenderer>();
+        std::shared_ptr<GenericObjectMeshRenderer> currentMesh = newObject->GetComponent<GenericObjectMeshRenderer>();
 
         currentMesh->SetOpacity(static_cast<double>(rand()) / (RAND_MAX));
 
@@ -212,8 +212,8 @@ void DemoBehavior::Update(float deltaTime)
             glm::vec3 lightColor = glm::vec3((static_cast<double>(rand()) / (RAND_MAX)), (static_cast<double>(rand()) / (RAND_MAX)), (static_cast<double>(rand()) / (RAND_MAX)));
 
             newLightSource->SetColor(lightColor);
-            newObject->GetComponent<MeshRenderer>()->SetColor(lightColor);
-            newObject->GetComponent<MeshRenderer>()->SetLit(false);
+            newObject->GetComponent<GenericObjectMeshRenderer>()->SetColor(lightColor);
+            newObject->GetComponent<GenericObjectMeshRenderer>()->SetLit(false);
         }
 
         VulkanCommonFunctions::ObjectHandle newObjectHandle = GetScene()->AddObject(newObject);

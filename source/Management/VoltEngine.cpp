@@ -4,11 +4,9 @@ VoltEngine::VoltEngine(QWidget* parent, QVulkanInstance* vulkanInstance, int scr
 {
     m_windowManager = new WindowManager(this, screenWidth, screenHeight, "Vulkan Lighting Demo");
 
-    m_vulkanInterface = std::make_shared<VulkanInterface>(m_windowManager);
+    VulkanInterface::CreateVulkanInterface(m_windowManager);
 
-    m_windowManager->SetVulkanInterface(m_vulkanInterface);
-
-    m_sceneManager = std::make_shared<Scene>(m_windowManager, m_vulkanInterface);
+    m_sceneManager = std::make_shared<Scene>(m_windowManager, VulkanInterface::Get());
 
     m_windowManager->SetScene(m_sceneManager);
 

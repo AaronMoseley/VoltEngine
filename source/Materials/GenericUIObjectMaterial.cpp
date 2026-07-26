@@ -2,6 +2,8 @@
 #include "Components/Transform.h"
 #include "Vulkan Interface/VulkanWindow.h"
 
+MaterialAutoRegister<GenericUIObjectMaterial> GenericUIObjectMaterial::s_register;
+
 void GenericUIObjectMaterial::GetInstanceInfo(RenderObject* object, const std::vector<std::filesystem::path>& textureFilePaths, std::vector<std::byte>& outData)
 {
 	bool handled = UpdateInstanceInfoFromImage(object, textureFilePaths, outData);
@@ -25,7 +27,7 @@ size_t GenericUIObjectMaterial::GetInstanceCount(RenderObject* object)
 
 bool GenericUIObjectMaterial::UpdateInstanceInfoFromImage(RenderObject* object, const std::vector<std::filesystem::path>& textureFilePaths, std::vector<std::byte>& outData)
 {
-	VulkanCommonFunctions::UIInstanceInfo result {};
+	UIInstanceInfo result {};
 	std::shared_ptr<Transform> transform = object->GetComponent<Transform>();
 	if (transform == nullptr)
 	{
@@ -52,9 +54,28 @@ bool GenericUIObjectMaterial::UpdateInstanceInfoFromImage(RenderObject* object, 
 		result.m_displayProperties.y = 0;
 	}
 
-	memcpy(outData.data(), &result, sizeof(VulkanCommonFunctions::UIInstanceInfo));
+	memcpy(outData.data(), &result, sizeof(UIInstanceInfo));
 
 	return true;
+}
+
+void GenericUIObjectMaterial::CreateVertexFormat()
+{
+	m_vertexFormat = std::make_shared<VertexFormat>();
+
+	m_vertexFormat->AddNewBinding(0, VK_VERTEX_INPUT_RATE_VERTEX);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+
+	m_vertexFormat->AddNewBinding(1, VK_VERTEX_INPUT_RATE_INSTANCE);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_UINT);
+
+	m_vertexFormat->Finalize();
 }
 
 bool GenericUIObjectMaterial::UpdateInstanceInfoFromText(RenderObject* object, const std::vector<std::filesystem::path>& textureFilePaths, std::vector<std::byte>& outData)

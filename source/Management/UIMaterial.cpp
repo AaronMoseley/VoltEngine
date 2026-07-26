@@ -1,4 +1,5 @@
 #include "UIMaterial.h"
+#include "Vulkan Interface/TextureImage.h"
 
 void UIMaterial::CreateDescriptorSetLayout(const MaterialRegistry::MaterialCreationData& creationData)
 {

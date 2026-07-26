@@ -3,14 +3,35 @@
 
 #include "Management/UIMaterial.h"
 
-class GenericUIObjectMaterial : public UIMaterial {
+class GenericUIObjectMaterial : public UIMaterial
+{
 public:
-	GenericUIObjectMaterial() : UIMaterial("GenericUIObjectMaterial")
+	struct  UIInstanceInfo
+	{
+		glm::vec4 m_objectWorldPosition;
+		glm::vec4 m_scale;
+		glm::vec4 m_colorRGB;
+		glm::vec4 m_textureOffsetInAtlas;
+		//x, y is texture size, z, w is offset
+		glm::vec4 m_characterTextureSizeAndPositionOffset;
+		//x is textured boolean, y is texture index, z is isTextCharacter boolean
+		glm::uvec4 m_displayProperties;
+	};
+
+	struct  UIVertex
+	{
+		glm::vec4 m_position;
+		glm::vec4 m_textureCoordinate;
+	};
+
+	GenericUIObjectMaterial() : UIMaterial(kMaterialName)
 	{
 
 	}
 
-	size_t GetInstanceInfoSize() override { return sizeof(VulkanCommonFunctions::UIInstanceInfo); };
+	static const std::string& GetNameStatic() {return kMaterialName;}
+
+	size_t GetInstanceInfoSize() override { return sizeof(UIInstanceInfo); };
 	void GetInstanceInfo(RenderObject* object, const std::vector<std::filesystem::path>& textureFilePaths, std::vector<std::byte>& outData) override;
 
 	size_t GetInstanceCount(RenderObject* object) override;
@@ -22,12 +43,12 @@ protected:
 	bool UpdateInstanceInfoFromImage(RenderObject* object, const std::vector<std::filesystem::path>& textureFilePaths, std::vector<std::byte>& outData);
 	bool UpdateInstanceInfoFromText(RenderObject* object, const std::vector<std::filesystem::path>& textureFilePaths, std::vector<std::byte>& outData);
 
-	bool IsUIBased() override { return true; }
+	void CreateVertexFormat() override;
 
 private:
 	static MaterialAutoRegister<GenericUIObjectMaterial> s_register;
-};
 
-MaterialAutoRegister<GenericUIObjectMaterial> GenericUIObjectMaterial::s_register;
+	inline static const std::string kMaterialName = "GenericUIObjectMaterial";
+};
 
 #endif //VOLTENGINE_GENERICUIOBJECTMATERIAL_H

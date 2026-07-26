@@ -1,9 +1,12 @@
 #include "GenericObjectMaterial.h"
 #include "Components/Transform.h"
+#include "Components/GenericObjectMeshRenderer.h"
+
+MaterialAutoRegister<GenericObjectMaterial> GenericObjectMaterial::s_register;
 
 void GenericObjectMaterial::GetInstanceInfo(RenderObject* object, const std::vector<std::filesystem::path>& textureFilePaths, std::vector<std::byte>& outData)
 {
-	VulkanCommonFunctions::InstanceInfo result = {};
+	InstanceInfo result = {};
 
 	std::shared_ptr<Transform> transform = object->GetComponent<Transform>();
 
@@ -12,7 +15,7 @@ void GenericObjectMaterial::GetInstanceInfo(RenderObject* object, const std::vec
 		return;
 	}
 
-	std::shared_ptr<MeshRenderer> meshRenderer = object->GetComponent<MeshRenderer>();
+	std::shared_ptr<GenericObjectMeshRenderer> meshRenderer = object->GetComponent<GenericObjectMeshRenderer>();
 
 	if (meshRenderer == nullptr)
 	{
@@ -58,5 +61,33 @@ void GenericObjectMaterial::GetInstanceInfo(RenderObject* object, const std::vec
 		result.m_displayProperties.z = 0;
 	}
 
-	memcpy(outData.data(), &result, sizeof(VulkanCommonFunctions::InstanceInfo));
+	memcpy(outData.data(), &result, sizeof(InstanceInfo));
+}
+
+void GenericObjectMaterial::CreateVertexFormat()
+{
+	m_vertexFormat = std::make_shared<VertexFormat>();
+
+	m_vertexFormat->AddNewBinding(0, VK_VERTEX_INPUT_RATE_VERTEX);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+
+	m_vertexFormat->AddNewBinding(1, VK_VERTEX_INPUT_RATE_INSTANCE);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_UINT);
+
+	m_vertexFormat->Finalize();
 }

@@ -44,6 +44,14 @@ size_t RenderObject::GetInstanceCount()
 	return material->GetInstanceCount(this);
 }
 
+size_t RenderObject::GetInstanceDataSize()
+{
+	std::shared_ptr<Material> material = MaterialRegistry::Get()->GetMaterialByName(GetMaterialName());
+
+	size_t instanceInfoSize = material->GetInstanceInfoSize();
+	return instanceInfoSize;
+}
+
 std::shared_ptr<GraphicsBuffer> RenderObject::GetInstanceBuffer(const std::vector<std::filesystem::path>& textureFilePaths)
 {
 	if (m_instanceBuffer == nullptr)
@@ -66,60 +74,32 @@ std::shared_ptr<GraphicsBuffer> RenderObject::GetInstanceBuffer(const std::vecto
 
 void RenderObject::GetVertexBuffer(std::vector<size_t>& outBufferSizes, std::vector<std::shared_ptr<GraphicsBuffer>>& outBuffers)
 {
-	std::shared_ptr<MeshRenderer> meshComponent = GetComponent<MeshRenderer>();
+	std::shared_ptr<IMeshRenderer> meshComponent = GetComponent<IMeshRenderer>();
 	if (meshComponent != nullptr)
 	{
-		outBufferSizes.push_back(meshComponent->GetVertexBufferSize());
+		outBufferSizes.push_back(meshComponent->GetVertexCount());
 		outBuffers.push_back(meshComponent->GetVertexBuffer());
-	}
-
-	std::shared_ptr<UIImage> imageComponent = GetComponent<UIImage>();
-	if (imageComponent != nullptr)
-	{
-		outBufferSizes.push_back(imageComponent->GetVertexBufferSize());
-		outBuffers.push_back(imageComponent->GetVertexBuffer());
-	}
-
-	std::shared_ptr<Text> textComponent = GetComponent<Text>();
-	if (textComponent != nullptr)
-	{
-		outBufferSizes.push_back(textComponent->GetVertexBufferSize());
-		outBuffers.push_back(textComponent->GetVertexBuffer());
 	}
 }
 
 void RenderObject::GetIndexBuffer(std::vector<size_t>& outBufferSizes, std::vector<std::shared_ptr<GraphicsBuffer>>& outBuffers)
 {
-	std::shared_ptr<MeshRenderer> meshComponent = GetComponent<MeshRenderer>();
+	std::shared_ptr<IMeshRenderer> meshComponent = GetComponent<IMeshRenderer>();
 
 	if (meshComponent != nullptr && meshComponent->IsIndexed())
 	{
-		outBufferSizes.push_back(meshComponent->GetIndexBufferSize());
+		outBufferSizes.push_back(meshComponent->GetIndexCount());
 		outBuffers.push_back(meshComponent->GetIndexBuffer());
 	} else if (meshComponent != nullptr && !meshComponent->IsIndexed())
 	{
 		outBufferSizes.push_back(0);
 		outBuffers.push_back(nullptr);
 	}
-
-	std::shared_ptr<UIImage> imageComponent = GetComponent<UIImage>();
-	if (imageComponent != nullptr)
-	{
-		outBufferSizes.push_back(imageComponent->GetIndexBufferSize());
-		outBuffers.push_back(imageComponent->GetIndexBuffer());
-	}
-
-	std::shared_ptr<Text> textComponent = GetComponent<Text>();
-	if (textComponent != nullptr)
-	{
-		outBufferSizes.push_back(textComponent->GetIndexBufferSize());
-		outBuffers.push_back(textComponent->GetIndexBuffer());
-	}
 }
 
 bool RenderObject::IsIndexed()
 {
-	std::shared_ptr<MeshRenderer> meshComponent = GetComponent<MeshRenderer>();
+	std::shared_ptr<IMeshRenderer> meshComponent = GetComponent<IMeshRenderer>();
 
 	if (meshComponent != nullptr)
 	{

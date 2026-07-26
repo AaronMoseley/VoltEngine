@@ -3,7 +3,6 @@
 
 VulkanWindowRenderer::VulkanWindowRenderer(const std::shared_ptr<VulkanInterface>& vulkanInterface, const std::shared_ptr<Scene>& scene)
 {
-	m_vulkanInterface = vulkanInterface;
 	m_scene = scene;
 }
 
@@ -14,27 +13,27 @@ void VulkanWindowRenderer::preInitResources()
 
 void VulkanWindowRenderer::initResources()
 {
-	m_vulkanInterface->InitializeVulkan();
+	VulkanInterface::Get()->InitializeVulkan();
 }
 
 void VulkanWindowRenderer::initSwapChainResources()
 {
-	m_vulkanInterface->CreateDepthResources();
+	VulkanInterface::Get()->CreateDepthResources();
 
-	m_vulkanInterface->SetSwapChainReady(true);
+	VulkanInterface::Get()->SetSwapChainReady(true);
 }
 
 void VulkanWindowRenderer::releaseResources()
 {
-	m_vulkanInterface->SetSwapChainReady(false);
+	VulkanInterface::Get()->SetSwapChainReady(false);
 
 	m_scene->Cleanup();
-	m_vulkanInterface->Cleanup();
+	VulkanInterface::Get()->Cleanup();
 }
 
 void VulkanWindowRenderer::releaseSwapChainResources()
 {
-	m_vulkanInterface->CleanupSwapChain();
+	VulkanInterface::Get()->CleanupSwapChain();
 }
 
 void VulkanWindowRenderer::startNextFrame()
@@ -43,7 +42,7 @@ void VulkanWindowRenderer::startNextFrame()
 
 	if (!m_isShuttingDown)
 	{
-		m_vulkanInterface->DrawFrame(0.1f, m_scene);
+		VulkanInterface::Get()->DrawFrame(0.1f, m_scene);
 	}
 }
 

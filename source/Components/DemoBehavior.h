@@ -3,6 +3,9 @@
 #include "Objects/ObjectComponent.h"
 #include "Vulkan Interface/VulkanCommonFunctions.h"
 #include "Components/Transform.h"
+#include "Materials/GenericObjectMaterial.h"
+#include "Components/GenericObjectMeshRenderer.h"
+#include "Components/GenericUIObjectMeshRenderer.h"
 
 class DemoBehavior : public ObjectComponent {
 public:
@@ -27,7 +30,7 @@ private:
         glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
-    std::vector<VulkanCommonFunctions::Vertex> kSquareVertices = {
+    std::vector<GenericObjectMaterial::Vertex> kSquareVertices = {
         //positions                                     //normals                                       //texture coords
         {{-0.5f,  0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f}}, //top left
         {{ 0.5f,  0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f, 0.0f}}, //top right

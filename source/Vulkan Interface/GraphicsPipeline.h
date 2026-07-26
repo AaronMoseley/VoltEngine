@@ -1,8 +1,10 @@
 #pragma once
 
 #include <fstream>
+#include <memory>
 
 #include "Vulkan Interface/VulkanCommonFunctions.h"
+#include "Management/VertexFormat.h"
 
 class VulkanWindow;
 
@@ -12,7 +14,7 @@ struct GraphicsPipelineCreateInfo {
 	VkDescriptorSetLayout m_descriptorSetLayout;
 	VkDevice m_device;
 	VulkanWindow* m_vulkanWindow;
-	bool m_uiBasedPipeline = false;
+	std::shared_ptr<VertexFormat> m_vertexFormat;
 };
 
 class GraphicsPipeline {
@@ -40,7 +42,7 @@ private:
 	std::string m_vertexShaderFilePath;
 	std::string m_fragmentShaderFilePath;
 
-	bool m_uiBasedPipeline = false;
+	std::shared_ptr<VertexFormat> m_vertexFormat;
 
 	VulkanWindow* m_vulkanWindow;
 };

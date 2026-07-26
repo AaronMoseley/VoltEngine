@@ -1,103 +1,147 @@
-#pragma once
+#ifndef VOLTENGINE_MESHRENDERER_H
+#define VOLTENGINE_MESHRENDERER_H
 
 #include "Objects/ObjectComponent.h"
-#include "Vulkan Interface/VulkanCommonFunctions.h"
 #include "Vulkan Interface/GraphicsBuffer.h"
 
-#include <glm.hpp>
-
-#include <vector>
-
-class MeshRenderer : public ObjectComponent {
+class IMeshRenderer : public ObjectComponent
+{
 public:
 	inline const static std::string kCustomMeshName = "CustomMesh";
 
-	MeshRenderer() { m_meshName = kCustomMeshName; };
-	MeshRenderer(const std::vector<VulkanCommonFunctions::Vertex>& vertices, const std::string& name)
+	IMeshRenderer()
 	{
-		m_vertices = vertices; m_meshName = name;
+
 	}
 
-	MeshRenderer(const std::vector<VulkanCommonFunctions::Vertex>& vertices, const std::vector<uint32_t>& indices, const std::string& name)
+	virtual bool IsIndexed() const = 0;
+
+	virtual size_t GetVertexCount() const = 0;
+	virtual size_t GetIndexCount() const = 0;
+
+	virtual size_t GetVertexDataSize() const = 0;
+
+	virtual void SetDirtyData(bool dirty) = 0;
+	virtual bool IsMeshDataDirty() const = 0;
+
+	virtual void SetVertexBuffer(const std::shared_ptr<GraphicsBuffer>& vertexBuffer) = 0;
+	virtual std::shared_ptr<GraphicsBuffer> GetVertexBuffer() = 0;
+
+	virtual void SetIndexBuffer(const std::shared_ptr<GraphicsBuffer>& indexBuffer) = 0;
+	virtual std::shared_ptr<GraphicsBuffer> GetIndexBuffer() = 0;
+
+	virtual std::string GetMeshName() = 0;
+
+	virtual void GetVertexData(std::vector<std::byte>& outVertexData) = 0;
+	virtual void GetIndices(std::vector<uint32_t>& outIndices) = 0;
+	virtual void SetIndexed(bool newIndexedValue) = 0;
+
+	virtual bool GetTextured() const = 0;
+	virtual std::string GetTexturePath() = 0;
+
+	virtual void SetTexture(const std::string& texturePath) = 0;
+	virtual void SetTextured(bool textured) = 0;
+
+	virtual void SetTextureDataDirty(bool dirty) = 0;
+	virtual bool IsTextureDataDirty() const = 0;
+
+private:
+};
+
+template<typename T>
+class MeshRenderer : public IMeshRenderer {
+public:
+	MeshRenderer()
 	{
-		m_vertices = vertices; m_indices = indices; m_useIndices = true; m_meshName = name;
+		m_vertexDataSize = sizeof(T);
 	}
 
-	virtual const std::vector<VulkanCommonFunctions::Vertex>& GetVertices() { return m_vertices; }
-	void SetVertices(const std::vector<VulkanCommonFunctions::Vertex>& vertices);
-	size_t GetVertexBufferSize() const { return m_vertexBufferSize; }
+	bool IsIndexed() const override { return m_indexed; }
 
-	virtual const std::vector<uint32_t>& GetIndices() { return m_indices; }
-	void SetIndices(const std::vector<uint32_t>& indices);
-	size_t GetIndexBufferSize() const { return m_indexBufferSize; }
+	size_t GetVertexCount() const override { return m_vertexCount; }
+	size_t GetIndexCount() const override { return m_indexCount; }
 
-	glm::vec3 GetColor() const { return m_color; }
-	void SetColor(glm::vec3 color) { m_color = color; }
+	size_t GetVertexDataSize() const override { return m_vertexDataSize; }
 
-	bool IsIndexed() const { return m_useIndices; }
-	void SetIndexed(bool useIndices) { m_useIndices = useIndices; }
+	void SetDirtyData(bool dirty) override { m_meshDataDirty = dirty; }
+	bool IsMeshDataDirty() const override { return m_meshDataDirty; }
 
-	bool GetLit() const { return m_lit; }
-	void SetLit(bool lit) { m_lit = lit; }
+	void SetVertexBuffer(const std::shared_ptr<GraphicsBuffer>& vertexBuffer) override { m_vertexBuffer = vertexBuffer; }
+	std::shared_ptr<GraphicsBuffer> GetVertexBuffer() override { return m_vertexBuffer; }
 
-	bool GetTextured() const { return m_textured; }
-	std::string GetTexturePath() { return m_texturePath; }
+	void SetIndexBuffer(const std::shared_ptr<GraphicsBuffer>& indexBuffer) override { m_indexBuffer = indexBuffer; }
+	std::shared_ptr<GraphicsBuffer> GetIndexBuffer() override { return m_indexBuffer; }
 
-	void SetTexture(const std::string& texturePath)
+	std::string GetMeshName() override { return m_meshName; }
+
+	void GetVertexData(std::vector<std::byte>& outVertexData) override
+	{
+		outVertexData.resize(m_vertexCount * GetVertexDataSize());
+		memcpy(outVertexData.data(), m_vertices.data(), outVertexData.size());
+	}
+
+	void GetVertices(std::vector<T>& outVertices) { outVertices = m_vertices; }
+	void SetVertices(const std::vector<T>& vertices)
+	{
+		m_vertexCount = vertices.size();
+		m_vertices = vertices;
+
+		SetDirtyData(true);
+	}
+
+	void GetIndices(std::vector<uint32_t>& outIndices) override
+	{
+		outIndices = m_indices;
+	}
+
+	void SetIndices(const std::vector<uint32_t>& indices)
+	{
+		m_indexCount = indices.size();
+		m_indices = indices;
+		m_indexed = true;
+
+		SetDirtyData(true);
+	}
+
+	void SetIndexed(bool newIndexedValue) override { m_indexed = newIndexedValue; }
+
+	bool GetTextured() const override { return m_textured; }
+	std::string GetTexturePath() override { return m_texturePath; }
+
+	void SetTexture(const std::string& texturePath) override
 	{
 		m_texturePath = texturePath;
 		m_textured = true;
 		m_textureDataDirty = true;
+		TextureSetCallback();
 	};
-	void SetTextured(bool textured) { m_textured = textured; }
+	void SetTextured(bool textured) override { m_textured = textured; }
 
-	void SetVertexBuffer(const std::shared_ptr<GraphicsBuffer>& vertexBuffer) { m_vertexBuffer = vertexBuffer; }
-	std::shared_ptr<GraphicsBuffer> GetVertexBuffer() { return m_vertexBuffer; }
+	void SetTextureDataDirty(bool dirty) override { m_textureDataDirty = dirty; }
+	bool IsTextureDataDirty() const override { return m_textureDataDirty; }
 
-	void SetIndexBuffer(const std::shared_ptr<GraphicsBuffer>& indexBuffer) { m_indexBuffer = indexBuffer; }
-	std::shared_ptr<GraphicsBuffer> GetIndexBuffer() { return m_indexBuffer; }
-
-	std::string GetMeshName() { return m_meshName; }
-
-	void SetOpacity(float opacity) { m_opacity = opacity; }
-	float GetOpacity() const { return m_opacity; }
-
-	void SetShininess(float shininess) { m_shininess = shininess; }
-	float GetShininess() const { return m_shininess; }
-
-	void SetDirtyData(bool dirty) { m_meshDataDirty = dirty; }
-	bool IsMeshDataDirty() const { return m_meshDataDirty; }
-
-	void SetTextureDataDirty(bool dirty) { m_textureDataDirty = dirty; }
-	bool IsTextureDataDirty() const { return m_textureDataDirty; }
-
-	void SetIsBillboarded(bool isBillboarded) { m_isBillboarded = isBillboarded; }
-	bool IsBillboarded() const { return m_isBillboarded; }
+	virtual void TextureSetCallback() {};
 
 protected:
-	std::vector<VulkanCommonFunctions::Vertex> m_vertices;
+	std::vector<T> m_vertices;
 	std::vector<uint32_t> m_indices;
+
+	bool m_meshDataDirty = false;
+	bool m_indexed = false;
+
+	bool m_textured = false;
+	bool m_textureDataDirty = false;
+	std::string m_texturePath = "";
 
 	std::shared_ptr<GraphicsBuffer> m_vertexBuffer = nullptr;
 	std::shared_ptr<GraphicsBuffer> m_indexBuffer = nullptr;
 
-	size_t m_indexBufferSize = 0;
-	size_t m_vertexBufferSize = 0;
-	
-	float m_opacity = 1.0f;
-	float m_shininess = 4.0f;
+	size_t m_vertexDataSize = 0;
 
-	bool m_useIndices = false;
-	bool m_lit = true;
+	size_t m_indexCount = 0;
+	size_t m_vertexCount = 0;
 
-	bool m_meshDataDirty = false;
-	bool m_textureDataDirty = false;
-
-	bool m_textured = false;
-	std::string m_texturePath = "";
-
-	bool m_isBillboarded = false;
-
-	std::string m_meshName = "";
-	glm::vec3 m_color = glm::vec3(1.0f);
+	std::string m_meshName = kCustomMeshName;
 };
+
+#endif //VOLTENGINE_MESHRENDERER_H

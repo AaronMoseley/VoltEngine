@@ -2,15 +2,9 @@
 #include "Objects/RenderObject.h"
 #include "Components/Transform.h"
 
-Text::Text()
-{
-	SetVertices(kSquareVertices);
-	SetIndices(kSquareIndices);
-}
-
 void Text::GetInstanceInfo(const std::pair<size_t, size_t>& screenSize, const std::shared_ptr<Font>& currentFont, const size_t textureIndex, std::vector<std::byte>& outData)
 {
-	std::vector<VulkanCommonFunctions::UIInstanceInfo> characterInfos;
+	std::vector<GenericUIObjectMaterial::UIInstanceInfo> characterInfos;
 	GetCharacterInstanceInfo(screenSize, currentFont, characterInfos);
 
 	for (size_t i = 0; i < characterInfos.size(); i++)
@@ -21,7 +15,7 @@ void Text::GetInstanceInfo(const std::pair<size_t, size_t>& screenSize, const st
 	memcpy(outData.data(), characterInfos.data(), outData.size());
 }
 
-void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const std::shared_ptr<Font>& currentFont, std::vector<VulkanCommonFunctions::UIInstanceInfo>& outCharacterInfo)
+void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const std::shared_ptr<Font>& currentFont, std::vector<GenericUIObjectMaterial::UIInstanceInfo>& outCharacterInfo)
 {
 	glm::vec3 componentPosition = GetOwner()->GetComponent<Transform>()->GetWorldPosition();
 	glm::vec3 scale = GetOwner()->GetComponent<Transform>()->GetWorldScale();
@@ -54,7 +48,7 @@ void Text::GetCharacterInstanceInfo(std::pair<size_t, size_t> screenSize, const 
 		float widthScale = (currentGlyphInfo.scaleMultiplierX * m_fontSize) * GetPixelToScreen(screenSize);
 
 		//create new instance info
-		VulkanCommonFunctions::UIInstanceInfo currentCharacterInfo = {};
+		GenericUIObjectMaterial::UIInstanceInfo currentCharacterInfo = {};
 
 		//set color and opacity
 		currentCharacterInfo.m_colorRGB = m_color;

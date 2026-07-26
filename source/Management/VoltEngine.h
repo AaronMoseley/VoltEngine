@@ -25,10 +25,8 @@ public:
 
 	WindowManager* GetWindowManager() const { return m_windowManager; }
 	std::shared_ptr<Scene> GetCurrentScene() { return m_sceneManager; }
-	std::shared_ptr<VulkanInterface> GetVulkanInterface() { return m_vulkanInterface; }
 
 private:
 	WindowManager* m_windowManager;
 	std::shared_ptr<Scene> m_sceneManager;
-	std::shared_ptr<VulkanInterface> m_vulkanInterface;
 };

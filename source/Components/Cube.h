@@ -1,24 +1,20 @@
 #pragma once
 
-#include "Components/MeshRenderer.h"
+#include "Components/GenericObjectMeshRenderer.h"
 #include "Vulkan Interface/VulkanCommonFunctions.h"
 
-class Cube : public MeshRenderer {
+class Cube : public GenericObjectMeshRenderer {
 public:
-    Cube() : MeshRenderer()
+    Cube() : GenericObjectMeshRenderer(kCubeVertices, kCubeIndices, "Cube")
 	{
-        m_meshName = "Cube";
-        SetIndexed(true);
-	}
 
-    const std::vector<VulkanCommonFunctions::Vertex>& GetVertices() override { return kCubeVertices; };
-	const std::vector<uint32_t>& GetIndices() override { return kCubeIndices; };
+	}
 
 private:
     using MeshRenderer::SetIndices;
 	using MeshRenderer::SetVertices;
 
-    const std::vector<VulkanCommonFunctions::Vertex> kCubeVertices =
+    inline static const std::vector<GenericObjectMaterial::Vertex> kCubeVertices =
     {
         //top
         {{-0.5f, 0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 0.0f}},
@@ -57,7 +53,7 @@ private:
         {{0.5f, 0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f, 0.0f}},
     };
 
-    const std::vector<uint32_t> kCubeIndices =
+    inline static const std::vector<uint32_t> kCubeIndices =
     {
         //top
         0, 1, 3,  3, 1, 2,

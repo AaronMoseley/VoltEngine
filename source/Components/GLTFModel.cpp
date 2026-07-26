@@ -2,7 +2,7 @@
 
 #include "Management/Scene.h"
 
-GLTFModel::GLTFModel() : MeshRenderer()
+GLTFModel::GLTFModel() : GenericObjectMeshRenderer()
 {
 
 }
@@ -120,6 +120,8 @@ void GLTFModel::ReadModel()
 	{
 		ReverseWindingOrder(false);
 	}
+
+	m_vertexCount = m_vertices.size();
 }
 
 void GLTFModel::ReadIndices()
@@ -163,6 +165,7 @@ void GLTFModel::ReadIndices()
 	}
 
 	SetIndexed(m_indices.size() >= 3);
+	m_indexCount = m_indices.size();
 }
 
 template<typename T>

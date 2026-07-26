@@ -1,4 +1,5 @@
 #include "Material.h"
+#include "Vulkan Interface/TextureImage.h"
 
 void Material::InitializeMaterial(const MaterialRegistry::MaterialCreationData& creationData)
 {
@@ -8,6 +9,7 @@ void Material::InitializeMaterial(const MaterialRegistry::MaterialCreationData& 
 	m_vulkanWindow = creationData.m_vulkanWindow;
 	m_vkDevice = creationData.m_vkDevice;
 
+	CreateVertexFormat();
 	CreateDescriptorSetLayout(creationData);
 	CreateGraphicsPipeline();
 	CreateDescriptorPool(creationData);
@@ -36,7 +38,7 @@ void Material::CreateGraphicsPipeline()
 	pipelineCreateInfo.m_descriptorSetLayout = m_descriptorSetLayout;
 	pipelineCreateInfo.m_device = m_vkDevice;
 	pipelineCreateInfo.m_vulkanWindow = m_vulkanWindow;
-	pipelineCreateInfo.m_uiBasedPipeline = IsUIBased();
+	pipelineCreateInfo.m_vertexFormat = m_vertexFormat;
 	m_graphicsPipeline = std::make_shared<GraphicsPipeline>(pipelineCreateInfo);
 }
 

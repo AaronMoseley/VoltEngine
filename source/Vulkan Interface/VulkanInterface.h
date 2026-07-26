@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <filesystem>
 
-#include "Components/MeshRenderer.h"
+#include "Components/GenericObjectMeshRenderer.h"
 
 class VulkanWindow;
 class WindowManager;
@@ -32,13 +32,10 @@ public:
 
     void Cleanup();
 
-    std::shared_ptr<GraphicsBuffer> CreateVertexBuffer(const std::shared_ptr<MeshRenderer>& object) const;
-    std::shared_ptr<GraphicsBuffer> CreateIndexBuffer(const std::shared_ptr<MeshRenderer>&  object) const;
+    std::shared_ptr<GraphicsBuffer> CreateVertexBuffer(const std::shared_ptr<IMeshRenderer>& object) const;
+    std::shared_ptr<GraphicsBuffer> CreateIndexBuffer(const std::shared_ptr<IMeshRenderer>&  object) const;
 
-    std::shared_ptr<GraphicsBuffer> CreateUIVertexBuffer(const std::shared_ptr<UIMeshRenderer>& imageObject) const;
-    std::shared_ptr<GraphicsBuffer> CreateUIIndexBuffer(const std::shared_ptr<UIMeshRenderer>& imageObject) const;
-
-    void UpdateObjectBuffers(const std::shared_ptr<MeshRenderer>& objectMesh);
+    void UpdateObjectBuffers(const std::shared_ptr<IMeshRenderer>& objectMesh);
     bool HasTexture(const std::filesystem::path& textureFilePath) { return std::find(m_textureFilePaths.begin(), m_textureFilePaths.end(), textureFilePath) != m_textureFilePaths.end(); };
     void UpdateTextureResources(const std::filesystem::path& newTextureFilePath, bool alreadyInitialized=true);
     void CreateDepthResources();
@@ -48,10 +45,13 @@ public:
 
     void InitializeVulkan();
 
-	void CreateInstanceBuffersFromObject(std::shared_ptr<MeshRenderer> objectMesh);
+	void CreateInstanceBuffersFromObject(std::shared_ptr<IMeshRenderer> objectMesh);
 	std::shared_ptr<GraphicsBuffer> CreateInstanceBuffer(size_t maxObjects, size_t instanceInfoSize) const;
 
     void CleanupSwapChain() const;
+
+	static void CreateVulkanInterface(WindowManager* windowManager);
+	static std::shared_ptr<VulkanInterface> Get();
 
 private:
 	void GetMaterialCreationInfo(MaterialRegistry::MaterialCreationData& outCreationData);
@@ -141,4 +141,6 @@ private:
 
     bool m_renderedFirstFrame = false;
 	bool m_swapChainReady = false;
+
+	static std::shared_ptr<VulkanInterface> s_vulkanInterfaceSingleton;
 };

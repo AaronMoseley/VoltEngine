@@ -19,7 +19,7 @@ void WindowManager::InitializeWindow(QVulkanInstance* vulkanInstance)
 	m_menuLayout = new QHBoxLayout();
 	addLayout(m_menuLayout);
 
-    m_vulkanWindow = new VulkanWindow(m_vulkanInterface, m_scene);
+    m_vulkanWindow = new VulkanWindow(VulkanInterface::Get(), m_scene);
     m_vulkanWindow->setVulkanInstance(vulkanInstance);
 
     QObject::connect(m_vulkanWindow, &VulkanWindow::KeyDown, this, &WindowManager::AddKeyDown);

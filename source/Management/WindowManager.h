@@ -24,7 +24,6 @@ public:
 
 	WindowManager(QWidget* parentProgram, size_t width, size_t height, const std::string& title);
 
-	void SetVulkanInterface(const std::shared_ptr<VulkanInterface>& vulkanInterface) { m_vulkanInterface = vulkanInterface; }
 	void SetScene(const std::shared_ptr<Scene>& scene) { m_scene = scene; }
 	void BeginRendering() const;
 
@@ -78,7 +77,6 @@ public slots:
 
 private:
 	VulkanWindow* m_vulkanWindow = nullptr;
-	std::shared_ptr<VulkanInterface> m_vulkanInterface = nullptr;
 	std::shared_ptr<Scene> m_scene = nullptr;
 
 	QWidget* m_parentProgram;
