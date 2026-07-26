@@ -244,7 +244,7 @@ bool Scene::RemoveObject(VulkanCommonFunctions::ObjectHandle objectToRemove)
         return false;
     }
 
-    removalSuccessful = removalSuccessful && m_materialAndNameToObjectHandle[objectName][materialName].erase(objectToRemove);
+    removalSuccessful = removalSuccessful && m_materialAndNameToObjectHandle[materialName][objectName].erase(objectToRemove);
 
     return removalSuccessful;
 }

@@ -220,7 +220,7 @@ void DemoBehavior::Update(float deltaTime)
         m_objectHandles.insert(newObjectHandle);
     }
 
-    if (GetWindowManager()->KeyPressed(Qt::Key::Key_E) && GetScene()->GetObjectCount() > 1)
+    if (GetWindowManager()->KeyPressed(Qt::Key::Key_E) && m_objectHandles.size() > 0)
     {
         VulkanCommonFunctions::ObjectHandle removeObjectHandle = *m_objectHandles.rbegin();
         bool correctlyRemoved = GetScene()->RemoveObject(removeObjectHandle);
