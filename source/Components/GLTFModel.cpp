@@ -80,15 +80,21 @@ void GLTFModel::ReadModel()
 
 	//read normal
 	std::vector<uint8_t> normalBytes;
-	ReadAttribute<glm::vec3>(kNormalAttributeName, normalBytes);
+	bool hasNormal = ReadAttribute<glm::vec3>(kNormalAttributeName, normalBytes);
 	std::vector<glm::vec3> normals(normalBytes.size() / sizeof(glm::vec3));
-	memcpy(normals.data(), normalBytes.data(), normalBytes.size());
+	if (hasNormal)
+	{
+		memcpy(normals.data(), normalBytes.data(), normalBytes.size());
+	}
 
 	//read texture coordinate
 	std::vector<uint8_t> textureCoordinateBytes;
-	ReadAttribute<glm::vec2>(kTextureCoordinateAttributeName, textureCoordinateBytes);
+	bool hasTextureCoordinate = ReadAttribute<glm::vec2>(kTextureCoordinateAttributeName, textureCoordinateBytes);
 	std::vector<glm::vec2> textureCoordinates(textureCoordinateBytes.size() / sizeof(glm::vec2));
-	memcpy(textureCoordinates.data(), textureCoordinateBytes.data(), textureCoordinateBytes.size());
+	if (hasTextureCoordinate)
+	{
+		memcpy(textureCoordinates.data(), textureCoordinateBytes.data(), textureCoordinateBytes.size());
+	}
 
 	//create vector of vertices
 	size_t vertexCount = std::max(std::max(positions.size(), normals.size()), textureCoordinates.size());
@@ -169,8 +175,9 @@ void GLTFModel::ReadIndices()
 }
 
 template<typename T>
-void GLTFModel::AddAttributeFromNode(int nodeIndex, const std::string& attributeName, std::vector<uint8_t>& outBytes) const
+bool GLTFModel::AddAttributeFromNode(int nodeIndex, const std::string& attributeName, std::vector<uint8_t>& outBytes) const
 {
+	bool result = false;
 	const tinygltf::Node node = m_model.nodes[nodeIndex];
 
 	if (node.mesh >= 0)
@@ -183,6 +190,8 @@ void GLTFModel::AddAttributeFromNode(int nodeIndex, const std::string& attribute
 			{
 				continue;
 			}
+
+			result = true;
 
 			const tinygltf::Accessor&   accessor  = m_model.accessors[primitive.attributes.at(attributeName)];
 			const tinygltf::BufferView& view = m_model.bufferViews[accessor.bufferView];
@@ -198,33 +207,47 @@ void GLTFModel::AddAttributeFromNode(int nodeIndex, const std::string& attribute
 
 	for (int childNodeIndex : node.children)
 	{
-		AddAttributeFromNode<T>(childNodeIndex, attributeName, outBytes);
+		result = result || AddAttributeFromNode<T>(childNodeIndex, attributeName, outBytes);
 	}
+
+	return result;
 }
 
 template <typename T>
-void GLTFModel::ReadAttribute(const std::string& attributeName, std::vector<uint8_t>& outBytes) const
+bool GLTFModel::ReadAttribute(const std::string& attributeName, std::vector<uint8_t>& outBytes) const
 {
+	bool result = false;
+
 	for (const tinygltf::Scene& scene : m_model.scenes)
 	{
 		for (int nodeIndex : scene.nodes)
 		{
-			AddAttributeFromNode<T>(nodeIndex, attributeName, outBytes);
+			result = result || AddAttributeFromNode<T>(nodeIndex, attributeName, outBytes);
 		}
 	}
+
+	return result;
 }
 
 template <typename T>
-void GLTFModel::GetAttribute(const std::string& attributeName, std::vector<T>& outAttributeData)
+bool GLTFModel::GetAttribute(const std::string& attributeName, std::vector<T>& outAttributeData)
 {
 	if (m_customAttributes.contains(attributeName) == false)
 	{
 		std::vector<uint8_t> attributeData;
-		ReadAttribute<T>(attributeName, attributeData);
+		bool hasAttribute = ReadAttribute<T>(attributeName, attributeData);
+
+		if (hasAttribute == false)
+		{
+			return false;
+		}
+
 		m_customAttributes[attributeName] = attributeData;
 	}
 
 	outAttributeData.resize(m_customAttributes.at(attributeName).size() / sizeof(T));
 
 	memcpy(outAttributeData.data(), m_customAttributes.at(attributeName).data(), m_customAttributes.at(attributeName).data());
+
+	return true;
 }

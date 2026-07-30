@@ -17,7 +17,7 @@ public:
 	void SetSourcePath(const std::filesystem::path& sourceFilePath);
 
 	template <typename T>
-	void GetAttribute(const std::string& attributeName, std::vector<T>& outAttributeData);
+	bool GetAttribute(const std::string& attributeName, std::vector<T>& outAttributeData);
 
 	void ReverseWindingOrder(bool changeFlag=true);
 
@@ -39,10 +39,10 @@ private:
 	bool m_reverseWindingOrder = false;
 
 	template <typename T>
-	void ReadAttribute(const std::string& attributeName, std::vector<uint8_t>& outBytes) const;
+	bool ReadAttribute(const std::string& attributeName, std::vector<uint8_t>& outBytes) const;
 
 	template<typename T>
-	void AddAttributeFromNode(int nodeIndex, const std::string& attributeName, std::vector<uint8_t>& outBytes) const;
+	bool AddAttributeFromNode(int nodeIndex, const std::string& attributeName, std::vector<uint8_t>& outBytes) const;
 
 	tinygltf::Model m_model;
 
