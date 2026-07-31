@@ -6,7 +6,9 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+
 #define TINYGLTF_IMPLEMENTATION
+#include "tiny_gltf.h"
 
 #ifdef _WIN32
 #define VK_USE_PLATFORM_WIN32_KHR
