@@ -9,7 +9,8 @@ public:
 	Transform() {};
 
 	glm::vec3 GetPosition() const { return m_position; }
-	glm::vec3 GetRotation() const { return m_rotation; }
+	glm::vec3 GetRotation() const { return glm::degrees(glm::eulerAngles(m_rotation)); }
+	glm::quat GetRotationQuaternion() const { return m_rotation; }
 	glm::vec3 GetScale() const { return m_scale; }
 
 	glm::vec3 GetWorldPosition() 
@@ -38,6 +39,20 @@ public:
 		return parent->GetWorldRotation() + GetRotation();
 	}
 
+	glm::quat GetWorldRotationQuaternion()
+	{
+		std::shared_ptr<Transform> parent = GetParent();
+		if (parent == nullptr)
+		{
+			return GetRotationQuaternion();
+		}
+
+		glm::quat parentRotation = parent->GetWorldRotationQuaternion();
+		glm::quat result = GetRotationQuaternion() * parentRotation;
+
+		return result;
+	}
+
 	glm::vec3 GetWorldScale()
 	{
 		std::shared_ptr<Transform> parent = GetParent();
@@ -52,31 +67,50 @@ public:
 	void SetParent(const std::shared_ptr<Transform>& parentTransform) { m_parentTransform = parentTransform; }
 	std::shared_ptr<Transform> GetParent() { return m_parentTransform; }
 
-	void SetRotation(glm::vec3 rotation) { m_rotation = glm::vec4(rotation, 1.0f); }
+	void SetRotation(glm::vec3 rotation)
+	{
+		rotation.y = -rotation.y;
+		m_rotation = glm::quat(glm::radians(rotation));
+		m_rotation = glm::normalize(m_rotation);
+	}
+
+	void SetRotationQuaternion(glm::quat newRotation)
+	{
+		m_rotation = newRotation;
+	}
+
 	void SetPosition(glm::vec3 position) { m_position = glm::vec4(position, 1.0f); }
 	void SetScale(glm::vec3 scale) { m_scale = glm::vec4(scale, 1.0f); }
 
-	void Rotate(glm::vec3 amountToRotate) { m_rotation += glm::vec4(amountToRotate, 0.0f); }
+	void Rotate(glm::vec3 amountToRotate)
+	{
+		amountToRotate.y = -amountToRotate.y;
+		glm::vec3 rotationAmoutRadians = glm::radians(amountToRotate);
+
+		glm::quat rotationX = glm::angleAxis(rotationAmoutRadians.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::quat rotationY = glm::angleAxis(rotationAmoutRadians.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::quat rotationZ = glm::angleAxis(rotationAmoutRadians.z, glm::vec3(0.0f, 0.0f, 1.0f));
+
+		m_rotation = m_rotation * rotationZ * rotationY * rotationX;
+		m_rotation = glm::normalize(m_rotation);
+	}
+
 	void Move(glm::vec3 amountToMove) { m_position += glm::vec4(amountToMove, 0.0f); }
 	void Scale(glm::vec3 amountToScale) { m_scale += glm::vec4(amountToScale, 0.0f); }
 
 	glm::vec3 Forward() const
 	{
-		glm::vec3 forward;
-		forward.x = cos(glm::radians(m_rotation.y)) * cos(glm::radians(m_rotation.x));
-		forward.y = sin(glm::radians(m_rotation.x));
-		forward.z = sin(glm::radians(m_rotation.y)) * cos(glm::radians(m_rotation.x));
-		return glm::normalize(forward);
+		return m_rotation * glm::vec3(0.0f, 0.0f, -1.0f);
 	}
 
 	glm::vec3 Right() const
 	{
-		return glm::normalize(glm::cross(Forward(), glm::vec3(0.0f, 1.0f, 0.0f)));
+		return m_rotation * glm::vec3(1.0f, 0.0f, 0.0f);
 	}
 
 	glm::vec3 Up() const
 	{
-		return glm::normalize(glm::cross(Right(), Forward()));
+		return m_rotation * glm::vec3(0.0f, 1.0f, 0.0f);
 	}
 
 private:
@@ -85,6 +119,6 @@ private:
 	std::shared_ptr<Transform> m_parentTransform = nullptr;
 
 	glm::vec4 m_position = glm::vec4(0.0f);
-	glm::vec4 m_rotation = glm::vec4(0.0f);
+	glm::quat m_rotation = glm::quat(glm::vec3(0.0f));
 	glm::vec4 m_scale = glm::vec4(1.0f);
 };

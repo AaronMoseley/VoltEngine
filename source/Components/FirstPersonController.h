@@ -20,5 +20,7 @@ private:
     float m_movementSpeed = 4.0f;
     float m_mouseSensitivity = 7500.0f;
 
+    glm::vec3 m_rotationEuler = glm::vec3(0.0f);
+
     bool m_rightClickToLook = true;
 };

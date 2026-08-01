@@ -61,15 +61,19 @@ void FirstPersonController::Update(float deltaTime)
     rotationDelta.y = mouseDelta.x * m_mouseSensitivity;
 	transform->Rotate(rotationDelta * deltaTime);
 
-    if (transform->GetRotation().x > 89.0f)
+	m_rotationEuler += rotationDelta * deltaTime;
+
+    if (m_rotationEuler.x > 89.0f)
     {
-		transform->SetRotation(glm::vec3(89.0f, transform->GetRotation().y, transform->GetRotation().z));
+		m_rotationEuler.x = 89.0f;
     }
 
-    if (transform->GetRotation().x < -89.0f)
+    if (m_rotationEuler.x < -89.0f)
     {
-		transform->SetRotation(glm::vec3(-89.0f, transform->GetRotation().y, transform->GetRotation().z));
+    	m_rotationEuler.x = -89.0f;
     }
+
+	transform->SetRotation(m_rotationEuler);
 
 	std::shared_ptr<Camera> camera = GetOwner()->GetComponent<Camera>();
 	float newFOV = camera->GetFOV();

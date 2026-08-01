@@ -23,15 +23,13 @@ void GenericObjectMaterial::GetInstanceInfo(RenderObject* object, const std::vec
 	}
 
 	result.m_modelMatrix = glm::mat4(1.0f);
+
 	result.m_modelMatrix = glm::translate(result.m_modelMatrix, transform->GetWorldPosition());
 
+	glm::quat rotation = transform->GetWorldRotationQuaternion();
+	result.m_modelMatrix *= glm::mat4_cast(rotation);
+
 	result.m_modelMatrix = glm::scale(result.m_modelMatrix, transform->GetWorldScale());
-
-	glm::vec3 rotation = transform->GetWorldRotation();
-
-	result.m_modelMatrix = glm::rotate(result.m_modelMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	result.m_modelMatrix = glm::rotate(result.m_modelMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	result.m_modelMatrix = glm::rotate(result.m_modelMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
 	//need to transpose the matrix because hlsl expects column major matrices
 	result.m_modelMatrix = glm::transpose(result.m_modelMatrix);
