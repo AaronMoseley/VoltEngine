@@ -19,10 +19,11 @@ void DemoBehavior::Start()
     testingGLTFModel->SetMaterialName("GenericObjectMaterial");
     std::shared_ptr<Transform> gltfModelTransform = testingGLTFModel->AddComponent<Transform>();
     std::shared_ptr<GLTFModel> gltfMesh = testingGLTFModel->AddComponent<GLTFModel>();
+    gltfMesh->SetLit(false);
     testingGLTFModel->AddComponent<LightSource>();
     gltfModelTransform->SetPosition(glm::vec3(-20.0f, 0.0f, 0.0f));
     //gltfModelTransform->SetScale(glm::vec3(100.0f, 100.0f, 100.0f));
-    gltfMesh->SetSourcePath("models/Camera/CameraModel.gltf");
+    gltfMesh->SetSourcePath("models/OriginMarker/OriginMarker.gltf");
     //gltfMesh->SetTexture("models/Avocado/Avocado_baseColor.png");
     gltfMesh->ReverseWindingOrder();
     GetScene()->AddObject(testingGLTFModel);

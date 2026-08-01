@@ -29,6 +29,7 @@ private:
 	const std::string kNormalAttributeName = "NORMAL";
 	const std::string kTextureCoordinateAttributeName = "TEXCOORD_0";
 	const std::string kIndicesAttributeName = "INDICES";
+	const std::string kColorAttributeName = "COLOR_0";
 
 	glm::vec3 m_modelOrigin = glm::vec3(0.0f);
 

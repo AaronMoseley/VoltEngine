@@ -22,10 +22,13 @@ public:
 		glm::uvec4 m_displayProperties;
 	};
 
-	struct Vertex {
+	struct Vertex
+	{
 		glm::vec4 m_position;
 		glm::vec4 m_normalVector;
 		glm::vec4 m_textureCoordinate;
+		//last value is used to indicate the vertex color overrides the object color
+		glm::vec4 m_color = {0.0f, 0.0f, 0.0f, 0.0f};
 	};
 
 	GenericObjectMaterial() : Material(kMaterialName)

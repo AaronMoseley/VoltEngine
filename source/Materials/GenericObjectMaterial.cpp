@@ -72,6 +72,7 @@ void GenericObjectMaterial::CreateVertexFormat()
 	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
 	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
 	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
+	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);
 
 	m_vertexFormat->AddNewBinding(1, VK_VERTEX_INPUT_RATE_INSTANCE);
 	m_vertexFormat->AddAttributeToBinding(VK_FORMAT_R32G32B32A32_SFLOAT);

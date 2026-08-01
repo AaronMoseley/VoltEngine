@@ -96,6 +96,14 @@ void GLTFModel::ReadModel()
 		memcpy(textureCoordinates.data(), textureCoordinateBytes.data(), textureCoordinateBytes.size());
 	}
 
+	std::vector<uint8_t> colorBytes;
+	bool hasColor = ReadAttribute<glm::vec3>(kColorAttributeName, colorBytes);
+	std::vector<glm::vec3> vertexColor(colorBytes.size() / sizeof(glm::vec3));
+	if (hasColor)
+	{
+		memcpy(vertexColor.data(), colorBytes.data(), colorBytes.size());
+	}
+
 	//create vector of vertices
 	size_t vertexCount = std::max(std::max(positions.size(), normals.size()), textureCoordinates.size());
 	m_vertices.resize(vertexCount);
@@ -114,6 +122,11 @@ void GLTFModel::ReadModel()
 		if (i < textureCoordinates.size())
 		{
 			m_vertices[i].m_textureCoordinate = glm::vec4(textureCoordinates[i], 0.0f, 0.0f);
+		}
+
+		if (i < vertexColor.size())
+		{
+			m_vertices[i].m_color = glm::vec4(vertexColor[i], 1.0f);
 		}
 	}
 
