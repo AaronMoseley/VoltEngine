@@ -38,9 +38,8 @@ void WindowManager::InitializeWindow(QVulkanInstance* vulkanInstance)
     m_wrappingWidget->setFocusPolicy(Qt::StrongFocus);
     m_wrappingWidget->setFocus();
     m_wrappingWidget->setMouseTracking(true);
-    m_wrappingWidget->grabKeyboard();
 
-	addWidget(m_wrappingWidget);
+	addWidget(m_wrappingWidget, 1);
 }
 
 void WindowManager::NewFrame()

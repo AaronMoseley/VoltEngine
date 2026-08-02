@@ -58,7 +58,7 @@ void FirstPersonController::Update(float deltaTime)
 	glm::vec2 mouseDelta = GetWindowManager()->GetMouseDelta();
 
 	rotationDelta.x = mouseDelta.y * m_mouseSensitivity;
-    rotationDelta.y = mouseDelta.x * m_mouseSensitivity;
+    rotationDelta.y = -mouseDelta.x * m_mouseSensitivity;
 	transform->Rotate(rotationDelta * deltaTime);
 
 	m_rotationEuler += rotationDelta * deltaTime;

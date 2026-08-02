@@ -69,7 +69,6 @@ public:
 
 	void SetRotation(glm::vec3 rotation)
 	{
-		rotation.y = -rotation.y;
 		m_rotation = glm::quat(glm::radians(rotation));
 		m_rotation = glm::normalize(m_rotation);
 	}
