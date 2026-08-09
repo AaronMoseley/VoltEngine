@@ -68,6 +68,7 @@ public:
 	void SetParent(const std::shared_ptr<Transform>& parentTransform)
 	{
 		m_parentTransform = parentTransform;
+		parentTransform->AddChild(GetOwner()->GetComponent<Transform>());
 		GetOwner()->RequestInstanceBufferUpdate();
 	}
 	std::shared_ptr<Transform> GetParent() { return m_parentTransform; }
@@ -137,10 +138,33 @@ public:
 		return m_rotation * glm::vec3(0.0f, 1.0f, 0.0f);
 	}
 
+	void AddChild(std::shared_ptr<Transform> newChild) { m_childTransforms.push_back(newChild); }
+	size_t GetChildCount() const { return m_childTransforms.size(); }
+	std::shared_ptr<Transform> GetChild(size_t childIndex)
+	{
+		if (childIndex >= m_childTransforms.size())
+		{
+			return nullptr;
+		}
+
+		return m_childTransforms[childIndex];
+	}
+
+	void RemoveChild(size_t childIndex)
+	{
+		if (childIndex >= m_childTransforms.size())
+		{
+			return;
+		}
+
+		m_childTransforms.erase(m_childTransforms.begin() + childIndex);
+	}
+
 private:
 	using ObjectComponent::SetEnabled;
 
 	std::shared_ptr<Transform> m_parentTransform = nullptr;
+	std::vector<std::shared_ptr<Transform>> m_childTransforms = {};
 
 	glm::vec4 m_position = glm::vec4(0.0f);
 	glm::quat m_rotation = glm::quat(glm::vec3(0.0f));

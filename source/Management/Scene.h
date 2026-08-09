@@ -9,7 +9,6 @@
 #include <vector>
 #include <functional>
 #include <chrono>
-#include <mutex>
 
 class RenderObject;
 
@@ -62,9 +61,9 @@ public:
 	{
 		for (auto it = m_objectsToUpdateInstanceInfo.begin(); it != m_objectsToUpdateInstanceInfo.end();)
 		{
-			m_objectsToUpdateInstanceInfo.at(it->first)--;
+			it->second--;
 
-			if (m_objectsToUpdateInstanceInfo.at(it->first) == 0)
+			if (it->second == 0)
 			{
 				it = m_objectsToUpdateInstanceInfo.erase(it);
 			} else
@@ -74,13 +73,8 @@ public:
 		}
 	}
 
-	void LockObjectMutex() { m_objectMapMutex.lock(); }
-	void UnlockObjectMutex() { m_objectMapMutex.unlock(); }
-
 private:
 	void UpdateMeshData(const std::shared_ptr<RenderObject>& currentObject);
-
-	std::mutex m_objectMapMutex;
 
 	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> m_objects = {};
 	std::map<std::string, std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>>> m_materialAndNameToObjectHandle;

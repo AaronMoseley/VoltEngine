@@ -21,9 +21,6 @@ void PointMaterial::GetInstanceInfo(RenderObject* object, const std::vector<std:
 
 	instanceInfo.m_modelMatrix = glm::translate(instanceInfo.m_modelMatrix, transform->GetPosition());
 
-	glm::quat rotation = transform->GetWorldRotationQuaternion();
-	instanceInfo.m_modelMatrix *= glm::mat4_cast(rotation);
-
 	instanceInfo.m_modelMatrix = glm::scale(instanceInfo.m_modelMatrix, transform->GetScale());
 
 	//need to transpose the matrix because hlsl expects column major matrices
