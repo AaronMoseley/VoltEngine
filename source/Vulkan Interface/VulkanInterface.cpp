@@ -609,6 +609,8 @@ void VulkanInterface::DrawFrame(float deltaTime, const std::shared_ptr<Scene>& s
         return;
     }
 
+	scene->LockObjectMutex();
+
     const std::map<std::string, std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>>>& objectHandles = scene->GetMaterialAndNameToObjectMap();
     const std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>>& objects = scene->GetObjects();
     const std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>>& uiObjects = scene->GetUIObjects();
@@ -678,6 +680,8 @@ void VulkanInterface::DrawFrame(float deltaTime, const std::shared_ptr<Scene>& s
     m_renderedFirstFrame = true;
 
 	scene->DecrementFrameCountersForObjects();
+
+	scene->UnlockObjectMutex();
 
     m_vulkanWindow->frameReady();
     m_vulkanWindow->requestUpdate();

@@ -9,6 +9,7 @@
 #include <vector>
 #include <functional>
 #include <chrono>
+#include <mutex>
 
 class RenderObject;
 
@@ -73,8 +74,13 @@ public:
 		}
 	}
 
+	void LockObjectMutex() { m_objectMapMutex.lock(); }
+	void UnlockObjectMutex() { m_objectMapMutex.unlock(); }
+
 private:
 	void UpdateMeshData(const std::shared_ptr<RenderObject>& currentObject);
+
+	std::mutex m_objectMapMutex;
 
 	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> m_objects = {};
 	std::map<std::string, std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>>> m_materialAndNameToObjectHandle;

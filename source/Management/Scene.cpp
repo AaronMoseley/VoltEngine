@@ -137,6 +137,8 @@ bool Scene::MeshAlreadyAdded(const std::string& meshName) const
 
 VulkanCommonFunctions::ObjectHandle Scene::AddObject(const std::shared_ptr <RenderObject>& newObject)
 {
+    std::lock_guard<std::mutex> lock(m_objectMapMutex);
+
     if (m_objects.size() >= VulkanCommonFunctions::MAX_OBJECTS)
     {
 		return VulkanCommonFunctions::INVALID_OBJECT_HANDLE;
@@ -174,6 +176,8 @@ VulkanCommonFunctions::ObjectHandle Scene::AddObject(const std::shared_ptr <Rend
 
 VulkanCommonFunctions::ObjectHandle Scene::AddUIObject(const std::shared_ptr <RenderObject>& newObject)
 {
+    std::lock_guard<std::mutex> lock(m_objectMapMutex);
+
     if (m_uiObjects.size() >= VulkanCommonFunctions::MAX_OBJECTS)
     {
         return VulkanCommonFunctions::INVALID_OBJECT_HANDLE;
@@ -205,6 +209,8 @@ VulkanCommonFunctions::ObjectHandle Scene::AddUIObject(const std::shared_ptr <Re
 
 bool Scene::RemoveObject(VulkanCommonFunctions::ObjectHandle objectToRemove)
 {
+    std::lock_guard<std::mutex> lock(m_objectMapMutex);
+
     std::shared_ptr<RenderObject> currentObject = GetRenderObject(objectToRemove);
 
     if (currentObject == nullptr)
@@ -257,6 +263,8 @@ bool Scene::RemoveObject(VulkanCommonFunctions::ObjectHandle objectToRemove)
 
 bool Scene::RemoveUIObject(VulkanCommonFunctions::ObjectHandle objectToRemove)
 {
+    std::lock_guard<std::mutex> lock(m_objectMapMutex);
+
     std::shared_ptr<RenderObject> currentObject = GetUIRenderObject(objectToRemove);
 
     if (currentObject == nullptr)
@@ -415,6 +423,8 @@ std::shared_ptr<Font> Scene::AddFont(const std::string& atlasFilePath, const std
 
 void Scene::Cleanup()
 {
+    std::lock_guard<std::mutex> lock(m_objectMapMutex);
+
     for (auto it = m_objects.begin(); it != m_objects.end(); it++)
     {
         std::shared_ptr<GraphicsBuffer> instanceBuffer = it->second->GetInstanceBuffer({});
