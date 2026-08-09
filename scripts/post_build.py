@@ -21,6 +21,7 @@ DIRECTORIES_TO_COPY = [
     os.path.join(PROJECT_ROOT, "models"),
     os.path.join(PROJECT_ROOT, "shaders"),
     os.path.join(PROJECT_ROOT, "textures"),
+    os.path.join(PROJECT_ROOT, "ml_models"),
 ]
 
 # Destination build directory
@@ -37,7 +38,7 @@ def run_shell_script():
     print(f"Running {SHADER_COMPILATION_SCRIPT}")
 
     subprocess.run(
-        ["python3", str(SHADER_COMPILATION_SCRIPT)],
+        [sys.executable, str(SHADER_COMPILATION_SCRIPT)],
         check=True,
     )
 
