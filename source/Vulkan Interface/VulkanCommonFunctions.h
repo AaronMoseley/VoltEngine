@@ -17,7 +17,7 @@
 namespace VulkanCommonFunctions {
     using ObjectHandle = size_t;
     static constexpr VulkanCommonFunctions::ObjectHandle INVALID_OBJECT_HANDLE = 0;
-    static constexpr size_t MAX_OBJECTS = 10000;
+    static constexpr size_t MAX_OBJECTS = 999999;
 
     static constexpr size_t MAX_FRAMES_IN_FLIGHT = 3;
     

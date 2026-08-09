@@ -23,10 +23,7 @@ public:
 		SetIndices(indices);
 	}
 
-	void OwnerSetCallback() override
-	{
-		GetOwner()->SetMaterialName(GenericUIObjectMaterial::GetNameStatic());
-	}
+	void OwnerSetCallback() override;
 
 protected:
 };

@@ -146,7 +146,10 @@ VulkanCommonFunctions::ObjectHandle Scene::AddObject(const std::shared_ptr <Rend
 
     m_objects[m_currentObjectHandle] = newObject;
     newObject->SetSceneManager(this);
+    newObject->SetObjectHandle(m_currentObjectHandle);
     newObject->SetWindowManager(m_windowManager);
+
+    RequestInstanceBufferUpdate(m_currentObjectHandle);
 
     std::shared_ptr<IMeshRenderer> meshComponent = newObject->GetComponent<IMeshRenderer>();
 
@@ -180,7 +183,10 @@ VulkanCommonFunctions::ObjectHandle Scene::AddUIObject(const std::shared_ptr <Re
 
     m_uiObjects[m_currentUIObjectHandle] = newObject;
     newObject->SetSceneManager(this);
+    newObject->SetObjectHandle(m_currentObjectHandle);
     newObject->SetWindowManager(m_windowManager);
+
+    RequestInstanceBufferUpdate(m_currentObjectHandle);
 
     std::shared_ptr<UIImage> imageComponent = newObject->GetComponent<UIImage>();
 

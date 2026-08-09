@@ -10,13 +10,13 @@ public:
 	UIImage();
 	UIImage(const std::string& imageFilePath);
 
-	void SetOpacity(float opacity) { m_opacity = opacity; }
+	void SetOpacity(float opacity);
 	float GetOpacity() const { return m_opacity; }
 
 	void TextureSetCallback() override;
 
 	glm::vec3 GetColor() const { return m_color; }
-	void SetColor(glm::vec3 color) { m_color = color; }
+	void SetColor(glm::vec3 color);
 
 private:
 	using GenericUIObjectMeshRenderer::SetVertices;

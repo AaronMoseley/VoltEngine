@@ -3,6 +3,7 @@
 
 #include "Objects/ObjectComponent.h"
 #include "Vulkan Interface/GraphicsBuffer.h"
+#include "Objects/RenderObject.h"
 
 class IMeshRenderer : public ObjectComponent
 {
@@ -108,19 +109,25 @@ public:
 	bool GetTextured() const override { return m_textured; }
 	std::string GetTexturePath() override { return m_texturePath; }
 
+	void SetTextureDataDirty(bool dirty) override { m_textureDataDirty = dirty; }
+	bool IsTextureDataDirty() const override { return m_textureDataDirty; }
+
+	virtual void TextureSetCallback() {};
+
 	void SetTexture(const std::string& texturePath) override
 	{
 		m_texturePath = texturePath;
 		m_textured = true;
 		m_textureDataDirty = true;
+		GetOwner()->RequestInstanceBufferUpdate();
 		TextureSetCallback();
-	};
-	void SetTextured(bool textured) override { m_textured = textured; }
+	}
 
-	void SetTextureDataDirty(bool dirty) override { m_textureDataDirty = dirty; }
-	bool IsTextureDataDirty() const override { return m_textureDataDirty; }
-
-	virtual void TextureSetCallback() {};
+	void SetTextured(bool textured) override
+	{
+		m_textured = textured;
+		GetOwner()->RequestInstanceBufferUpdate();
+	}
 
 protected:
 	std::vector<T> m_vertices;

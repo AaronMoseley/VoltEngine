@@ -69,7 +69,7 @@ private:
     VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) const;
     void BeginDrawFrameCommandBuffer(VkCommandBuffer commandBuffer) const;
     void DrawInstancedObjectCommandBuffer(VkCommandBuffer commandBuffer, const std::string& objectName, size_t objectCount);
-    void DrawSingleObjectCommandBuffer(VkCommandBuffer commandBuffer, const std::shared_ptr<RenderObject>& currentObject) const;
+    void DrawSingleObjectCommandBuffer(VkCommandBuffer commandBuffer, const std::shared_ptr<RenderObject>& currentObject, bool regenerateInstanceData) const;
     void SwitchToPipelineFromMaterial(VkCommandBuffer commandBuffer, std::shared_ptr<Material> material) const;
     static void EndDrawFrameCommandBuffer(VkCommandBuffer commandBuffer);
     static void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
@@ -78,7 +78,8 @@ private:
     bool CheckValidationLayerSupport() const;
     void UpdateInstanceBuffer(const std::string& objectName,
     	const std::set<VulkanCommonFunctions::ObjectHandle>& objectHandles,
-    	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>>& objects);
+    	const std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>>& objects,
+    	const std::map<VulkanCommonFunctions::ObjectHandle, size_t>& objectsToUpdate);
     void UpdateUniformBuffer(uint32_t currentImage, std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> objects) const;
 
     VkInstance m_vulkanInstance{};

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Objects/ObjectComponent.h"
+#include "Objects/RenderObject.h"
 #include <glm.hpp>
 #include <gtc/quaternion.hpp>
 
@@ -64,22 +65,36 @@ public:
 		return parent->GetWorldScale() * GetScale();
 	}
 
-	void SetParent(const std::shared_ptr<Transform>& parentTransform) { m_parentTransform = parentTransform; }
+	void SetParent(const std::shared_ptr<Transform>& parentTransform)
+	{
+		m_parentTransform = parentTransform;
+		GetOwner()->RequestInstanceBufferUpdate();
+	}
 	std::shared_ptr<Transform> GetParent() { return m_parentTransform; }
 
 	void SetRotation(glm::vec3 rotation)
 	{
 		m_rotation = glm::quat(glm::radians(rotation));
 		m_rotation = glm::normalize(m_rotation);
+		GetOwner()->RequestInstanceBufferUpdate();
 	}
 
 	void SetRotationQuaternion(glm::quat newRotation)
 	{
 		m_rotation = newRotation;
+		GetOwner()->RequestInstanceBufferUpdate();
 	}
 
-	void SetPosition(glm::vec3 position) { m_position = glm::vec4(position, 1.0f); }
-	void SetScale(glm::vec3 scale) { m_scale = glm::vec4(scale, 1.0f); }
+	void SetPosition(glm::vec3 position)
+	{
+		m_position = glm::vec4(position, 1.0f);
+		GetOwner()->RequestInstanceBufferUpdate();
+	}
+	void SetScale(glm::vec3 scale)
+	{
+		m_scale = glm::vec4(scale, 1.0f);
+		GetOwner()->RequestInstanceBufferUpdate();
+	}
 
 	void Rotate(glm::vec3 amountToRotate)
 	{
@@ -92,10 +107,20 @@ public:
 
 		m_rotation = m_rotation * rotationZ * rotationY * rotationX;
 		m_rotation = glm::normalize(m_rotation);
+
+		GetOwner()->RequestInstanceBufferUpdate();
 	}
 
-	void Move(glm::vec3 amountToMove) { m_position += glm::vec4(amountToMove, 0.0f); }
-	void Scale(glm::vec3 amountToScale) { m_scale += glm::vec4(amountToScale, 0.0f); }
+	void Move(glm::vec3 amountToMove)
+	{
+		m_position += glm::vec4(amountToMove, 0.0f);
+		GetOwner()->RequestInstanceBufferUpdate();
+	}
+	void Scale(glm::vec3 amountToScale)
+	{
+		m_scale += glm::vec4(amountToScale, 0.0f);
+		GetOwner()->RequestInstanceBufferUpdate();
+	}
 
 	glm::vec3 Forward() const
 	{

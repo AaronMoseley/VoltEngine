@@ -1,27 +1,28 @@
 #ifndef POINTCLOUDAPP_SQUARE_H
 #define POINTCLOUDAPP_SQUARE_H
 
-#include "Components/GenericObjectMeshRenderer.h"
+#include "Components/PointMeshRenderer.h"
+#include "Materials/PointMaterial.h"
 #include "Vulkan Interface/VulkanCommonFunctions.h"
 
-class Square : public GenericObjectMeshRenderer {
+class Square : public PointMeshRenderer {
 public:
-    Square() : GenericObjectMeshRenderer(kSquareVertices, kSquareIndices, "Square")
+    Square() : PointMeshRenderer(kSquareVertices, kSquareIndices, "Square")
 	{
-        SetIsBillboarded(true);
+
 	}
 
 private:
     using MeshRenderer::SetIndices;
 	using MeshRenderer::SetVertices;
 
-	inline static const std::vector<GenericObjectMaterial::Vertex> kSquareVertices =
+	inline static const std::vector<PointMaterial::PointVertex> kSquareVertices =
 	{
-		//positions                                     //normals                                       //texture coords
-		{{-0.5f,  0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f}}, //top left
-		{{ 0.5f,  0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f, 0.0f}}, //top right
-		{{ 0.5f, -0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 0.0f}}, //bottom right
-		{{-0.5f, -0.5f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}}  //bottom left
+		//positions
+		{{-0.5f,  0.5f, 0.0f, 0.0f}}, //top left
+		{{ 0.5f,  0.5f, 0.0f, 0.0f}}, //top right
+		{{ 0.5f, -0.5f, 0.0f, 0.0f}}, //bottom right
+		{{-0.5f, -0.5f, 0.0f, 0.0f}}  //bottom left
 	};
 
 	inline static const std::vector<uint32_t> kSquareIndices =

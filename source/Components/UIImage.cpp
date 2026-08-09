@@ -1,5 +1,6 @@
 #include "UIImage.h"
 #include "stb_image.h"
+#include "Objects/RenderObject.h"
 
 UIImage::UIImage() : GenericUIObjectMeshRenderer(kSquareVertices, kSquareIndices)
 {
@@ -37,4 +38,16 @@ void UIImage::TextureSetCallback()
 	}
 
 	m_meshDataDirty = true;
+}
+
+void UIImage::SetOpacity(float opacity)
+{
+	m_opacity = opacity;
+	GetOwner()->RequestInstanceBufferUpdate();
+}
+
+void UIImage::SetColor(glm::vec3 color)
+{
+	m_color = color;
+	GetOwner()->RequestInstanceBufferUpdate();
 }

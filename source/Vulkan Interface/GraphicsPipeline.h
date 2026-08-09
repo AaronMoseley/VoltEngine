@@ -15,6 +15,7 @@ struct GraphicsPipelineCreateInfo {
 	VkDevice m_device;
 	VulkanWindow* m_vulkanWindow;
 	std::shared_ptr<VertexFormat> m_vertexFormat;
+	bool m_allowTransparency;
 };
 
 class GraphicsPipeline {
@@ -38,6 +39,8 @@ private:
 	VkPipeline m_graphicsPipeline = VK_NULL_HANDLE;
 	VkDescriptorSetLayout m_descriptorSetLayout = VK_NULL_HANDLE;
 	VkDevice m_device = VK_NULL_HANDLE;
+
+	bool m_allowTransparency = false;
 
 	std::string m_vertexShaderFilePath;
 	std::string m_fragmentShaderFilePath;

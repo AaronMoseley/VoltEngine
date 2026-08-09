@@ -4,8 +4,9 @@
 #include "MaterialRegistry.h"
 #include "Vulkan Interface/GraphicsPipeline.h"
 #include "Vulkan Interface/VulkanCommonFunctions.h"
-#include "Objects/RenderObject.h"
 #include "Management/VertexFormat.h"
+
+class RenderObject;
 
 class Material {
 public:
@@ -26,6 +27,8 @@ public:
 	void CleanupMaterial();
 
 protected:
+	void SetAllowTransparency(bool newValue) { m_allowTransparency = newValue; }
+
 	void CreateGraphicsPipeline();
 
 	virtual void CreateVertexFormat() = 0;
@@ -43,6 +46,8 @@ protected:
 	std::shared_ptr<GraphicsPipeline> m_graphicsPipeline = nullptr;
 
 	std::shared_ptr<VertexFormat> m_vertexFormat = nullptr;
+
+	bool m_allowTransparency = true;
 
 	VkDescriptorSetLayout m_descriptorSetLayout = VK_NULL_HANDLE;
 	VmaAllocator m_allocator = VK_NULL_HANDLE;

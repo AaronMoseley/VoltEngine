@@ -4,6 +4,7 @@
 #include "Management/Scene.h"
 #include "Management/WindowManager.h"
 #include "Management/Material.h"
+#include "Management/Scene.h"
 
 RenderObject::RenderObject()
 {
@@ -107,4 +108,14 @@ bool RenderObject::IsIndexed()
 	}
 
 	return false;
+}
+
+void RenderObject::RequestInstanceBufferUpdate()
+{
+	if (GetSceneManager() == nullptr)
+	{
+		return;
+	}
+
+	GetSceneManager()->RequestInstanceBufferUpdate(m_objectHandle);
 }

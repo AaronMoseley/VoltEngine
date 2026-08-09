@@ -33,9 +33,10 @@ public:
 
 	void UpdateTexture(const std::filesystem::path& newTexturePath) const;
 
-	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> GetObjects() { return m_objects; };
-	std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> GetUIObjects() { return m_uiObjects; };
-	std::map<std::string, std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>>> GetMaterialAndNameToObjectMap() { return m_materialAndNameToObjectHandle; }
+	const std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>>& GetObjects() { return m_objects; };
+	const std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>>& GetUIObjects() { return m_uiObjects; };
+	const std::map<std::string, std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>>>& GetMaterialAndNameToObjectMap() { return m_materialAndNameToObjectHandle; }
+	const std::map<VulkanCommonFunctions::ObjectHandle, size_t>& GetObjectsToUpdate() { return m_objectsToUpdateInstanceInfo; }
 
 	VulkanCommonFunctions::ObjectHandle GetObjectByTag(const std::string& tag);
 	std::shared_ptr<RenderObject> GetRenderObject(VulkanCommonFunctions::ObjectHandle handle);
@@ -51,6 +52,26 @@ public:
 	void OnResize(QSize newSize, QSize oldSize);
 
 	bool MeshAlreadyAdded(const std::string& meshName) const;
+
+	void RequestInstanceBufferUpdate(VulkanCommonFunctions::ObjectHandle renderObjectHandle)
+	{
+		m_objectsToUpdateInstanceInfo.insert( {renderObjectHandle, VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT} );
+	}
+	void DecrementFrameCountersForObjects()
+	{
+		for (auto it = m_objectsToUpdateInstanceInfo.begin(); it != m_objectsToUpdateInstanceInfo.end();)
+		{
+			m_objectsToUpdateInstanceInfo.at(it->first)--;
+
+			if (m_objectsToUpdateInstanceInfo.at(it->first) == 0)
+			{
+				it = m_objectsToUpdateInstanceInfo.erase(it);
+			} else
+			{
+				it++;
+			}
+		}
+	}
 
 private:
 	void UpdateMeshData(const std::shared_ptr<RenderObject>& currentObject);
@@ -68,6 +89,8 @@ private:
 	std::vector<std::function<void(float)>> m_updateCallbacks;
 
 	std::vector<std::shared_ptr<GraphicsBuffer>> m_buffersToDestroy;
+
+	std::map<VulkanCommonFunctions::ObjectHandle, size_t> m_objectsToUpdateInstanceInfo;
 
 	double m_deltaTime = 0.0f;	// Time between current frame and last frame
 	double m_lastFrameTime = -1.0f; // Time of last frame

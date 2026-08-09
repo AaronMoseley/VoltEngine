@@ -294,7 +294,7 @@ void VulkanInterface::DrawInstancedObjectCommandBuffer(VkCommandBuffer commandBu
     }
 }
 
-void VulkanInterface::DrawSingleObjectCommandBuffer(VkCommandBuffer commandBuffer, const std::shared_ptr<RenderObject>& renderObject) const
+void VulkanInterface::DrawSingleObjectCommandBuffer(VkCommandBuffer commandBuffer, const std::shared_ptr<RenderObject>& renderObject, bool regenerateInstanceData) const
 {
 	std::vector<std::shared_ptr<GraphicsBuffer>> vertexBuffers;
 	std::vector<size_t> vertexBufferSizes;
@@ -521,9 +521,35 @@ void VulkanInterface::CreateVMAAllocator()
     vmaCreateAllocator(&allocatorCreateInfo, &m_vmaAllocator);
 }
 
-void VulkanInterface::UpdateInstanceBuffer(const std::string& objectName, const std::set<VulkanCommonFunctions::ObjectHandle>& objectHandles, std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>>& objects)
+void VulkanInterface::UpdateInstanceBuffer(const std::string& objectName,
+	const std::set<VulkanCommonFunctions::ObjectHandle>& objectHandles,
+	const std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>>& objects,
+	const std::map<VulkanCommonFunctions::ObjectHandle, size_t>& objectsToUpdate)
 {
     std::vector<std::byte> objectInfo;
+
+	bool shouldUpdate = false;
+	for (auto it = objectHandles.begin(); it != objectHandles.end(); it++)
+	{
+		VulkanCommonFunctions::ObjectHandle currentHandle = *it;
+
+		if (currentHandle == VulkanCommonFunctions::INVALID_OBJECT_HANDLE || !objects.contains(currentHandle))
+		{
+			continue;
+		}
+
+		shouldUpdate |= objectsToUpdate.contains(currentHandle);
+
+		if (shouldUpdate)
+		{
+			break;
+		}
+	}
+
+	if (shouldUpdate == false)
+	{
+		return;
+	}
 
 	size_t instanceDataSize = 0;
     for (auto it = objectHandles.begin(); it != objectHandles.end(); it++)
@@ -535,7 +561,7 @@ void VulkanInterface::UpdateInstanceBuffer(const std::string& objectName, const 
             continue;
         }
 
-        std::shared_ptr<RenderObject> object = objects[currentHandle];
+        const std::shared_ptr<RenderObject> object = objects.at(currentHandle);
 
     	if (instanceDataSize == 0)
     	{
@@ -583,22 +609,23 @@ void VulkanInterface::DrawFrame(float deltaTime, const std::shared_ptr<Scene>& s
         return;
     }
 
-    std::map<std::string, std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>>> objectHandles = scene->GetMaterialAndNameToObjectMap();
-    std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> objects = scene->GetObjects();
-    std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>> uiObjects = scene->GetUIObjects();
+    const std::map<std::string, std::map<std::string, std::set<VulkanCommonFunctions::ObjectHandle>>>& objectHandles = scene->GetMaterialAndNameToObjectMap();
+    const std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>>& objects = scene->GetObjects();
+    const std::map<VulkanCommonFunctions::ObjectHandle, std::shared_ptr<RenderObject>>& uiObjects = scene->GetUIObjects();
+	const std::map<VulkanCommonFunctions::ObjectHandle, size_t>& objectsToUpdate = scene->GetObjectsToUpdate();
 
-    for (auto it = objectHandles.begin(); it != objectHandles.end(); it++)
-    {
-    	for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
-    	{
-    		std::string objectName = it2->first;
+	for (auto it = objectHandles.begin(); it != objectHandles.end(); it++)
+	{
+		for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
+		{
+			std::string objectName = it2->first;
 
-    		if (objectName != IMeshRenderer::kCustomMeshName)
-    		{
-    			UpdateInstanceBuffer(objectName, it2->second, objects);
-    		}
-    	}
-    }
+			if (objectName != IMeshRenderer::kCustomMeshName)
+			{
+				UpdateInstanceBuffer(objectName, it2->second, objects, objectsToUpdate);
+			}
+		}
+	}
 
     UpdateUniformBuffer(m_currentFrameIndex, objects);
 
@@ -621,7 +648,7 @@ void VulkanInterface::DrawFrame(float deltaTime, const std::shared_ptr<Scene>& s
             	for (auto it3 = it2->second.begin(); it3 != it2->second.end(); it3++)
             	{
             		VulkanCommonFunctions::ObjectHandle currentHandle = *it3;
-            		DrawSingleObjectCommandBuffer(commandBuffer, objects[currentHandle]);
+            		DrawSingleObjectCommandBuffer(commandBuffer, objects.at(currentHandle), objectsToUpdate.contains(currentHandle));
             	}
             } else
             {
@@ -642,13 +669,15 @@ void VulkanInterface::DrawFrame(float deltaTime, const std::shared_ptr<Scene>& s
 			activeMaterialName = currentMaterialName;
 		}
 
-		DrawSingleObjectCommandBuffer(commandBuffer, it->second);
+		DrawSingleObjectCommandBuffer(commandBuffer, it->second, objectsToUpdate.contains(it->first));
 	}
 
     EndDrawFrameCommandBuffer(commandBuffer);
 
     m_currentFrameIndex = (m_currentFrameIndex + 1) % VulkanCommonFunctions::MAX_FRAMES_IN_FLIGHT;
     m_renderedFirstFrame = true;
+
+	scene->DecrementFrameCountersForObjects();
 
     m_vulkanWindow->frameReady();
     m_vulkanWindow->requestUpdate();

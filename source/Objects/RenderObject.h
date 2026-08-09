@@ -74,7 +74,14 @@ public:
 	void GetIndexBuffer(std::vector<size_t>& outBufferSizes, std::vector<std::shared_ptr<GraphicsBuffer>>& outBuffers);
 	bool IsIndexed();
 
+	void SetObjectHandle(VulkanCommonFunctions::ObjectHandle newHandle) { m_objectHandle = newHandle; }
+	VulkanCommonFunctions::ObjectHandle GetObjectHandle() { return m_objectHandle; }
+
+	void RequestInstanceBufferUpdate();
+
 protected:
+	VulkanCommonFunctions::ObjectHandle m_objectHandle = VulkanCommonFunctions::INVALID_OBJECT_HANDLE;
+
 	std::vector<std::shared_ptr<ObjectComponent>> m_components;
 	WindowManager* m_windowManager = nullptr;
 	std::shared_ptr<GraphicsBuffer> m_instanceBuffer = nullptr;
@@ -84,5 +91,6 @@ protected:
 	std::string m_tag = "";
 	std::string m_materialName = "";
 
+	bool m_instanceDataDirty = false;
 	bool m_initialized = false;
 };

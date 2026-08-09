@@ -29,24 +29,21 @@ public:
 	}
 
 	glm::vec3 GetColor() const { return m_color; }
-	void SetColor(glm::vec3 color) { m_color = color; }
+	void SetColor(glm::vec3 color);
 
 	bool GetLit() const { return m_lit; }
-	void SetLit(bool lit) { m_lit = lit; }
+	void SetLit(bool lit);
 
-	void SetOpacity(float opacity) { m_opacity = opacity; }
+	void SetOpacity(float opacity);
 	float GetOpacity() const { return m_opacity; }
 
-	void SetShininess(float shininess) { m_shininess = shininess; }
+	void SetShininess(float shininess);
 	float GetShininess() const { return m_shininess; }
 
-	void SetIsBillboarded(bool isBillboarded) { m_isBillboarded = isBillboarded; }
+	void SetIsBillboarded(bool isBillboarded);
 	bool IsBillboarded() const { return m_isBillboarded; }
 
-	void OwnerSetCallback() override
-	{
-		GetOwner()->SetMaterialName(GenericObjectMaterial::GetNameStatic());
-	}
+	void OwnerSetCallback() override;
 
 protected:
 	float m_opacity = 1.0f;

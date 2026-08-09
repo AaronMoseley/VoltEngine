@@ -1,5 +1,6 @@
 #include "Material.h"
 #include "Vulkan Interface/TextureImage.h"
+#include "Objects/RenderObject.h"
 
 void Material::InitializeMaterial(const MaterialRegistry::MaterialCreationData& creationData)
 {
@@ -39,6 +40,7 @@ void Material::CreateGraphicsPipeline()
 	pipelineCreateInfo.m_device = m_vkDevice;
 	pipelineCreateInfo.m_vulkanWindow = m_vulkanWindow;
 	pipelineCreateInfo.m_vertexFormat = m_vertexFormat;
+	pipelineCreateInfo.m_allowTransparency = m_allowTransparency;
 	m_graphicsPipeline = std::make_shared<GraphicsPipeline>(pipelineCreateInfo);
 }
 
